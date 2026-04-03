@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHLINK | DASHBOARD ELITE v14.0</title>
+    <title>CASHLINK | DASHBOARD ELITE v17.0</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -12,12 +12,12 @@
 
     <style>
         /* ============================================================
-           SYSTÈME DE DESIGN "TITAN OLYMPUS" (400 LIGNES DE CSS)
+           SYSTÈME DE DESIGN "TITAN OLYMPUS" (550 LIGNES DE STYLE)
            ============================================================ */
         :root {
             --primary: #003399; /* BLEU BIC RDC */
-            --warning: #ffcc00; /* JAUNE VIF NOTIF */
-            --accent: #00d9ff; /* CYAN NÉON BARRE */
+            --warning: #ffcc00; /* JAUNE VIF */
+            --accent: #00d9ff; /* CYAN NÉON */
             --success: #10b981;
             --danger: #f43f5e;
             --dark: #000c26;
@@ -26,8 +26,8 @@
             --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
-        /* CONFIGURATION SCROLLBAR PROFESSIONNELLE */
-        ::-webkit-scrollbar { width: 10px; }
+        /* CONFIGURATION SCROLLBAR CHIRURGICALE */
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--dark); }
         ::-webkit-scrollbar-thumb { background: var(--warning); border-radius: 10px; border: 2px solid var(--dark); }
 
@@ -35,311 +35,357 @@
 
         body {
             background-color: var(--primary);
-            background-image: radial-gradient(at 0% 0%, #0044cc 0px, transparent 55%), url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            background-image: 
+                radial-gradient(at 0% 0%, #0044cc 0px, transparent 55%),
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
             background-attachment: fixed;
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: var(--white); margin: 0; padding: 0; min-height: 100vh;
             overflow-x: hidden;
         }
 
-        /* --- BARRE DE NOTIFICATION JAUNE --- */
-        .notif-header-elite {
-            background: var(--warning); color: #000; padding: 15px;
+        /* --- EFFET DE PARTICULES TECHNOLOGIQUES (CSS PURE) --- */
+        .bg-particles {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden; pointer-events: none;
+        }
+        .particle {
+            position: absolute; display: block; background: rgba(0, 217, 255, 0.2);
+            box-shadow: 0 0 10px var(--accent); border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+        }
+
+        /* --- BARRE DE NOTIFICATION JAUNE FIXE --- */
+        .notif-header-titan {
+            background: var(--warning); color: #000; padding: 14px;
             font-weight: 900; text-align: center; text-transform: uppercase;
             border-bottom: 5px solid #000; position: relative; z-index: 5000;
-            display: flex; justify-content: center; align-items: center; gap: 15px;
-            font-size: 0.85rem; letter-spacing: 1px;
+            display: flex; justify-content: center; align-items: center; gap: 12px;
+            font-size: 0.8rem; letter-spacing: 0.5px;
         }
-        .notif-header-elite i { font-size: 1.4rem; animation: pulse 1s infinite; }
+        .notif-header-titan i { font-size: 1.4rem; animation: pulse 1s infinite; }
 
-        /* --- NAVBAR TITAN --- */
+        /* --- NAVBAR TITAN (OPTIMISÉE MOBILE) --- */
         .navbar-titan {
-            background: var(--warning); padding: 12px 25px;
+            background: var(--warning); padding: 10px 15px;
             position: sticky; top: 0; z-index: 4000;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.5);
         }
 
-        .brand-text { font-family: 'Space Grotesk', sans-serif; font-weight: 900; color: var(--primary); font-size: 1.8rem; text-decoration: none !important; letter-spacing: -2px; }
+        .brand-logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 900; color: var(--primary); font-size: 1.6rem; text-decoration: none !important; letter-spacing: -2px; }
 
-        .user-profile-box {
-            background: #fff; padding: 10px 25px; border-radius: 60px;
-            display: flex; align-items: center; gap: 20px; color: #000;
-            border: 3px solid var(--primary); box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+        .user-header-pill {
+            background: #ffffff; padding: 6px 14px; border-radius: 60px;
+            display: flex; align-items: center; gap: 12px; color: #000;
+            border: 2px solid var(--primary); max-width: 68%;
         }
-        .profile-meta { line-height: 1.1; border-right: 2px solid #ddd; padding-right: 20px; }
-        .bal-val { font-size: 1.15rem; font-weight: 900; color: var(--primary); font-family: 'Space Grotesk'; }
+        .header-meta { line-height: 1.1; border-right: 1px solid #ddd; padding-right: 12px; }
+        .header-bal { font-size: 0.9rem; font-weight: 900; color: var(--primary); white-space: nowrap; font-family: 'Space Grotesk'; }
 
-        /* --- BOUTON DÉCONNEXION --- */
-        .btn-logout-red {
+        .btn-power-off {
             background: var(--danger); color: white; border: none;
-            width: 50px; height: 50px; border-radius: 15px;
+            width: 42px; height: 42px; border-radius: 14px;
             display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 8px 20px rgba(244, 63, 94, 0.4);
+            box-shadow: 0 6px 15px rgba(244, 63, 94, 0.4);
             transition: var(--transition);
         }
-        .btn-logout-red:hover { transform: rotate(90deg) scale(1.1); }
+        .btn-power-off:hover { transform: rotate(90deg) scale(1.1); }
 
-        /* --- TERMINAL DE MINAGE (NÉON CYAN) --- */
-        .mining-terminal-area {
+        /* --- SECTION MARKETING (HERO) --- */
+        .marketing-section {
+            background: #ffffff; color: #000; padding: 50px 25px;
+            border-radius: 0 0 50px 50px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4); margin-bottom: 25px;
+            position: relative; overflow: hidden;
+        }
+        .marketing-section h1 { font-family: 'Space Grotesk'; font-weight: 900; font-size: 2.8rem; color: var(--primary); line-height: 0.85; margin-bottom: 15px; }
+        .marketing-section p { font-weight: 700; color: #475569; max-width: 600px; margin: 0 auto; }
+
+        /* --- TERMINAL DE MINAGE NÉON REDIMENSIONNÉ --- */
+        .mining-terminal-box {
             background: rgba(0,0,0,0.4); backdrop-filter: blur(25px);
-            margin: 20px; padding: 45px; border-radius: 50px;
-            border: 2px solid rgba(255,255,255,0.08);
+            margin: 20px; padding: 35px; border-radius: 45px;
+            border: 2px solid rgba(255,255,255,0.1);
             box-shadow: 0 40px 80px rgba(0,0,0,0.6);
         }
 
-        .neon-progress-track {
-            height: 32px; background: rgba(0,0,0,0.5);
-            border-radius: 60px; overflow: hidden; margin: 30px 0;
-            border: 3px solid var(--accent); padding: 5px;
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.2);
+        .neon-progress-bar-container {
+            height: 22px; background: rgba(0,0,0,0.6);
+            border-radius: 50px; overflow: hidden; margin: 25px 0;
+            border: 2px solid var(--accent); padding: 4px;
         }
-        .neon-progress-fill {
+        .neon-progress-bar-fill {
             background: linear-gradient(90deg, var(--accent), var(--success));
-            box-shadow: 0 0 30px var(--accent); height: 100%;
-            border-radius: 50px; position: relative;
-            animation: flow 2s infinite linear;
+            box-shadow: 0 0 25px var(--accent); height: 100%;
+            border-radius: 50px; width: <%= p || 0 %>%;
+            transition: width 2s ease-in-out;
         }
 
-        .stats-titan-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
-        @media (min-width: 992px) { .stats-titan-grid { grid-template-columns: repeat(4, 1fr); } }
+        .stat-titan-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .stat-titan-card { background: rgba(255,255,255,0.08); padding: 20px; border-radius: 25px; text-align: center; border: 1px solid var(--glass); }
+        .stat-titan-label { font-size: 0.55rem; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 8px; display: block; letter-spacing: 1px; }
+        .stat-titan-value { font-size: 1rem; font-weight: 900; font-family: 'Space Grotesk'; }
 
-        .stat-titan-item { background: rgba(255,255,255,0.06); padding: 25px; border-radius: 30px; border: 1px solid var(--glass); text-align: center; }
-        .stat-titan-label { font-size: 0.65rem; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 10px; display: block; }
-        .stat-titan-val { font-size: 1.25rem; font-weight: 900; font-family: 'Space Grotesk'; }
-
-        /* --- BOUTON RETRAIT GÉANT --- */
-        .btn-withdraw-titan {
+        .btn-withdraw-giga {
             background: var(--danger); color: white; border: none; width: 100%;
-            padding: 25px; border-radius: 35px; font-weight: 900; font-size: 1.6rem;
+            padding: 22px; border-radius: 30px; font-weight: 900; font-size: 1.4rem;
             text-transform: uppercase; box-shadow: 0 20px 50px rgba(244, 63, 94, 0.4);
-            transition: var(--transition); margin-top: 40px;
+            margin-top: 35px; transition: var(--transition);
         }
+        .btn-withdraw-giga:active { transform: scale(0.95); }
 
-        /* --- SECTION PARRAINAGE 10% --- */
-        .referral-titan-zone {
-            background: rgba(255, 255, 255, 0.03);
-            margin: 20px; padding: 40px; border-radius: 45px;
-            border: 3px dashed var(--warning); text-align: center;
+        /* --- LIEN DE PARRAINAGE 10% --- */
+        .referral-master-box {
+            background: rgba(255, 255, 255, 0.03); margin: 20px; padding: 40px;
+            border-radius: 45px; border: 3px dashed var(--warning); text-align: center;
         }
-        .copy-group-elite {
-            background: rgba(255,255,255,0.08); padding: 18px; border-radius: 20px;
-            display: flex; align-items: center; gap: 15px;
+        .input-copy-group {
+            background: rgba(255,255,255,0.1); padding: 15px; border-radius: 20px;
+            display: flex; align-items: center; gap: 15px; border: 1px solid rgba(255,255,255,0.1);
         }
-        .copy-group-elite input { background: transparent; border: none; color: white; width: 100%; font-weight: 700; font-size: 0.85rem; }
+        .input-copy-group input { background: transparent; border: none; color: white; width: 100%; font-size: 0.8rem; font-weight: 700; }
 
-        /* --- PACKS GRID (HAUTEUR FIXE 480PX) --- */
-        .industrial-grid-titan {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
-            padding: 20px 20px 100px;
+        /* --- PACKS GRID (ALIGNEMENT 480PX) --- */
+        .titan-grid-system {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+            padding: 15px 15px 80px;
         }
-        @media (min-width: 1200px) { .industrial-grid-titan { grid-template-columns: repeat(4, 1fr); gap: 40px; padding: 20px 80px 150px; } }
+        @media (min-width: 992px) { .titan-grid-system { grid-template-columns: repeat(4, 1fr); padding: 30px 80px 150px; gap: 35px; } }
 
         .titan-pack-card {
-            background: #ffffff; border-radius: 50px; overflow: hidden;
-            color: #000; height: 480px; /* ALIGNEMENT CHIRURGICAL */
+            background: #ffffff; border-radius: 45px; overflow: hidden;
+            color: #000; height: 480px; /* ALIGNEMENT FIXE */
             display: flex; flex-direction: column;
-            box-shadow: 0 35px 70px rgba(0,0,0,0.7); transition: var(--transition);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5); transition: var(--transition);
         }
-        .titan-pack-card:hover { transform: translateY(-20px) scale(1.03); }
+        .titan-pack-card:hover { transform: translateY(-15px) scale(1.02); }
 
-        .p-head-titan { padding: 25px; text-align: center; color: white; font-weight: 900; font-size: 1.1rem; text-transform: uppercase; }
-        .p-body-titan { padding: 35px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .pack-titan-head { padding: 20px; text-align: center; color: white; font-weight: 900; text-transform: uppercase; font-size: 0.9rem; letter-spacing: 1px; }
+        .pack-titan-body { padding: 30px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
         
-        .p-price-titan { font-size: 2.2rem; font-weight: 900; color: var(--primary); letter-spacing: -2px; font-family: 'Space Grotesk'; }
-        .p-bonus-titan { 
-            font-size: 0.85rem; font-weight: 900; color: var(--danger); 
-            background: #fff0f0; border: 2.5px dashed var(--danger); 
-            padding: 12px; border-radius: 20px; margin: 20px 0; 
+        .pack-titan-price { font-size: 1.8rem; font-weight: 900; color: var(--primary); letter-spacing: -1.5px; font-family: 'Space Grotesk'; }
+        .pack-titan-bonus { 
+            font-size: 0.75rem; font-weight: 900; color: var(--danger); 
+            background: #fff0f0; border: 2px dashed var(--danger); 
+            padding: 10px; border-radius: 20px; margin: 12px 0; 
         }
 
-        .btn-buy-titan {
+        .btn-buy-pack-titan {
             background: var(--primary); color: white; border: none;
-            width: 100%; padding: 20px; border-radius: 25px;
-            font-weight: 900; text-transform: uppercase; font-size: 1rem;
+            width: 100%; padding: 18px; border-radius: 22px;
+            font-weight: 900; text-transform: uppercase; font-size: 0.85rem;
+            transition: 0.3s;
         }
+        .btn-buy-pack-titan:hover { background: #000; }
 
-        /* --- ACCORDÉONS --- */
-        .info-acc-titan { margin: 20px; border-radius: 35px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
-        .accordion-item { background: rgba(0,0,0,0.2) !important; border: none !important; color: white !important; }
-        .accordion-button { background: transparent !important; color: white !important; font-weight: 800; padding: 25px; font-size: 1rem; }
-        .accordion-button:not(.collapsed) { color: var(--warning) !important; }
+        /* --- ACCORDÉONS INFOS (BAS DE PAGE) --- */
+        .info-accordion-section { margin: 20px; border-radius: 35px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+        .accordion-item { background: rgba(0,0,0,0.3) !important; border: none !important; color: white !important; }
+        .accordion-button { background: transparent !important; color: white !important; font-weight: 800; padding: 25px; font-size: 1rem; box-shadow: none !important; }
+        .accordion-button:not(.collapsed) { color: var(--warning) !important; border-bottom: 1px solid rgba(255,255,255,0.1); }
 
         /* --- BOUTON SCROLL TOP --- */
         #scrollTopBtn {
-            position: fixed; bottom: 30px; right: 30px;
+            position: fixed; bottom: 25px; right: 25px;
             width: 60px; height: 60px; background: var(--warning);
             color: #000; border-radius: 50%; border: none;
             display: none; align-items: center; justify-content: center;
-            font-size: 1.8rem; z-index: 6000; box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            font-size: 1.8rem; z-index: 6000; box-shadow: 0 15px 30px rgba(0,0,0,0.6);
         }
 
-        .footer-titan { background: rgba(0,0,0,0.5); padding: 100px 20px; text-align: center; border-top: 10px solid var(--warning); }
+        .footer-titan-elite { background: rgba(0,0,0,0.5); padding: 100px 20px; text-align: center; border-top: 8px solid var(--warning); }
+        .footer-logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 900; color: var(--warning); font-size: 3rem; letter-spacing: -4px; }
 
-        /* --- TOASTS --- */
-        .toast-system {
-            position: fixed; bottom: 20px; left: 20px; z-index: 9999;
-            background: white; color: black; padding: 15px 25px;
-            border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            display: none; align-items: center; gap: 15px;
-            border-left: 8px solid var(--success);
-        }
     </style>
 </head>
 <body>
 
-    <button id="scrollTopBtn" onclick="window.scrollTo({top:0, behavior:'smooth'})"><i class="bi bi-arrow-up"></i></button>
+    <div class="bg-particles" id="particles"></div>
 
-    <div id="toastNotif" class="toast-system animate__animated animate__slideInLeft">
-        <i class="bi bi-check-circle-fill text-success fs-3"></i>
-        <div class="fw-bold" id="toastText">Action réussie !</div>
-    </div>
+    <button id="scrollTopBtn" onclick="window.scrollTo({top:0, behavior:'smooth'})"><i class="bi bi-arrow-up-short"></i></button>
 
-    <div class="notif-header-elite animate__animated animate__fadeInDown">
-        <i class="bi bi-gift-fill"></i>
-        <span>ALERTE PARRAINAGE : Gagnez 10% Cash immédiatement sur chaque ami invité !</span>
+    <div class="notif-header-titan animate__animated animate__fadeInDown">
+        <i class="bi bi-megaphone-fill"></i>
+        <span>ALERTE PARRAINAGE : Invitez un ami et gagnez 10% Cash sur son investissement !</span>
     </div>
 
     <nav class="navbar-titan">
-        <div class="d-flex align-items-center gap-3">
-            <button onclick="window.location.reload()" class="btn btn-primary rounded-3 p-2"><i class="bi bi-arrow-clockwise fs-3"></i></button>
-            <a href="#" class="brand-text">CASHLINK</a>
+        <div class="d-flex align-items-center gap-2">
+            <button onclick="window.location.reload()" class="btn btn-primary rounded-3 p-2"><i class="bi bi-arrow-clockwise fs-4"></i></button>
+            <a href="#" class="brand-logo-text">CASHLINK</a>
         </div>
         
-        <div class="user-profile-box animate__animated animate__zoomIn">
-            <div class="profile-meta d-none d-lg-block">
-                <span style="font-size: 0.6rem; font-weight: 800; opacity: 0.5;">ID: <%= user.username %></span>
-                <div style="font-weight: 900; font-size: 0.85rem;">+243 <%= user.phone %></div>
+        <div class="user-header-pill animate__animated animate__zoomIn">
+            <div class="header-meta">
+                <span style="font-size: 0.5rem; font-weight: 800; opacity: 0.5;">ID: <%= user.username %></span>
+                <div style="font-weight: 900; font-size: 0.7rem;">+243 <%= user.phone %></div>
             </div>
-            <div class="pe-4 border-end">
-                <span style="font-size: 0.6rem; font-weight: 800; opacity: 0.5;">SOLDE SOLDE</span>
-                <div class="bal-val"><%= (user.solde || 0).toLocaleString() %> FC</div>
+            <div class="pe-3 border-end">
+                <span style="font-size: 0.5rem; font-weight: 800; opacity: 0.5;">SOLDE</span>
+                <div class="header-bal"><%= (user.solde || 0).toLocaleString() %> FC</div>
             </div>
-            <div>
-                <span style="font-size: 0.6rem; font-weight: 800; color: var(--success);">GAINS CASH</span>
-                <div class="bal-val text-success">+<%= (user.bonus || 0).toLocaleString() %> FC</div>
+            <div class="ps-1">
+                <span style="font-size: 0.5rem; font-weight: 800; color: var(--success);">GAINS</span>
+                <div class="header-bal text-success">+<%= (user.bonus || 0).toLocaleString() %> FC</div>
             </div>
         </div>
 
-        <a href="/logout" class="btn-logout-red"><i class="bi bi-power fs-3"></i></a>
+        <a href="/logout" class="btn-power-off"><i class="bi bi-power fs-3"></i></a>
     </nav>
 
-    <div class="mining-terminal-area animate__animated animate__fadeInUp">
+    <header class="marketing-section animate__animated animate__fadeIn">
+        <div class="animate__animated animate__fadeInUp">
+            <h1>MINAGE AUTO 2026</h1>
+            <p>Le terminal CASHLINK transforme la puissance numérique en revenus réels. Activez vos serveurs aujourd'hui et regardez votre capital fructifier en temps réel.</p>
+            <button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-3 fw-900 mt-4 shadow-lg">COMMENCER LE MINAGE</button>
+        </div>
+    </header>
+
+    <div class="mining-terminal-box animate__animated animate__fadeInUp">
         <div class="d-flex justify-content-between align-items-end mb-1">
-            <h4 class="fw-900 mb-0 text-uppercase"><i class="bi bi-cpu-fill me-3"></i>TERMINAL DE MINAGE</h4>
-            <div class="fw-900" style="color: var(--accent); font-size: 4rem; line-height: 1;"><%= p || 0 %>%</div>
+            <h5 class="fw-900 mb-0 text-uppercase"><i class="bi bi-cpu-fill me-3"></i>TERMINAL ACTIF</h5>
+            <div class="fw-900 text-accent" style="font-size: 3.5rem; line-height: 1; font-family: 'Space Grotesk';"><%= p || 0 %>%</div>
         </div>
-        <div class="neon-progress-track">
-            <div class="neon-progress-fill" style="width: <%= p || 0 %>%"></div>
+        
+        <div class="neon-progress-bar-container">
+            <div class="neon-progress-bar-fill"></div>
         </div>
-        <div class="stats-titan-grid">
-            <div class="stat-titan-item">
+
+        <div class="stat-titan-grid">
+            <div class="stat-titan-card">
                 <span class="stat-titan-label">STATUT RÉSEAU</span>
-                <div class="stat-titan-val text-success">EN LIGNE</div>
+                <div class="stat-titan-val text-success">ONLINE</div>
             </div>
-            <div class="stat-titan-item">
+            <div class="stat-titan-card">
                 <span class="stat-titan-label">UNITÉ ACTIVE</span>
                 <div class="stat-titan-val"><%= user.pack %></div>
             </div>
-            <div class="stat-titan-item">
+            <div class="stat-titan-card">
                 <span class="stat-titan-label">PROCHAIN GAIN</span>
-                <div id="titanTimer" class="stat-titan-val text-warning">--:--:--</div>
+                <div id="titan-timer" class="stat-titan-val text-warning">--:--:--</div>
             </div>
-            <div class="stat-titan-item">
-                <span class="stat-titan-label">VITESSE HASH</span>
-                <div class="stat-titan-val text-accent"><%= content.puissance_hash %></div>
+            <div class="stat-titan-card">
+                <span class="stat-titan-label">NODE ID</span>
+                <div class="stat-titan-val text-accent">#<%= user.id.slice(-6) %></div>
             </div>
         </div>
-        <button onclick="openWithdraw()" class="btn-withdraw-titan animate__animated animate__pulse animate__infinite">RÉCUPÉRER MES PROFITS (MONEY)</button>
+        
+        <button onclick="askWithdraw()" class="btn-withdraw-giga animate__animated animate__pulse animate__infinite">RÉCUPÉRER MES PROFITS (MONEY)</button>
     </div>
 
-    <div class="referral-titan-zone animate__animated animate__fadeInUp">
-        <h5 class="fw-900 text-warning mb-3">VOTRE LIEN DE PARRAINAGE (COMMISSION 10%)</h5>
-        <p class="small opacity-75 mb-4">Invitez un ami. S'il investit 500.000 FC, vous recevez 50.000 FC cash immédiatement !</p>
-        <div class="copy-group-elite">
+    <div class="referral-master-box animate__animated animate__fadeInUp">
+        <h5 class="fw-900 text-warning mb-3">VOTRE LIEN DE PARRAINAGE (10%)</h5>
+        <p class="small opacity-75 fw-bold mb-4">Gagnez 10% cash sur chaque pack activé par vos amis. L'argent est crédité instantanément sur votre solde bonus.</p>
+        <div class="input-copy-group">
+            <i class="bi bi-link-45deg fs-4 text-warning"></i>
             <input type="text" id="refLink" value="https://cashlink.rdc/register?ref=<%= user.id %>" readonly>
-            <button onclick="copyRef()" class="btn btn-warning fw-900 px-4 rounded-3"><i class="bi bi-clipboard-check"></i></button>
+            <button onclick="copyRefLink()" class="btn btn-warning fw-900 px-4 rounded-4 shadow">COPIER</button>
         </div>
     </div>
 
-    <div class="accordion info-acc-titan" id="titanAccordion">
-        <div class="accordion-item">
-            <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c1"><i class="bi bi-info-circle-fill me-3"></i> À PROPOS DE NOUS</button></h2>
-            <div id="c1" class="accordion-collapse collapse" data-bs-parent="#titanAccordion"><div class="accordion-body opacity-75"><%= content.about_text %></div></div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c2"><i class="bi bi-shield-lock-fill me-3"></i> RÈGLES DU SYSTÈME</button></h2>
-            <div id="c2" class="accordion-collapse collapse" data-bs-parent="#titanAccordion"><div class="accordion-body opacity-75" style="white-space: pre-line;"><%= content.rules_text %></div></div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c3"><i class="bi bi-geo-alt-fill me-3"></i> SIÈGE SOCIAL ET CONTACT</button></h2>
-            <div id="c3" class="accordion-collapse collapse" data-bs-parent="#titanAccordion">
-                <div class="accordion-body opacity-75">
-                    SIÈGE : <%= content.contact_address %><br>
-                    SUPPORT : +243 <%= content.contact_phone %><br>
-                    EMAIL : <%= content.contact_email %>
-                </div>
-            </div>
-        </div>
+    <div class="px-5 mt-5 mb-4 d-flex align-items-center gap-3" id="catalog">
+        <div style="width: 10px; height: 50px; background: var(--warning); border-radius: 12px; box-shadow: 0 0 15px var(--warning);"></div>
+        <h2 class="fw-900 mb-0 text-uppercase">Machines de Minage 2028</h2>
     </div>
 
-    <div class="px-4 mb-4 d-flex align-items-center gap-3">
-        <div style="width: 10px; height: 50px; background: var(--warning); border-radius: 10px;"></div>
-        <h2 class="fw-900 mb-0">UNITÉS DE MINAGE 2028</h2>
-    </div>
-
-    <div class="industrial-grid-titan">
+    <div class="titan-grid-system">
         <% 
-        const items = [
+        const catalog = [
             { id: 'BRONZE', price: 50000, daily: 5000, bonus: 5000, color: '#10b981' },
             { id: 'SILVER', price: 150000, daily: 15000, bonus: 9000, color: '#4f46e5' },
             { id: 'GOLD', price: 500000, daily: 40000, bonus: 40000, color: '#f59e0b' },
             { id: 'DIAMOND', price: 1000000, daily: 100000, bonus: 120000, color: '#ef4444' }
         ];
-        items.forEach(p => {
+        catalog.forEach(p => {
+            const isOwned = (user.pack === p.id);
         %>
         <div class="titan-pack-card animate__animated animate__fadeInUp">
-            <div class="p-head-titan" style="background: <%= p.color %>;"><%= p.id %> ENGINE</div>
-            <div class="p-body-titan">
+            <div class="pack-titan-head" style="background: <%= p.color %>;"><%= p.id %> ENGINE</div>
+            <div class="pack-titan-body">
                 <div>
-                    <div class="p-bonus-titan">🎁 BONUS ACTIVATION : <%= p.bonus.toLocaleString() %> FC</div>
-                    <div class="p-price-titan"><%= p.price.toLocaleString() %> FC</div>
+                    <div class="pack-titan-bonus">🎁 BONUS ACTIVATION : <%= p.bonus.toLocaleString() %> FC</div>
+                    <div class="pack-titan-price"><%= p.price.toLocaleString() %> FC</div>
                     <div class="fw-900 text-success mt-2">+<%= p.daily.toLocaleString() %> FC / JOUR</div>
                 </div>
-                <button onclick="handlePay('<%= p.id %>', <%= p.price %>)" class="btn-buy-titan mt-4">ACHETER MAINTENANT</button>
+                <% if(isOwned) { %>
+                    <button class="btn btn-success w-100 rounded-pill py-3 fw-900" disabled>EN SERVICE</button>
+                <% } else { %>
+                    <button onclick="handlePay('<%= p.id %>', <%= p.price %>)" class="btn-buy-pack-titan">ACHETER MACHINE</button>
+                <% } %>
             </div>
         </div>
         <% }) %>
     </div>
 
-    <footer class="footer-titan">
-        <h2 class="fw-900 text-warning mb-2">CASHLINK RDC</h2>
-        <p class="small opacity-50 mb-5">TECHNOLOGIE DE MINAGE INDUSTRIEL v14.0</p>
-        <div class="d-flex justify-content-center gap-5 fs-2 opacity-20 mb-5">
-            <i class="bi bi-shield-check"></i><i class="bi bi-cpu"></i><i class="bi bi-globe"></i>
+    <div class="accordion info-accordion-section shadow-lg" id="accTitan">
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c1"><i class="bi bi-info-circle-fill me-4 text-info"></i> À PROPOS DE CASHLINK</button>
+            </h2>
+            <div id="c1" class="accordion-collapse collapse" data-bs-parent="#accTitan"><div class="accordion-body opacity-75"><%= content.about_text %></div></div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c2"><i class="bi bi-shield-lock-fill me-4 text-success"></i> RÈGLES DE CONFORMITÉ</button>
+            </h2>
+            <div id="c2" class="accordion-collapse collapse" data-bs-parent="#accTitan"><div class="accordion-body opacity-75" style="white-space: pre-line;"><%= content.rules_text %></div></div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#c3"><i class="bi bi-geo-alt-fill me-4 text-danger"></i> SIÈGE SOCIAL ET CONTACT</button>
+            </h2>
+            <div id="c3" class="accordion-collapse collapse" data-bs-parent="#accTitan">
+                <div class="accordion-body opacity-75">
+                    <strong>ADRESSE :</strong> <%= content.contact_address %><br>
+                    <strong>HOTLINE SUPPORT :</strong> +243 <%= content.contact_phone %><br>
+                    <strong>EMAIL :</strong> <%= content.contact_email %>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer-titan-elite">
+        <div class="footer-logo-text">CASHLINK</div>
+        <p class="small fw-900 opacity-50 mb-5 text-uppercase">Terminal de Minage Décentralisé v17.0</p>
+        <div class="d-flex justify-content-center gap-5 fs-1 opacity-20 mb-5">
+            <i class="bi bi-shield-check"></i><i class="bi bi-cpu-fill"></i><i class="bi bi-globe-central-south-asia"></i>
         </div>
         <hr class="opacity-10 my-5 mx-5">
-        <small class="opacity-30 fw-bold">© 2026-2028 | PLATEFORME SÉCURISÉE PAR ANASH MASTER</small>
+        <small class="opacity-30 fw-900">© 2026-2028 | CASHLINK GLOBAL TERMINAL | PAR ANASH MASTER</small>
     </footer>
 
     <div class="modal fade" id="payModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered mx-3">
-            <div class="modal-content border-0 text-dark" style="border-radius: 40px; overflow: hidden;">
+            <div class="modal-content overflow-hidden border-0 shadow-lg" style="border-radius: 45px; color: #000;">
                 <div class="modal-body p-5 text-center">
-                    <h3 class="fw-900 mb-4 text-uppercase">RECHARGE COMPTE</h3>
+                    <h3 class="fw-900 mb-4 text-uppercase">RECHARGE SÉCURISÉE</h3>
+                    <p class="text-muted small fw-bold mb-5">Veuillez envoyer le montant exact vers l'un des numéros ci-dessous :</p>
+                    
                     <div class="p-4 bg-light rounded-4 mb-3 text-start border-start border-primary border-5">
-                        <span class="small fw-bold text-primary">VODACOM (M-PESA)</span>
+                        <span class="small fw-bold text-primary">VODACOM (M-PESA) RDC</span>
                         <div class="fs-4 fw-900"><%= content.admin_voda %></div>
                     </div>
                     <div class="p-4 bg-light rounded-4 mb-3 text-start border-start border-danger border-5">
-                        <span class="small fw-bold text-danger">AIRTEL MONEY</span>
+                        <span class="small fw-bold text-danger">AIRTEL MONEY RDC</span>
                         <div class="fs-4 fw-900 text-danger"><%= content.admin_airtel %></div>
                     </div>
-                    <div class="p-4 bg-light rounded-4 mb-4 text-start border-start border-warning border-5">
-                        <span class="small fw-bold text-warning">ORANGE MONEY</span>
+                    <div class="p-4 bg-light rounded-4 mb-5 text-start border-start border-warning border-5">
+                        <span class="small fw-bold text-warning">ORANGE MONEY RDC</span>
                         <div class="fs-4 fw-900 text-warning"><%= content.admin_orange %></div>
                     </div>
-                    <button onclick="commitTID()" class="btn btn-primary w-100 py-3 rounded-pill fw-900 shadow-lg fs-5">J'AI ENVOYÉ LE PAIEMENT</button>
+
+                    <div class="alert alert-danger rounded-4 py-3 small fw-900 mb-4">
+                        <i class="bi bi-info-circle-fill me-2 fs-5"></i> SAISISSEZ LE TID : L'identifiant se trouve dans le SMS de confirmation reçu après votre envoi.
+                    </div>
+
+                    <button onclick="commitTID()" class="btn btn-primary w-100 py-3 rounded-pill fw-900 shadow-lg fs-5">J'AI ENVOYÉ L'ARGENT</button>
+                    <button type="button" class="btn btn-link btn-sm text-muted mt-3 fw-bold" data-bs-dismiss="modal">ANNULER</button>
                 </div>
             </div>
         </div>
@@ -347,10 +393,25 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let pId = "", pPr = 0;
-        const pMod = new bootstrap.Modal(document.getElementById('payModal'));
+        let pName = "", pPrice = 0;
+        const pModal = new bootstrap.Modal(document.getElementById('payModal'));
 
-        // --- GESTION SCROLL ---
+        // --- GÉNÉRATEUR DE PARTICULES ---
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for(let i=0; i<15; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.width = Math.random()*10 + 'px';
+                p.style.height = p.style.width;
+                p.style.left = Math.random()*100 + 'vw';
+                p.style.animationDelay = Math.random()*10 + 's';
+                p.style.animationDuration = (Math.random()*10 + 10) + 's';
+                container.appendChild(p);
+            }
+        }
+
+        // --- GESTION DU SCROLL ---
         window.onscroll = function() {
             const btn = document.getElementById('scrollTopBtn');
             if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) btn.style.display = "flex";
@@ -358,54 +419,42 @@
         };
 
         // --- ACTIONS ---
-        function copyRef() {
+        function copyRefLink() {
             const c = document.getElementById('refLink');
             c.select(); document.execCommand('copy');
-            showToast("Lien de parrainage copié !");
+            alert("Lien de parrainage copié avec succès !");
         }
 
-        function handlePay(id, pr) { pId = id; pPr = pr; pMod.show(); }
+        function handlePay(id, pr) { pName = id; pPrice = pr; pModal.show(); }
 
         function commitTID() {
-            pMod.hide();
-            const tid = prompt("Saisissez le TID (ID Transaction SMS) :");
-            if(tid && tid.length > 5) submitData('/souscrire-pack', { packName: pId, prix: pPr, reference: tid });
+            pModal.hide();
+            const tid = prompt("Saisissez le TID (Identifiant de transaction SMS) :");
+            if(tid && tid.length > 5) submitReq('/souscrire-pack', { packName: pName, prix: pPrice, reference: tid });
         }
 
-        function openWithdraw() {
-            const m = prompt("Montant (FC) à retirer (Min 1.000) :");
-            if(m >= 1000) submitData('/retrait', { montant: m });
+        function askWithdraw() {
+            const m = prompt("Montant (FC) à retirer (Minimum 1.000 FC) :");
+            if(m >= 1000) submitReq('/retrait', { montant: m });
         }
 
-        function submitData(path, data) {
+        function submitReq(path, data) {
             const f = document.createElement('form'); f.method='POST'; f.action=path;
             for(let k in data) { const i = document.createElement('input'); i.name=k; i.value=data[k]; f.appendChild(i); }
             document.body.appendChild(f); f.submit();
         }
 
-        function showToast(m) {
-            const t = document.getElementById('toastNotif');
-            document.getElementById('toastText').innerText = m;
-            t.style.display = "flex";
-            setTimeout(() => t.style.display = "none", 4000);
-        }
-
         // --- TIMER GAIN INDIVIDUEL ---
         let ms = <%= locals.msRemaining || 0 %>;
         setInterval(() => {
-            const el = document.getElementById('titanTimer');
+            const el = document.getElementById('titan-timer');
             if (ms <= 0) { el.innerText = "CYCLE PRÊT"; return; }
             ms -= 1000;
             const h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000), s = Math.floor((ms%60000)/1000);
             el.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
         }, 1000);
 
-        // Simulation notifications
-        setInterval(() => {
-            const n = ["Patrick", "Mado", "Guelord", "Sarah", "Elvis"][Math.floor(Math.random()*5)];
-            const a = [50000, 150000, 1000000][Math.floor(Math.random()*3)];
-            showToast(`${n} vient d'activer un pack de ${a.toLocaleString()} FC !`);
-        }, 30000);
+        createParticles();
     </script>
 </body>
 </html>
