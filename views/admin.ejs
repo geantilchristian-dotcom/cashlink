@@ -63,10 +63,29 @@
         .btn-update { background: var(--neon-blue); color: #000; border: none; padding: 18px; border-radius: 20px; font-weight: 800; width: 100%; text-transform: uppercase; cursor: pointer; }
         .section-panel { display: none; }
         .section-panel.active { display: block; animation: fadeInUp 0.5s ease-out; }
+        
+        /* Notification Alert */
+        #admin-alert {
+            position: fixed; top: 20px; right: 20px; z-index: 9999;
+            display: none;
+        }
+
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
+
+    <audio id="notif-sound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
+
+    <div id="admin-alert" class="animate__animated animate__bounceIn">
+        <div class="alert alert-info border-0 shadow-lg rounded-4 p-3 d-flex align-items-center gap-3">
+            <div class="bg-info p-2 rounded-3 text-white"><i class="bi bi-bell-fill"></i></div>
+            <div>
+                <strong class="d-block">Nouvelle activité !</strong>
+                <small>Vérifiez les onglets Dépôts ou Retraits.</small>
+            </div>
+        </div>
+    </div>
 
     <div class="admin-sidebar">
         <div class="text-center mb-5">
@@ -79,9 +98,10 @@
 
         <div class="nav-menu">
             <div class="nav-item-custom active" onclick="openTab('stats', this)"><i class="bi bi-graph-up"></i> Performances</div>
-            <div class="nav-item-custom" onclick="openTab('validations', this)"><i class="bi bi-check2-circle"></i> Dépôts <% if(stats.enAttente > 0){ %><span class="badge bg-danger ms-auto"><%= stats.enAttente %></span><% } %></div>
+            <div class="nav-item-custom" onclick="openTab('validations', this)"><i class="bi bi-check2-circle"></i> Dépôts <% if(stats.enAttente > 0){ %><span id="badge-depot" class="badge bg-danger ms-auto"><%= stats.enAttente %></span><% } %></div>
             <div class="nav-item-custom" onclick="openTab('retraits_tab', this)"><i class="bi bi-cash-stack"></i> Retraits</div>
             <div class="nav-item-custom" onclick="openTab('interface', this)"><i class="bi bi-pencil-square"></i> Modifier Dashboard</div>
+            <div class="nav-item-custom" onclick="openTab('legal', this)"><i class="bi bi-file-earmark-text"></i> Contenu Légal</div>
             <div class="nav-item-custom" onclick="openTab('members', this)"><i class="bi bi-people"></i> Investisseurs</div>
         </div>
 
@@ -97,7 +117,7 @@
             <div class="row g-4 mb-4">
                 <div class="col-md-4"><div class="glass-card text-center"><span class="stat-label">Membres</span><div class="stat-val"><%= stats.totalUsers %></div></div></div>
                 <div class="col-md-4"><div class="glass-card text-center"><span class="stat-label">En Attente</span><div class="stat-val text-warning"><%= stats.enAttente %></div></div></div>
-                <div class="col-md-4"><div class="glass-card text-center"><span class="stat-label">Capital Total</span><div class="stat-val text-info"><%= stats.soldeTotalUsers.toLocaleString() %> FC</div></div></div>
+                <div class="col-md-4"><div class="glass-card text-center"><span class="stat-label">Capital Global</span><div class="stat-val text-info"><%= stats.soldeTotalUsers.toLocaleString() %> FC</div></div></div>
             </div>
         </div>
 
@@ -155,48 +175,75 @@
 
         <div id="interface" class="section-panel">
             <div class="glass-card">
-                <h4 class="fw-900 text-info mb-4">Pilotage du Dashboard Client</h4>
+                <h4 class="fw-900 text-info mb-4">Pilotage du Dashboard & Offres</h4>
                 <form action="/admin/update-content" method="POST">
                     <div class="row">
+                        <div class="col-md-6 border-end border-secondary">
+                            <h6 class="text-info mb-3">NUMÉROS DE PAIEMENT</h6>
+                            <label class="admin-label">M-PESA (VODACOM)</label>
+                            <input type="text" name="admin_voda" class="admin-input" value="<%= site.admin_voda %>">
+                            <label class="admin-label">AIRTEL MONEY</label>
+                            <input type="text" name="admin_airtel" class="admin-input" value="<%= site.admin_airtel %>">
+                            <label class="admin-label">ORANGE MONEY</label>
+                            <input type="text" name="admin_orange" class="admin-input" value="<%= site.admin_orange %>">
+                        </div>
                         <div class="col-md-6">
-                            <label class="admin-label">Étiquette Tech (Haut)</label>
+                            <h6 class="text-warning mb-3">INFOS D'EN-TÊTE</h6>
+                            <label class="admin-label">Nom du Site</label>
+                            <input type="text" name="brand_name" class="admin-input" value="<%= site.brand_name %>">
+                            <label class="admin-label">Étiquette Tech</label>
                             <input type="text" name="tag_tech" class="admin-input" value="<%= site.tag_tech %>">
                             <label class="admin-label">Titre Principal</label>
                             <input type="text" name="titre_principal" class="admin-input" value="<%= site.titre_principal %>">
-                            <label class="admin-label">Puissance de Minage</label>
-                            <input type="text" name="puissance_hash" class="admin-input" value="<%= site.puissance_hash %>">
-                            <label class="admin-label">Status Réseau</label>
-                            <input type="text" name="reseau_status" class="admin-input" value="<%= site.reseau_status %>">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="admin-label">Description / Slogan</label>
-                            <textarea name="description" class="admin-input" rows="3"><%= site.description %></textarea>
-                            <label class="admin-label">Sécurité / Protocole</label>
-                            <input type="text" name="securite_type" class="admin-input" value="<%= site.securite_type %>">
-                            <label class="admin-label">Status Retraits</label>
-                            <input type="text" name="retraits_status" class="admin-input" value="<%= site.retraits_status %>">
-                            <label class="admin-label">Footer Texte</label>
-                            <input type="text" name="footer_text" class="admin-input" value="<%= site.footer_text %>">
                         </div>
                     </div>
-                    <button type="submit" class="btn-update mt-4">SAUVEGARDER LES MODIFICATIONS</button>
+                    <button type="submit" class="btn-update mt-4">SAUVEGARDER LES INFOS</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="legal" class="section-panel">
+            <div class="glass-card">
+                <h4 class="fw-900 text-info mb-4">Pages Légales & Contact</h4>
+                <form action="/admin/update-content" method="POST">
+                    <label class="admin-label">À Propos de nous</label>
+                    <textarea name="about_text" class="admin-input" rows="4"><%= site.about_text %></textarea>
+                    
+                    <label class="admin-label">Règles du Système</label>
+                    <textarea name="rules_text" class="admin-input" rows="5"><%= site.rules_text %></textarea>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="admin-label">Siège Social</label>
+                            <input type="text" name="contact_address" class="admin-input" value="<%= site.contact_address %>">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="admin-label">Email Support</label>
+                            <input type="text" name="contact_email" class="admin-input" value="<%= site.contact_email %>">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="admin-label">Hotline (+243...)</label>
+                            <input type="text" name="contact_phone" class="admin-input" value="<%= site.contact_phone %>">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-update mt-4">METTRE À JOUR LE CONTENU LÉGAL</button>
                 </form>
             </div>
         </div>
 
         <div id="members" class="section-panel">
             <div class="glass-card">
-                <h4 class="fw-900 mb-4">Investisseurs</h4>
+                <h4 class="fw-900 mb-4">Journal des Investisseurs</h4>
                 <div class="table-responsive">
                     <table class="premium-table">
-                        <thead><tr><th>Nom</th><th>Pack</th><th>Solde</th><th>Gains</th></tr></thead>
+                        <thead><tr><th>Nom</th><th>Machine Active</th><th>Solde</th><th>Bonus Cumulés</th></tr></thead>
                         <tbody>
                             <% users.forEach(u => { %>
                             <tr>
                                 <td><%= u.username %></td>
-                                <td><span class="badge bg-dark"><%= u.pack %></span></td>
-                                <td class="text-info"><%= u.solde.toLocaleString() %> FC</td>
-                                <td class="text-success"><%= u.bonus.toLocaleString() %> FC</td>
+                                <td><span class="badge bg-dark"><%= u.pack || 'Aucun' %></span></td>
+                                <td class="text-info fw-bold"><%= u.solde.toLocaleString() %> FC</td>
+                                <td class="text-success fw-bold">+<%= u.bonus.toLocaleString() %> FC</td>
                             </tr>
                             <% }) %>
                         </tbody>
@@ -214,6 +261,20 @@
             document.querySelectorAll('.nav-item-custom').forEach(n => n.classList.remove('active'));
             btn.classList.add('active');
         }
+
+        // Système de Notification Sonore Auto-Refresh
+        let currentEnAttente = <%= stats.enAttente %>;
+        
+        function checkActivity() {
+            // Ici, on pourrait faire un fetch('/admin/api/stats') pour du temps réel
+            // Pour l'instant, on simule une vérification de la valeur passée par EJS
+            if (currentEnAttente > 0) {
+                document.getElementById('admin-alert').style.display = 'block';
+                document.getElementById('notif-sound').play().catch(e => console.log("Audio bloqué par navigateur"));
+            }
+        }
+
+        window.onload = checkActivity;
     </script>
 </body>
 </html>
