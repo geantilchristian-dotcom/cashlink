@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHLINK | TERMINAL DE MINAGE ELITE v4.0</title>
+    <meta name="description" content="CASH LINK - Terminal de minage automatique en RDC">
+    <title>CASH LINK | TERMINAL ELITE v5.0</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -11,9 +12,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
-        /* ============================================================
-           SYSTÈME DE DESIGN "TITAN v4.0" - RDC EDITION 
-           ============================================================
+        /* ==========================================================================
+           SECTION 1 : SYSTÈME DE DESIGN & VARIABLES CSS
+           ==========================================================================
         */
         :root {
             --primary: #003399;
@@ -25,49 +26,56 @@
             --dark-core: #000c26;
             --white-pure: #ffffff;
             --slate-100: #f1f5f9;
+            --slate-200: #e2e8f0;
             --slate-600: #475569;
-            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-bg: rgba(255, 255, 255, 0.04);
             --glass-border: rgba(255, 255, 255, 0.1);
-            --shadow-elite: 0 30px 70px rgba(0,0,0,0.6);
+            --shadow-hd: 0 25px 60px rgba(0,0,0,0.6);
             --transition-master: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
-        /* RESET ET OPTIMISATION MOBILE */
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none !important; }
-        
+        /* CONFIGURATION SCROLLBAR */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: var(--dark-core); }
         ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
+        /* RÉGLAGES DE BASE */
+        * { 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            outline: none !important; 
+        }
+
         body {
             background-color: var(--dark-core);
             background-image: 
-                radial-gradient(circle at 10% 10%, #001f5c, transparent 40%),
-                radial-gradient(circle at 90% 90%, #00061a, transparent 40%),
+                radial-gradient(circle at 15% 15%, #001f5c, transparent 45%),
+                radial-gradient(circle at 85% 85%, #000820, transparent 45%),
                 url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
             background-attachment: fixed;
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: var(--white-pure);
-            margin: 0; padding: 0; min-height: 100vh;
+            margin: 0; padding: 0; 
+            min-height: 100vh;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
         }
 
-        /* ------------------------------------------------------------
-           COMPOSANT : NAVIGATION MASTER 
-           ------------------------------------------------------------
+        /* ==========================================================================
+           SECTION 2 : NAVIGATION MASTER (STICKY)
+           ==========================================================================
         */
-        .navbar-terminal {
+        .master-navigation {
             background: var(--warning);
             height: 85px;
             padding: 0 20px;
             position: sticky; top: 0; z-index: 3000;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 50px rgba(0,0,0,0.7);
+            box-shadow: 0 10px 45px rgba(0,0,0,0.7);
             border-bottom: 5px solid rgba(0,0,0,0.15);
         }
 
-        .brand-text {
+        .brand-logo-text {
             font-weight: 900;
             font-size: 1.8rem;
             color: var(--primary);
@@ -76,41 +84,40 @@
             text-transform: uppercase;
         }
 
-        .nav-btn-square {
+        .nav-action-square {
             background: var(--primary); color: white; border-radius: 14px;
             width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
             text-decoration: none; border: 2px solid rgba(255,255,255,0.2);
             transition: var(--transition-master);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
-        .nav-btn-square:hover { transform: scale(1.1) rotate(-5deg); background: #000; }
+        .nav-action-square:hover { transform: scale(1.1) rotate(-5deg); background: #000; }
 
-        .balance-pill {
+        .balance-master-pill {
             background: var(--white-pure);
-            padding: 10px 25px;
+            padding: 8px 22px;
             border-radius: 60px;
             display: flex; align-items: center; gap: 20px;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .bal-data { display: flex; flex-direction: column; line-height: 1.1; }
-        .bal-tag { font-size: 0.55rem; font-weight: 800; color: var(--slate-600); text-transform: uppercase; margin-bottom: 2px; }
-        .bal-val { font-size: 1.05rem; font-weight: 900; color: var(--primary); }
-        .bal-val.bonus { color: var(--success); }
+        .bal-column { display: flex; flex-direction: column; line-height: 1.1; }
+        .bal-label-tag { font-size: 0.55rem; font-weight: 800; color: var(--slate-600); text-transform: uppercase; margin-bottom: 3px; }
+        .bal-value-text { font-size: 1rem; font-weight: 900; color: var(--primary); }
+        .bal-value-text.success-mode { color: var(--success); }
 
-        .client-profile-header {
+        .client-header-profile {
             text-align: right; line-height: 1.2;
             color: var(--primary);
             padding-right: 10px;
         }
-        .cp-name { font-weight: 900; font-size: 1rem; display: block; text-transform: uppercase; }
-        .cp-phone { font-weight: 700; font-size: 0.8rem; opacity: 0.8; }
+        .ch-name { font-weight: 900; font-size: 1rem; display: block; text-transform: uppercase; }
+        .ch-phone { font-weight: 700; font-size: 0.8rem; opacity: 0.8; }
 
-        /* ------------------------------------------------------------
-           COMPOSANT : CASE MARKETING TYPOGRAPHIQUE 
-           ------------------------------------------------------------
+        /* ==========================================================================
+           SECTION 3 : MARKETING ZONE (WHITE CASE)
+           ==========================================================================
         */
-        .marketing-white-container {
+        .marketing-white-case {
             background: var(--white-pure);
             padding: 90px 30px;
             text-align: center;
@@ -121,31 +128,32 @@
             position: relative;
         }
 
-        .mkt-title-elite {
+        .mkt-h1-elite {
             font-size: 3.5rem; font-weight: 900; line-height: 0.85;
             background: linear-gradient(90deg, var(--primary), var(--primary-dark));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             margin-bottom: 25px; letter-spacing: -3px;
         }
 
-        .mkt-text-elite {
+        .mkt-p-elite {
             font-size: 1.25rem; font-weight: 700; color: var(--slate-600);
-            max-width: 750px; margin: 0 auto 40px; line-height: 1.6;
+            max-width: 700px; margin: 0 auto 40px; line-height: 1.6;
         }
 
-        .btn-share-master {
-            background: transparent; border: 2.5px solid var(--primary);
-            color: var(--primary); padding: 14px 40px; border-radius: 50px;
-            font-weight: 900; font-size: 0.85rem; text-transform: uppercase;
+        .btn-certification-gold {
+            background: var(--primary); color: white; border: none;
+            padding: 18px 45px; border-radius: 60px;
+            font-weight: 900; font-size: 0.9rem; text-transform: uppercase;
+            box-shadow: 0 15px 35px rgba(0, 51, 153, 0.4);
             transition: var(--transition-master);
         }
-        .btn-share-master:hover { background: var(--primary); color: white; transform: translateY(-3px); }
+        .btn-certification-gold:hover { transform: translateY(-5px); background: #000; }
 
-        /* ------------------------------------------------------------
-           COMPOSANT : AFFILIATION ET PARRAINAGE 
-           ------------------------------------------------------------
+        /* ==========================================================================
+           SECTION 4 : MODULE DE PARRAINAGE
+           ==========================================================================
         */
-        .affiliation-bar {
+        .referral-glass-area {
             background: rgba(255,255,255,0.03);
             margin: 0 20px 40px;
             padding: 30px;
@@ -156,45 +164,43 @@
             backdrop-filter: blur(20px);
         }
 
-        .aff-stat-wrapper { display: flex; align-items: center; gap: 20px; }
-        .aff-icon-square { 
+        .ref-stat-cube { display: flex; align-items: center; gap: 20px; }
+        .ref-icon-vibe { 
             background: var(--warning); color: var(--primary); 
-            padding: 15px; border-radius: 22px; font-size: 1.5rem; 
+            padding: 15px; border-radius: 22px; font-size: 1.6rem; 
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
         }
 
-        .btn-copy-referral {
+        .btn-copy-master {
             background: var(--primary); color: white; border: none;
-            padding: 16px 35px; border-radius: 50px; font-weight: 900;
+            padding: 16px 40px; border-radius: 50px; font-weight: 900;
             font-size: 0.85rem; letter-spacing: 0.5px; transition: 0.3s;
             box-shadow: 0 15px 35px rgba(0, 51, 153, 0.4);
         }
-        .btn-copy-referral:active { transform: scale(0.94); }
 
-        /* ------------------------------------------------------------
-           COMPOSANT : TERMINAL DE MINAGE 
-           ------------------------------------------------------------
+        /* ==========================================================================
+           SECTION 5 : TERMINAL DE MINAGE (CENTRAL)
+           ==========================================================================
         */
-        .mining-interface-wrapper { padding: 0 20px 50px; }
-        .mining-glass-panel {
+        .mining-interface-section { padding: 0 20px 50px; }
+        .mining-titan-panel {
             background: rgba(255,255,255,0.02);
             backdrop-filter: blur(35px);
             border: 1px solid var(--glass-border);
             border-radius: 55px; padding: 50px;
             position: relative; overflow: hidden;
-            box-shadow: var(--shadow-elite);
+            box-shadow: var(--shadow-hd);
         }
 
-        .mining-status-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; }
-        .mining-h-title { font-weight: 900; text-transform: uppercase; margin-bottom: 0; color: var(--accent); letter-spacing: 1px; }
-        .mining-h-sub { opacity: 0.5; font-size: 0.8rem; font-weight: 600; }
+        .mining-header-flex { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; }
+        .mining-title-status { font-weight: 900; text-transform: uppercase; margin-bottom: 0; color: var(--accent); letter-spacing: 1px; }
 
-        .elite-progress-track {
-            height: 16px; background: rgba(255,255,255,0.06);
+        .progress-titan-track {
+            height: 18px; background: rgba(255,255,255,0.06);
             border-radius: 50px; overflow: hidden; margin: 30px 0;
             border: 1px solid rgba(255,255,255,0.1);
         }
-        .elite-bar-fill {
+        .progress-titan-fill {
             background: linear-gradient(90deg, var(--accent), var(--success), var(--accent));
             background-size: 200% 100%;
             height: 100%; position: relative;
@@ -203,69 +209,90 @@
         }
         @keyframes flow-animation { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        .mining-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-bottom: 45px; }
-        @media (min-width: 768px) { .mining-stats-grid { grid-template-columns: repeat(4, 1fr); } }
+        .stats-titan-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-bottom: 45px; }
+        @media (min-width: 992px) { .stats-titan-grid { grid-template-columns: repeat(4, 1fr); } }
 
-        .m-stat-box { text-align: center; }
-        .m-stat-label { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; opacity: 0.6; display: block; margin-bottom: 8px; }
-        .m-stat-val { font-weight: 900; font-size: 1.2rem; }
+        .st-box { text-align: center; border-right: 1px solid rgba(255,255,255,0.05); }
+        .st-box:last-child { border: none; }
+        .st-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; opacity: 0.6; display: block; margin-bottom: 8px; }
+        .st-val { font-weight: 900; font-size: 1.3rem; }
 
-        .btn-withdraw-master {
+        .btn-withdraw-titan {
             background: var(--danger); color: white; border: none;
-            width: 100%; padding: 25px; border-radius: 30px;
-            font-weight: 900; font-size: 1.25rem; text-transform: uppercase;
+            width: 100%; padding: 25px; border-radius: 35px;
+            font-weight: 900; font-size: 1.3rem; text-transform: uppercase;
             box-shadow: 0 20px 50px rgba(244, 63, 94, 0.5);
             transition: var(--transition-master);
-            letter-spacing: 1.5px;
+            letter-spacing: 2px;
         }
-        .btn-withdraw-master:hover { transform: translateY(-5px); box-shadow: 0 25px 70px rgba(244, 63, 94, 0.7); }
+        .btn-withdraw-titan:hover { transform: translateY(-5px); box-shadow: 0 25px 70px rgba(244, 63, 94, 0.7); }
 
-        /* ------------------------------------------------------------
-           COMPOSANT : GRILLE DES PACKS INDUSTRIELS 
-           ------------------------------------------------------------
+        /* ==========================================================================
+           SECTION 6 : GRILLE DES PACKS INDUSTRIELS (320PX)
+           ==========================================================================
         */
-        .pack-grid-header { padding: 0 30px; margin-bottom: 35px; display: flex; align-items: center; gap: 20px; }
-        .header-accent-line { width: 8px; height: 40px; background: var(--warning); border-radius: 10px; }
+        .industrial-grid-title { padding: 0 30px; margin-bottom: 35px; display: flex; align-items: center; gap: 20px; }
+        .accent-line-industrial { width: 8px; height: 40px; background: var(--warning); border-radius: 10px; }
         
-        .industrial-pack-grid {
+        .pack-industrial-container {
             display: grid; grid-template-columns: repeat(2, 1fr);
             gap: 15px; padding: 0 20px 100px;
         }
-        @media (min-width: 992px) { .industrial-pack-grid { grid-template-columns: repeat(4, 1fr); gap: 40px; padding: 0 80px 160px; } }
+        @media (min-width: 992px) { .pack-industrial-container { grid-template-columns: repeat(4, 1fr); gap: 40px; padding: 0 80px 160px; } }
 
-        .industrial-card {
+        .industrial-card-item {
             background: var(--white-pure);
             border-radius: 40px;
             overflow: hidden;
             display: flex; flex-direction: column;
             box-shadow: 0 25px 60px rgba(0,0,0,0.6);
-            height: 320px; /* VERROUILLAGE HAUTEUR */
+            height: 320px; /* HAUTEUR VERROUILLÉE */
             transition: var(--transition-master);
             border: none;
         }
-        .industrial-card:hover { transform: translateY(-15px) rotate(1.5deg); }
+        .industrial-card-item:hover { transform: translateY(-15px) scale(1.02); }
 
-        .card-tag-head { padding: 15px; text-align: center; color: white; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; }
-        .card-body-elite { padding: 25px; text-align: center; color: var(--dark-core); flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .pack-tag-head { padding: 15px; text-align: center; color: white; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; }
+        .pack-body-elite { padding: 25px; text-align: center; color: var(--dark-core); flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
         
-        .card-price-text { font-size: 1.6rem; font-weight: 900; margin: 10px 0; color: var(--primary); letter-spacing: -2px; }
-        .card-income-sub { font-size: 0.9rem; font-weight: 800; opacity: 0.8; margin-bottom: 15px; }
+        .pack-price-hero { font-size: 1.6rem; font-weight: 900; margin: 10px 0; color: var(--primary); letter-spacing: -2px; }
+        .pack-daily-status { font-size: 0.9rem; font-weight: 800; opacity: 0.8; margin-bottom: 15px; }
 
-        .btn-industrial-buy {
+        .btn-industrial-activate {
             background: var(--primary); color: white; border: none;
             width: 100%; padding: 16px; border-radius: 22px;
-            font-weight: 900; font-size: 0.8rem; text-transform: uppercase;
+            font-weight: 900; font-size: 0.85rem; text-transform: uppercase;
             box-shadow: 0 8px 20px rgba(0, 51, 153, 0.3);
         }
 
-        .pack-titan-locked { opacity: 0.65; filter: grayscale(1); cursor: not-allowed; position: relative; }
-        .lock-indicator { position: absolute; top: 20px; right: 20px; color: var(--danger); font-size: 1.5rem; z-index: 10; }
+        .pack-titan-locked { opacity: 0.6; filter: grayscale(1); cursor: not-allowed; position: relative; }
 
-        /* ------------------------------------------------------------
-           COMPOSANT : ÉLÉMENTS INTERACTIFS FLOTTANTS 
-           ------------------------------------------------------------
+        /* ==========================================================================
+           SECTION 7 : MODALES & INTERFACE DE PAIEMENT
+           ==========================================================================
         */
-        #master-back-top {
+        .modal-industrial-style { border-radius: 55px !important; border: none; overflow: hidden; box-shadow: 0 0 120px rgba(0,0,0,0.9); }
+        .net-selector-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 35px; }
+        
+        .network-btn-item {
+            background: var(--slate-100); border: 3px solid transparent; padding: 20px 10px;
+            border-radius: 25px; transition: 0.4s; font-weight: 900; color: var(--slate-600);
+            font-size: 0.75rem; text-transform: uppercase;
+        }
+        .network-btn-item.active-voda { border-color: var(--primary); color: var(--primary); background: #ebf2ff; }
+        .network-btn-item.active-airtel { border-color: var(--danger); color: var(--danger); background: #fff1f2; }
+        .network-btn-item.active-orange { border-color: var(--warning); color: #000; background: #fffbeb; }
+
+        .terminal-display-industrial {
+            background: var(--slate-100); padding: 30px; border-radius: 35px; 
+            margin-bottom: 35px; border: 1px solid var(--slate-200); display: none;
+        }
+
+        /* ==========================================================================
+           SECTION 8 : FOOTER & FLOATING BTN
+           ==========================================================================
+        */
+        #back-to-top-master {
             position: fixed; bottom: 40px; right: 30px;
             width: 65px; height: 65px; background: var(--warning);
             color: var(--primary); border-radius: 50%;
@@ -273,241 +300,189 @@
             box-shadow: 0 15px 40px rgba(0,0,0,0.6); z-index: 5000;
             transition: 0.3s; border: 3px solid var(--white-pure);
         }
-        #master-back-top:hover { transform: translateY(-8px) scale(1.1); background: var(--white-pure); }
 
-        /* ------------------------------------------------------------
-           COMPOSANT : FOOTER INDUSTRIEL 
-           ------------------------------------------------------------
-        */
-        .footer-industrial-master {
+        .industrial-footer-master {
             background: rgba(0,0,0,0.8); padding: 100px 30px;
             border-top: 1px solid var(--glass-border); text-align: center;
-        }
-
-        /* ------------------------------------------------------------
-           MODALES ET INTERFACE DE PAIEMENT 
-           ------------------------------------------------------------
-        */
-        .modal-industrial-style { border-radius: 55px !important; border: none; overflow: hidden; box-shadow: 0 0 120px rgba(0,0,0,0.9); }
-        .network-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 35px; }
-        
-        .net-btn {
-            background: var(--slate-100); border: 3px solid transparent; padding: 18px 10px;
-            border-radius: 25px; transition: 0.4s; font-weight: 900; color: var(--slate-600);
-            font-size: 0.75rem; text-transform: uppercase;
-        }
-        .net-btn.active-voda { border-color: var(--primary); color: var(--primary); background: #ebf2ff; }
-        .net-btn.active-airtel { border-color: var(--danger); color: var(--danger); background: #fff1f2; }
-        .net-btn.active-orange { border-color: var(--warning); color: #000; background: #fffbeb; }
-
-        .terminal-display-box {
-            background: var(--slate-100); padding: 25px; border-radius: 30px; 
-            margin-bottom: 35px; border: 1px solid #e2e8f0; display: none;
         }
     </style>
 </head>
 <body>
 
-    <div id="master-back-top" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+    <div id="back-to-top-master" onclick="window.scrollTo({top:0, behavior:'smooth'})">
         <i class="bi bi-chevron-double-up fs-3"></i>
     </div>
 
-    <nav class="navbar-terminal">
+    <nav class="master-navigation">
         <div class="d-flex align-items-center gap-4">
-            <a href="/" class="nav-btn-square"><i class="bi bi-house-door-fill fs-4"></i></a>
-            <a href="#" class="brand-text">CASHLINK</a>
+            <a href="/" class="nav-action-square"><i class="bi bi-house-door-fill fs-4"></i></a>
+            <a href="#" class="brand-logo-text">CASH LINK</a>
         </div>
         
-        <div class="balance-pill animate__animated animate__fadeInDown">
-            <div class="bal-data" style="border-right: 2px solid #f1f5f9; padding-right: 25px;">
-                <span class="bal-tag">Portefeuille Principal</span>
-                <span class="bal-val"><%= (user.solde || 0).toLocaleString() %> FC</span>
+        <div class="balance-master-pill animate__animated animate__fadeInDown">
+            <div class="bal-column" style="border-right: 2px solid var(--slate-200); padding-right: 25px;">
+                <span class="bal-label-tag">Mon Capital Actuel</span>
+                <span class="bal-value-text"><%= (user.solde || 0).toLocaleString() %> FC</span>
             </div>
-            <div class="bal-data">
-                <span class="bal-tag text-success">Accumulation Bonus</span>
-                <span class="bal-val bonus">+<%= (user.bonus || 0).toLocaleString() %> FC</span>
+            <div class="bal-column">
+                <span class="bal-label-tag text-success">Accumulation Bonus</span>
+                <span class="bal-value-text success-mode">+<%= (user.bonus || 0).toLocaleString() %> FC</span>
             </div>
         </div>
 
         <div class="d-flex align-items-center gap-3">
-            <div class="client-profile-header d-none d-md-block">
-                <span class="cp-name"><%= user.username %></span>
-                <span class="cp-phone">+243 <%= user.phone %></span>
+            <div class="client-header-profile d-none d-md-block">
+                <span class="ch-name"><%= user.username %></span>
+                <span class="ch-phone">+243 <%= user.phone %></span>
             </div>
-            <a href="/logout" class="nav-btn-square bg-dark shadow-sm"><i class="bi bi-power"></i></a>
+            <a href="/logout" class="nav-action-square bg-dark shadow-sm"><i class="bi bi-power"></i></a>
         </div>
     </nav>
 
-    <header class="marketing-white-container animate__animated animate__fadeIn">
+    <header class="marketing-white-case animate__animated animate__fadeIn">
         <div class="animate__animated animate__fadeInUp">
-            <h1 class="mkt-title-elite"><%= content.titre_principal %></h1>
-            <p class="mkt-text-elite"><%= content.description %></p>
-            <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
-                <button onclick="systemShare()" class="btn-share-master">
-                    <i class="bi bi-share-fill me-2"></i> PARTAGER MON LIEN ELITE
+            <h1 class="mkt-h1-elite">MINAGE AUTO</h1>
+            <p class="mkt-p-elite">Changez de vie aujourd'hui. Laissez nos serveurs travailler pour vous et encaissez vos profits chaque jour sans aucun effort physique.</p>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <button onclick="triggerCertification()" class="btn-certification-gold shadow-lg">
+                    <i class="bi bi-patch-check-fill me-2"></i> DEVENIR CLIENT CERTIFIÉ
                 </button>
             </div>
         </div>
     </header>
 
-    <div class="affiliation-bar animate__animated animate__fadeIn">
-        <div class="aff-stat-wrapper">
-            <div class="aff-icon-square"><i class="bi bi-people-fill"></i></div>
+    <div class="referral-glass-area animate__animated animate__fadeIn">
+        <div class="ref-stat-cube">
+            <div class="ref-icon-vibe"><i class="bi bi-people-fill"></i></div>
             <div>
-                <span class="bal-tag">Réseau d'Affiliation</span>
-                <div class="fw-900 fs-4">0 Membres Parrainés</div>
+                <span class="bal-label-tag">Équipe Affiliée</span>
+                <div class="fw-900 fs-4">0 Personnes Gagnées</div>
             </div>
         </div>
         <div class="d-flex flex-column gap-2 text-center text-md-end">
-            <button onclick="copyEliteRef()" class="btn-copy-referral">
+            <button onclick="copyMyReferralLink()" class="btn-copy-master">
                 <i class="bi bi-link-45deg me-2 fs-5"></i>COPIER MON LIEN DE PARRAINAGE
             </button>
-            <small class="fw-bold opacity-40">Commission directe : 10% sur chaque dépôt</small>
+            <small class="fw-bold opacity-40">Commission automatique : 10% par dépôt</small>
         </div>
     </div>
 
-    <div class="mining-interface-wrapper">
-        <div class="mining-glass-panel animate__animated animate__fadeInUp">
-            <div class="mining-status-header">
+    <div class="mining-interface-section">
+        <div class="mining-titan-panel animate__animated animate__fadeInUp">
+            <div class="mining-header-flex">
                 <div>
-                    <h5 class="mining-h-title"><i class="bi bi-activity me-3"></i>Statut Flux de Minage Sécurisé</h5>
-                    <span class="mining-h-sub">Synchronisation RDC en cours via satellite...</span>
+                    <h5 class="mining-title-status"><i class="bi bi-activity me-3"></i>PROGRESSION DES GAINS</h5>
+                    <span class="mining-h-sub">Synchronisation satellite RDC en temps réel...</span>
                 </div>
                 <div class="text-accent fw-900 fs-1"><%= p || 0 %>%</div>
             </div>
 
-            <div class="elite-progress-track">
-                <div class="elite-bar-fill" style="width: <%= p || 0 %>%"></div>
+            <div class="progress-titan-track">
+                <div class="progress-titan-fill" style="width: <%= p || 0 %>%"></div>
             </div>
 
-            <div class="mining-stats-grid">
-                <div class="m-stat-box">
-                    <span class="m-stat-label">Puissance Hash</span>
-                    <div class="m-stat-val text-accent"><%= content.puissance_hash %></div>
+            <div class="stats-titan-grid">
+                <div class="st-box">
+                    <span class="st-label">UNITÉ CONNECTÉE</span>
+                    <div class="st-val text-accent"><%= content.puissance_hash %></div>
                 </div>
-                <div class="m-stat-box">
-                    <span class="m-stat-label">Réseau Status</span>
-                    <div class="m-stat-val text-success"><i class="bi bi-broadcast me-2"></i>OPÉRATIONNEL</div>
+                <div class="st-box">
+                    <span class="st-label">Statut Réseau</span>
+                    <div class="st-val text-success"><i class="bi bi-broadcast me-2"></i>OPÉRATIONNEL</div>
                 </div>
-                <div class="m-stat-box">
-                    <span class="m-stat-label">Unité Connectée</span>
-                    <div class="m-stat-val text-white"><%= user.pack %></div>
+                <div class="st-box">
+                    <span class="st-label">Machine Active</span>
+                    <div class="st-val text-white"><%= user.pack %></div>
                 </div>
-                <div class="m-stat-box">
-                    <span class="m-stat-label">Prochain Gain</span>
-                    <div id="master-timer" class="m-stat-val text-warning">00:00:00</div>
+                <div class="st-box">
+                    <span class="st-label">Cycle de Gain</span>
+                    <div id="countdown-timer" class="st-val text-warning">00:00:00</div>
                 </div>
             </div>
 
-            <button onclick="masterWithdraw()" class="btn-withdraw-master animate__animated animate__pulse animate__infinite">
-                <i class="bi bi-piggy-bank-fill me-3 fs-3"></i> Demander le Retrait des Profits
+            <button onclick="initiateWithdrawal()" class="btn-withdraw-titan animate__animated animate__pulse animate__infinite">
+                <i class="bi bi-piggy-bank-fill me-3 fs-3"></i> RETIRER MES PROFITS
             </button>
+            
+            <div class="text-center mt-4">
+                <% if(user.certified) { %>
+                    <span class="badge bg-success px-4 py-2 rounded-pill"><i class="bi bi-shield-check me-2"></i>STATUT CERTIFIÉ : Retrait toutes les 24h</span>
+                <% } else { %>
+                    <span class="badge bg-secondary px-4 py-2 rounded-pill opacity-50"><i class="bi bi-info-circle me-2"></i>STATUT STANDARD : Retrait tous les 3 jours</span>
+                <% } %>
+            </div>
         </div>
     </div>
 
-    <div class="pack-grid-header mx-3" id="packs">
-        <div class="header-accent-line"></div>
-        <h3 class="fw-900 mb-0 text-uppercase">Génération Industrielle 2026</h3>
+    <div class="industrial-grid-title mx-3" id="packs">
+        <div class="accent-line-industrial"></div>
+        <h3 class="fw-900 mb-0 text-uppercase">CATALOGUE DE MINAGE 2026</h3>
     </div>
 
-    <div class="industrial-pack-grid">
+    <div class="pack-industrial-container">
         <% 
-        const PACK_DATA = [
-            { id: 'BRONZE', price: 50000, daily: 5000, bonus: 5000, color: '#10b981' },
-            { id: 'SILVER', price: 150000, daily: 15000, bonus: 9000, color: '#4f46e5' },
-            { id: 'GOLD', price: 500000, daily: 40000, bonus: 40000, color: '#f59e0b' },
-            { id: 'DIAMOND', price: 1000000, daily: 100000, bonus: 120000, color: '#ef4444' }
+        const PACK_COLLECTION = [
+            { id: 'BRONZE', price: 50000, daily: 5000, color: '#10b981' },
+            { id: 'SILVER', price: 150000, daily: 15000, color: '#4f46e5' },
+            { id: 'GOLD', price: 500000, daily: 40000, color: '#f59e0b' },
+            { id: 'DIAMOND', price: 1000000, daily: 100000, color: '#ef4444' }
         ];
-        PACK_DATA.forEach(p => {
-            const isOwned = (user.pack === p.id);
+        PACK_COLLECTION.forEach(pack => {
+            const isOwned = (user.pack === pack.id);
         %>
-        <div class="industrial-card animate__animated animate__fadeInUp">
-            <div class="card-tag-head" style="background: <%= p.color %>;"><%= p.id %> UNIT</div>
-            <div class="card-body-elite">
+        <div class="industrial-card-item animate__animated animate__fadeInUp">
+            <div class="pack-tag-head" style="background: <%= pack.color %>;"><%= pack.id %> UNIT</div>
+            <div class="pack-body-elite">
                 <div>
-                    <span class="bal-tag">Coût d'Activation</span>
-                    <div class="card-price-text"><%= p.price.toLocaleString() %> FC</div>
-                    <div class="card-income-sub" style="color: <%= p.color %>;">+<%= p.daily.toLocaleString() %> FC / JOUR</div>
+                    <span class="bal-label-tag">Prix d'Activation</span>
+                    <div class="pack-price-hero"><%= pack.price.toLocaleString() %> FC</div>
+                    <div class="pack-daily-status" style="color: <%= pack.color %>;">+<%= pack.daily.toLocaleString() %> FC / JOUR</div>
                     
                     <div class="text-start border-top border-bottom py-3 mb-4 mt-3">
-                        <div class="small fw-800 mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i>Bonus : +<%= p.bonus.toLocaleString() %> FC</div>
-                        <div class="small fw-800 mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i>Contrat : 30 Jours</div>
-                        <div class="small fw-800"><i class="bi bi-check-circle-fill text-success me-2"></i>Retraits Illimités</div>
+                        <div class="small fw-800 mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i>Retraits Illimités</div>
+                        <div class="small fw-800"><i class="bi bi-check-circle-fill text-success me-2"></i>Validité : 30 Jours</div>
                     </div>
                 </div>
 
                 <% if(isOwned) { %>
-                    <button class="btn btn-success w-100 rounded-pill py-3 fw-900 shadow-sm" disabled>UNITÉ EN MARCHE</button>
+                    <button class="btn btn-success w-100 rounded-pill py-3 fw-900 shadow-sm" disabled>UNITÉ ACTIVE</button>
                 <% } else { %>
-                    <button onclick="triggerEliteGateway('<%= p.id %>', <%= p.price %>)" class="btn-industrial-buy">ACTIVER CETTE UNITÉ</button>
+                    <button onclick="openIndustrialGateway('<%= pack.id %>', <%= pack.price %>)" class="btn-industrial-activate">ACHETER L'UNITÉ</button>
                 <% } %>
             </div>
         </div>
         <% }) %>
     </div>
 
-    <div class="pack-grid-header mx-3">
-        <div class="header-accent-line opacity-25"></div>
-        <h3 class="fw-900 mb-0 text-uppercase opacity-30">Extensions Réseau 2028</h3>
+    <div class="industrial-grid-title mx-3">
+        <div class="accent-line-industrial opacity-25"></div>
+        <h3 class="fw-900 mb-0 text-uppercase opacity-30">EXTENSIONS RÉSEAU 2028</h3>
     </div>
 
-    <div class="industrial-pack-grid">
+    <div class="pack-industrial-container">
         <% 
-        const FUTURE_DATA = [
+        const FUTURES = [
             { id: 'AMÉTHYSTE', price: 2500000, color: '#9333ea' },
             { id: 'ÉMERAUDE', price: 5000000, color: '#059669' },
             { id: 'RUBIS', price: 10000000, color: '#dc2626' },
             { id: 'SAPHIR', price: 25000000, color: '#2563eb' }
         ];
-        FUTURE_DATA.forEach(f => {
+        FUTURES.forEach(f => {
         %>
-        <div class="industrial-card pack-titan-locked">
-            <i class="bi bi-lock-fill lock-indicator"></i>
-            <div class="card-tag-head" style="background: <%= f.color %>;"><%= f.id %></div>
-            <div class="card-body-elite">
-                <div class="card-price-text opacity-20"><%= f.price.toLocaleString() %> FC</div>
+        <div class="industrial-card-item pack-titan-locked">
+            <div class="pack-tag-head" style="background: <%= f.color %>;"><%= f.id %></div>
+            <div class="pack-body-elite">
+                <div class="pack-price-hero opacity-20"><%= f.price.toLocaleString() %> FC</div>
                 <button class="btn btn-secondary w-100 rounded-pill py-2 fw-900 disabled opacity-50">VERROUILLÉ</button>
             </div>
         </div>
         <% }) %>
     </div>
 
-    <div class="container-fluid mb-5">
-        <div class="mining-glass-panel p-5">
-            <div class="row g-5">
-                <div class="col-lg-6 border-end border-secondary border-opacity-25">
-                    <h4 class="fw-900 text-warning mb-4 text-uppercase">Philosophie de <%= content.brand_name %></h4>
-                    <p class="small fw-600 opacity-75 mb-0" style="line-height: 1.8;"><%= content.about_text %></p>
-                </div>
-                <div class="col-lg-6">
-                    <h4 class="fw-900 text-accent mb-4 text-uppercase">Règles de Conformité</h4>
-                    <div class="small fw-600 opacity-75" style="white-space: pre-line; line-height: 1.8;"><%= content.rules_text %></div>
-                </div>
-            </div>
-            
-            <hr class="my-5 opacity-10">
-
-            <div class="row g-4 text-center text-md-start">
-                <div class="col-md-4">
-                    <h6 class="bal-tag text-danger mb-3">Siège Administratif</h6>
-                    <div class="small fw-bold"><i class="bi bi-geo-alt-fill me-2 text-danger"></i><%= content.contact_address %></div>
-                </div>
-                <div class="col-md-4">
-                    <h6 class="bal-tag text-danger mb-3">Support Technique</h6>
-                    <div class="small fw-bold"><i class="bi bi-envelope-at-fill me-2 text-danger"></i><%= content.contact_email %></div>
-                </div>
-                <div class="col-md-4">
-                    <h6 class="bal-tag text-danger mb-3">Hotline RDC 24/7</h6>
-                    <div class="small fw-bold"><i class="bi bi-headset me-2 text-danger"></i>+243 <%= content.contact_phone %></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <footer class="footer-industrial-master">
+    <footer class="industrial-footer-master">
         <div class="container">
-            <div class="fw-900 text-warning fs-1 mb-2 letter-spacing-n2">CASHLINK ELITE</div>
-            <p class="small opacity-50 mb-5 text-uppercase letter-spacing-2 fw-bold"><%= content.footer_text %> | SYSTÈME DE MINAGE RDC v4.0</p>
+            <div class="fw-900 text-warning fs-1 mb-2 letter-spacing-n2">CASH LINK</div>
+            <p class="small opacity-50 mb-5 text-uppercase letter-spacing-2 fw-bold"><%= content.footer_text %> | RDC 2026</p>
             <div class="d-flex justify-content-center gap-5 fs-2 opacity-20">
                 <i class="bi bi-shield-shaded"></i>
                 <i class="bi bi-cpu-fill"></i>
@@ -515,37 +490,36 @@
                 <i class="bi bi-hdd-network-fill"></i>
             </div>
             <hr class="my-5 opacity-10">
-            <small class="opacity-20 fw-900 text-uppercase letter-spacing-1"><%= content.footer_sub %></small>
+            <small class="opacity-30 fw-bold text-uppercase letter-spacing-1">SIÈGE : <%= content.contact_address %> | SUPPORT : +243 <%= content.contact_phone %></small>
         </div>
     </footer>
 
-    <div class="modal fade" id="eliteGatewayModal" tabindex="-1">
+    <div class="modal fade" id="industrialGatewayModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered mx-3 mx-md-auto">
             <div class="modal-content modal-industrial-style text-dark">
                 <div class="modal-body p-4 p-md-5 text-center">
-                    <div class="bg-primary text-white p-4 rounded-circle d-inline-block mb-4 shadow-lg"><i class="bi bi-shield-lock-fill fs-1"></i></div>
-                    <h2 class="fw-900 mb-1 text-uppercase">Recharge Sécurisée</h2>
+                    <h3 class="fw-900 mb-1 text-primary text-uppercase">RECHARGE COMPTE</h3>
                     <p class="text-muted small fw-bold mb-5">Sélectionnez votre réseau de transfert RDC</p>
                     
-                    <div class="network-grid">
-                        <button onclick="netSelect('VODA')" id="net-voda" class="net-btn">VODACOM</button>
-                        <button onclick="netSelect('AIRTEL')" id="net-airtel" class="net-btn">AIRTEL</button>
-                        <button onclick="netSelect('ORANGE')" id="net-orange" class="net-btn">ORANGE</button>
+                    <div class="net-selector-grid">
+                        <button onclick="selectTerminal('VODA')" id="net-voda" class="network-btn-item">VODACOM</button>
+                        <button onclick="selectTerminal('AIRTEL')" id="net-airtel" class="network-btn-item">AIRTEL</button>
+                        <button onclick="selectTerminal('ORANGE')" id="net-orange" class="network-btn-item">ORANGE</button>
                     </div>
 
-                    <div id="terminal-box" class="terminal-display-box animate__animated animate__fadeIn">
-                        <span id="term-title" class="bal-tag text-uppercase">TERMINAL DE DÉPÔT</span>
+                    <div id="industrial-terminal-box" class="terminal-display-industrial animate__animated animate__fadeIn">
+                        <span id="term-label" class="bal-label-tag text-uppercase">TERMINAL DE DÉPÔT</span>
                         <div class="fs-4 fw-900 text-primary d-flex justify-content-between align-items-center mt-2">
-                            <span id="term-number">+243 000 000 000</span>
-                            <i class="bi bi-clipboard-plus fs-3" style="cursor:pointer;" onclick="copyPhoneData()"></i>
+                            <span id="term-number-val">+243 000 000 000</span>
+                            <i class="bi bi-clipboard-plus fs-3" style="cursor:pointer;" onclick="copyTerminalNum()"></i>
                         </div>
                     </div>
 
-                    <div class="alert alert-warning small rounded-4 py-3 border-0 shadow-sm mb-4 fw-bold">
-                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i> Saisissez impérativement le TID reçu par SMS (Ex: PP260328.1242.H42886).
+                    <div class="alert alert-warning small rounded-4 py-3 border-0 shadow-sm mb-4 fw-bold text-start">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5 text-danger"></i> Saisissez l'ID (TID) qui se trouve dans le message (SMS) que le réseau vous renvoie après avoir envoyé l'argent.
                     </div>
 
-                    <button onclick="submitFinalTID()" class="btn btn-primary w-100 py-3 rounded-pill fw-900 shadow-lg fs-5">J'AI EFFECTUÉ LE TRANSFERT</button>
+                    <button onclick="validateAndSubmitTID()" class="btn btn-primary w-100 py-3 rounded-pill fw-900 shadow-lg fs-5">J'AI ENVOYÉ L'ARGENT</button>
                     <button type="button" class="btn btn-link btn-sm text-muted mt-3 fw-bold" data-bs-dismiss="modal">ANNULER L'OPÉRATION</button>
                 </div>
             </div>
@@ -554,122 +528,112 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        /* ------------------------------------------------------------
-           MOTEUR JAVASCRIPT ELITE v4.0
-           ------------------------------------------------------------
+        /* ==========================================================================
+           MOTEUR JAVASCRIPT CASH LINK v5.0
+           ==========================================================================
         */
-        let selectedId = "", selectedPrice = 0, activeTerminalNum = "";
-        const gatewayUI = new bootstrap.Modal(document.getElementById('eliteGatewayModal'));
+        let activePackId = "", activePackPrice = 0, currentTerminalPhone = "";
+        const gatewayModalUI = new bootstrap.Modal(document.getElementById('industrialGatewayModal'));
 
-        // GESTION DU SCROLL
+        // GESTION DU DÉFILEMENT
         window.onscroll = () => {
-            document.getElementById('master-back-top').style.display = (window.scrollY > 450) ? 'flex' : 'none';
+            document.getElementById('back-to-top-master').style.display = (window.scrollY > 450) ? 'flex' : 'none';
         };
 
         // GESTION DES RÉSEAUX RDC
-        function netSelect(network) {
-            const box = document.getElementById('terminal-box');
-            const title = document.getElementById('term-title');
-            const number = document.getElementById('term-number');
-            const btns = document.querySelectorAll('.net-btn');
+        function selectTerminal(network) {
+            const box = document.getElementById('industrial-terminal-box');
+            const label = document.getElementById('term-label');
+            const num = document.getElementById('term-number-val');
+            const btns = document.querySelectorAll('.network-btn-item');
             
-            btns.forEach(b => b.className = 'net-btn');
+            btns.forEach(b => b.className = 'network-btn-item');
             box.style.display = "block";
 
             if(network === 'VODA') {
                 document.getElementById('net-voda').classList.add('active-voda');
-                title.innerText = "M-PESA (VODACOM RDC)";
-                activeTerminalNum = "+243 <%= content.admin_voda %>";
+                label.innerText = "M-PESA (VODACOM RDC)";
+                currentTerminalPhone = "+243 <%= content.admin_voda %>";
             } else if(network === 'AIRTEL') {
                 document.getElementById('net-airtel').classList.add('active-airtel');
-                title.innerText = "AIRTEL MONEY (RDC)";
-                activeTerminalNum = "+243 <%= content.admin_airtel %>";
+                label.innerText = "AIRTEL MONEY (RDC)";
+                currentTerminalPhone = "+243 <%= content.admin_airtel %>";
             } else if(network === 'ORANGE') {
                 document.getElementById('net-orange').classList.add('active-orange');
-                title.innerText = "ORANGE MONEY (RDC)";
-                activeTerminalNum = "+243 <%= content.admin_orange %>";
+                label.innerText = "ORANGE MONEY (RDC)";
+                currentTerminalPhone = "+243 <%= content.admin_orange %>";
             }
-            number.innerText = activeTerminalNum;
+            num.innerText = currentTerminalPhone;
         }
 
         // ACTIONS FINANCIÈRES
-        function triggerEliteGateway(id, price) {
-            selectedId = id; selectedPrice = price;
-            gatewayUI.show();
+        function openIndustrialGateway(id, price) {
+            activePackId = id; activePackPrice = price;
+            gatewayModalUI.show();
         }
 
-        function submitFinalTID() {
-            gatewayUI.hide();
-            const tid = prompt("Veuillez saisir votre référence de transaction TID :");
+        function triggerCertification() {
+            if(confirm("La CERTIFICATION ELITE coûte 10.000 FC. Elle permet de retirer vos gains toutes les 24h au lieu de 3 jours. Continuer ?")) {
+                activePackId = "CERTIFICATION"; activePackPrice = 10000;
+                gatewayModalUI.show();
+            }
+        }
+
+        function validateAndSubmitTID() {
+            gatewayModalUI.hide();
+            const tid = prompt("Veuillez saisir l'ID (TID) de la transaction (Ex: PP260328.1242.H42886) :");
             
-            // VALIDATION STRICTE DU FORMAT TID RDC (Pattern: PP260328.1242.H42886)
-            const tidPattern = /^[A-Z0-9]{8}\.[0-9]{4}\.[A-Z0-9]{6}$/;
-            
-            if(tid && tid.length > 12) {
-                commitAction('/souscrire-pack', { packName: selectedId, prix: selectedPrice, reference: tid });
+            // Format TID RDC Global
+            if(tid && tid.length > 8) {
+                submitSecurePost('/souscrire-pack', { packName: activePackId, prix: activePackPrice, reference: tid });
             } else if(tid !== null) {
-                alert("Erreur critique : Format de TID invalide. Vérifiez votre SMS de confirmation.");
+                alert("Erreur : L'ID de transaction saisi est invalide. Veuillez vérifier votre message SMS.");
             }
         }
 
-        function masterWithdraw() {
-            const amount = prompt("Saisissez le montant à retirer (Minimum : 1.000 FC) :");
+        function initiateWithdrawal() {
+            const amount = prompt("Veuillez saisir le montant à retirer (Minimum : 1.000 FC) :");
             if(amount && amount >= 1000) {
-                commitAction('/retrait', { montant: amount });
+                submitSecurePost('/retrait', { montant: amount });
             } else if(amount !== null) {
-                alert("Opération refusée : Le montant minimum est de 1.000 FC.");
+                alert("Opération refusée : Le montant saisi est inférieur au minimum de 1.000 FC.");
             }
         }
 
-        function commitAction(path, data) {
+        function submitSecurePost(path, data) {
             const form = document.createElement('form'); form.method = 'POST'; form.action = path;
             for(let key in data) {
-                const hiddenField = document.createElement('input'); 
-                hiddenField.type='hidden'; hiddenField.name=key; hiddenField.value=data[key];
-                form.appendChild(hiddenField);
+                const hiddenInput = document.createElement('input'); 
+                hiddenInput.type='hidden'; hiddenInput.name=key; hiddenInput.value=data[key];
+                form.appendChild(hiddenInput);
             }
             document.body.appendChild(form); form.submit();
         }
 
-        // UTILITAIRES
-        function copyPhoneData() {
-            navigator.clipboard.writeText(activeTerminalNum);
-            alert("Numéro du terminal copié avec succès !");
+        // UTILITAIRES COPIE
+        function copyTerminalNum() {
+            navigator.clipboard.writeText(currentTerminalPhone);
+            alert("Numéro de terminal copié : " + currentTerminalPhone);
         }
 
-        function copyEliteRef() {
+        function copyMyReferralLink() {
             const link = window.location.origin + "/register?ref=<%= user.username %>";
             navigator.clipboard.writeText(link);
-            alert("Lien de parrainage copié dans le presse-papier !");
-        }
-
-        function systemShare() {
-            if (navigator.share) {
-                navigator.share({ 
-                    title: 'CASHLINK ELITE', 
-                    text: 'Rejoignez la révolution du minage en RDC avec CASHLINK !', 
-                    url: window.location.origin 
-                });
-            }
+            alert("Lien de parrainage copié avec succès !");
         }
 
         // COMPTE À REBOURS DU CYCLE DE GAIN
-        function runEliteTimer() {
-            const now = new Date(), next = new Date();
-            next.setHours(24, 0, 0, 0);
-            const diff = next - now;
+        function startCountdownEngine() {
+            const now = new Date(), target = new Date();
+            target.setHours(24, 0, 0, 0);
+            const diff = target - now;
             const h = Math.floor(diff/3600000), 
                   m = Math.floor((diff%3600000)/60000), 
                   s = Math.floor((diff%60000)/1000);
-            document.getElementById('master-timer').innerText = 
+            document.getElementById('countdown-timer').innerText = 
                 `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
         }
-        setInterval(runEliteTimer, 1000);
-
-        // GESTION DES NOTIFICATIONS D'URL
-        const urlParams = new URLSearchParams(window.location.search);
-        if(urlParams.get('msg') === 'TID_SEND') alert("TID envoyé pour vérification. Cela peut prendre jusqu'à 24h.");
-        if(urlParams.get('msg') === 'SUCCESS') alert("Votre demande de retrait a été enregistrée.");
+        setInterval(startCountdownEngine, 1000);
     </script>
 </body>
 </html>
