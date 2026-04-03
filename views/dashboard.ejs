@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title><%= content.brand_name %> | Interface Elite v21.0</title>
+    <title><%= content.brand_name %> | Interface Elite v25.0</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -12,17 +12,17 @@
 
     <style>
         /* ============================================================
-           SYSTÈME DE DESIGN "TITAN OLYMPUS" - 400 LIGNES DE STYLE
+           MOTEUR DE STYLE "TITAN OLYMPUS" (500 LIGNES DE STYLE)
            ============================================================ */
         :root {
             --bleu-bic: #003399;
             --neon-blue: #00d9ff;
-            --emerald: #10b981; /* COULEUR DE PROGRESSION DEMANDÉE */
+            --emerald: #10b981; /* VERT ÉMERAUDE POUR PROGRESSION */
             --rose: #f43f5e;
             --gold: #fbbf24;
             --dark-deep: #000c26;
             --glass-white: rgba(255, 255, 255, 0.1);
-            --glass-dark: rgba(0, 0, 0, 0.35);
+            --glass-dark: rgba(0, 0, 0, 0.4);
             --transition-titan: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
@@ -47,8 +47,8 @@
 
         /* --- BARRE DE NAVIGATION (NAVBAR GOLD) --- */
         .premium-nav {
-            background: var(--gold); padding: 10px 15px; position: sticky;
-            top: 0; z-index: 2000; display: flex; justify-content: space-between;
+            background: var(--gold); padding: 12px 15px; position: sticky;
+            top: 0; z-index: 4000; display: flex; justify-content: space-between;
             align-items: center; box-shadow: 0 15px 45px rgba(0,0,0,0.5);
             border-bottom: 5px solid rgba(0,0,0,0.15);
         }
@@ -56,363 +56,340 @@
 
         .logo-brand { 
             font-family: 'Space Grotesk', sans-serif; font-weight: 900; 
-            color: var(--bleu-bic); font-size: 1.6rem; text-decoration: none !important; 
+            color: var(--bleu-bic); font-size: 1.8rem; text-decoration: none !important; 
             letter-spacing: -2px; transition: var(--transition-titan);
         }
-        .logo-brand:hover { transform: scale(1.05); }
-        
-        .nav-info-box {
-            background: #ffffff; padding: 6px 15px; border-radius: 60px;
-            display: flex; align-items: center; gap: 10px; color: #0f172a;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
-        }
-        .solde-badge { border-right: 2px solid #f1f5f9; padding-right: 12px; }
-        .label-xs { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; display: block; line-height: 1; margin-bottom: 3px; }
-        .val-md { font-weight: 900; font-size: 0.95rem; color: var(--bleu-bic); line-height: 1.1; font-family: 'Space Grotesk'; }
-        @media (min-width: 768px) { .val-md { font-size: 1.3rem; } .nav-info-box { gap: 25px; padding: 12px 30px; } }
 
-        /* --- BOUTON DÉCONNEXION --- */
-        .btn-logout-circle {
+        .nav-info-box {
+            background: #ffffff; padding: 8px 18px; border-radius: 60px;
+            display: flex; align-items: center; gap: 12px; color: #0f172a;
+            box-shadow: inset 0 2px 12px rgba(0,0,0,0.2);
+        }
+        .solde-badge { border-right: 2.5px solid #f1f5f9; padding-right: 15px; }
+        .label-xs { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; display: block; line-height: 1; margin-bottom: 4px; }
+        .val-md { font-weight: 900; font-size: 1rem; color: var(--bleu-bic); line-height: 1.1; font-family: 'Space Grotesk'; }
+
+        .btn-logout-titan {
             background: var(--dark-deep); color: white; border: none;
             width: 45px; height: 45px; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 10px 20px rgba(0,0,0,0.3); transition: var(--transition-titan);
         }
-        .btn-logout-circle:hover { background: var(--rose); transform: rotate(90deg); }
+        .btn-logout-titan:hover { background: var(--rose); transform: rotate(90deg); }
 
         /* --- SECTION MARKETING (BANNIÈRE BLANCHE) --- */
-        .marketing-hero {
-            width: 100%; background: #ffffff; border-radius: 0 0 50px 50px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.4); overflow: hidden;
-            margin-bottom: 30px; padding: 60px 25px; text-align: center;
+        .marketing-hero-titan {
+            width: 100%; background: #ffffff; border-radius: 0 0 55px 55px;
+            box-shadow: 0 25px 65px rgba(0,0,0,0.4); overflow: hidden;
+            margin-bottom: 35px; padding: 70px 25px; text-align: center;
             position: relative;
         }
-        .marketing-hero::after {
-            content: ""; position: absolute; bottom: 0; left: 0; width: 100%;
-            height: 8px; background: var(--gold);
-        }
-        .m-content h1 { font-family: 'Space Grotesk'; font-weight: 900; color: var(--bleu-bic); font-size: clamp(2.2rem, 10vw, 4.5rem); line-height: 0.85; margin-bottom: 20px; letter-spacing: -2px; }
-        .m-content p { color: #475569; font-weight: 700; font-size: 1.1rem; max-width: 750px; margin: 0 auto 30px; line-height: 1.4; }
-        .user-identity-badge { background: var(--bleu-bic); color: #fff; padding: 10px 25px; border-radius: 50px; font-weight: 800; font-size: 0.85rem; display: inline-block; margin-bottom: 15px; box-shadow: 0 10px 20px rgba(0, 51, 153, 0.2); }
+        .marketing-hero-titan::after { content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 10px; background: var(--gold); }
+        .m-title-titan { font-family: 'Space Grotesk'; font-weight: 900; color: var(--bleu-bic); font-size: clamp(2.5rem, 12vw, 4.8rem); line-height: 0.82; margin-bottom: 25px; letter-spacing: -3px; }
+        .m-para-titan { color: #475569; font-weight: 700; font-size: 1.2rem; max-width: 800px; margin: 0 auto 35px; line-height: 1.5; }
+        .user-id-badge-titan { background: var(--bleu-bic); color: #fff; padding: 12px 30px; border-radius: 60px; font-weight: 900; font-size: 0.9rem; display: inline-block; margin-bottom: 20px; box-shadow: 0 12px 25px rgba(0, 51, 153, 0.25); }
 
         /* --- ÉLÉMENTS DE STATISTIQUES --- */
-        .stats-titan-container {
+        .stats-titan-grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 15px; padding: 10px 20px;
+            gap: 20px; padding: 10px 20px;
         }
-        @media (min-width: 992px) { .stats-titan-container { grid-template-columns: repeat(4, 1fr); padding: 20px 80px; gap: 30px; } }
+        @media (min-width: 992px) { .stats-titan-grid { grid-template-columns: repeat(4, 1fr); padding: 20px 85px; gap: 35px; } }
 
-        .stat-titan-card {
-            background: var(--glass-white); backdrop-filter: blur(15px);
-            padding: 25px; border-radius: 30px; border: 1.2px solid rgba(255,255,255,0.18);
+        .stat-titan-glass {
+            background: var(--glass-white); backdrop-filter: blur(18px);
+            padding: 30px; border-radius: 35px; border: 1.5px solid rgba(255,255,255,0.2);
             text-align: center; transition: var(--transition-titan);
         }
-        .stat-titan-card:hover { transform: translateY(-8px); background: rgba(255,255,255,0.15); border-color: var(--gold); }
-        .stat-titan-icon { font-size: 2rem; color: var(--neon-blue); margin-bottom: 12px; display: block; }
+        .stat-titan-glass:hover { transform: translateY(-10px); border-color: var(--gold); background: rgba(255,255,255,0.15); }
+        .stat-titan-icon-box { font-size: 2.2rem; color: var(--neon-blue); margin-bottom: 15px; display: block; }
         
-        /* --- BOUTON CERTIFICATION --- */
-        .btn-certification-action {
+        .btn-titan-certif {
             background: var(--gold); color: #000; border: none; width: 100%;
-            padding: 12px; border-radius: 15px; font-weight: 900; font-size: 0.7rem;
-            text-transform: uppercase; margin-top: 15px; letter-spacing: 1px;
-            box-shadow: 0 8px 20px rgba(251, 191, 36, 0.4); transition: 0.3s;
+            padding: 14px; border-radius: 18px; font-weight: 900; font-size: 0.75rem;
+            text-transform: uppercase; margin-top: 20px; letter-spacing: 1.2px;
+            box-shadow: 0 10px 25px rgba(251, 191, 36, 0.45); transition: 0.4s;
         }
-        .btn-certification-action:active { transform: scale(0.95); }
 
-        /* --- SYSTÈME DE PARRAINAGE 10% --- */
-        .referral-titan-section {
-            background: var(--glass-dark); margin: 20px; padding: 40px;
-            border-radius: 45px; border: 3px dashed var(--gold); text-align: center;
+        /* --- SYSTÈME DE PARRAINAGE --- */
+        .referral-titan-container {
+            background: var(--glass-dark); margin: 25px; padding: 45px;
+            border-radius: 50px; border: 4px dashed var(--gold); text-align: center;
         }
-        @media (min-width: 992px) { .referral-titan-section { margin: 40px 80px; } }
-        .referral-titan-section h5 { font-family: 'Space Grotesk'; font-weight: 900; color: var(--gold); margin-bottom: 15px; text-transform: uppercase; }
+        @media (min-width: 992px) { .referral-titan-container { margin: 45px 85px; } }
+        .ref-title-titan { font-family: 'Space Grotesk'; font-weight: 900; color: var(--gold); margin-bottom: 18px; text-transform: uppercase; letter-spacing: 2px; }
         
-        .copy-group-industrial {
-            background: #ffffff; padding: 8px; border-radius: 25px;
-            display: flex; align-items: center; gap: 15px; margin-top: 20px;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.3);
+        .copy-box-titan {
+            background: #ffffff; padding: 10px; border-radius: 30px;
+            display: flex; align-items: center; gap: 15px; margin-top: 25px;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.35);
         }
-        .copy-group-industrial input { background: transparent; border: none; color: #000; font-weight: 800; font-size: 0.9rem; width: 100%; padding-left: 20px; }
-        .btn-copy-titan { background: var(--bleu-bic); color: #fff; border: none; padding: 14px 30px; border-radius: 20px; font-weight: 900; text-transform: uppercase; font-size: 0.8rem; }
+        .copy-box-titan input { background: transparent; border: none; color: #000; font-weight: 800; font-size: 0.95rem; width: 100%; padding-left: 25px; }
+        .btn-copy-titan-action { background: var(--bleu-bic); color: #fff; border: none; padding: 16px 35px; border-radius: 25px; font-weight: 900; text-transform: uppercase; font-size: 0.85rem; }
 
-        /* --- SECTION MINAGE (BARRE VERTE) --- */
-        .mining-titan-area {
-            background: var(--glass-dark); margin: 20px; padding: 35px;
-            border-radius: 45px; border: 1px solid rgba(255,255,255,0.1);
+        /* --- TERMINAL DE MINAGE (LIGNE VERTE ÉMERAUDE) --- */
+        .mining-titan-terminal {
+            background: var(--glass-dark); margin: 25px; padding: 40px;
+            border-radius: 50px; border: 1.5px solid rgba(255,255,255,0.15);
         }
-        @media (min-width: 992px) { .mining-titan-area { margin: 40px 80px; padding: 50px; } }
+        @media (min-width: 992px) { .mining-titan-terminal { margin: 45px 85px; padding: 60px; } }
 
-        .progress-titan-master {
-            height: 35px; background: rgba(0,0,0,0.5); border-radius: 60px;
-            overflow: hidden; margin: 25px 0; border: 2px solid rgba(255,255,255,0.1); padding: 5px;
+        .progress-titan-track {
+            height: 40px; background: rgba(0,0,0,0.6); border-radius: 70px;
+            overflow: hidden; margin: 30px 0; border: 2.5px solid rgba(255,255,255,0.15); padding: 6px;
         }
-        .bar-titan-emerald {
+        .bar-titan-emerald-fill {
             background: linear-gradient(90deg, #10b981, #059669, #34d399);
-            box-shadow: 0 0 30px rgba(16, 185, 129, 0.6); border-radius: 60px;
-            height: 100%; position: relative;
+            box-shadow: 0 0 35px rgba(16, 185, 129, 0.7); border-radius: 70px;
+            height: 100%; position: relative; width: <%= p || 0 %>%;
+            transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .withdraw-titan-btn {
+            background: var(--rose); color: white; border: none; width: 100%;
+            padding: 25px; border-radius: 35px; font-weight: 900; font-size: 1.5rem;
+            text-transform: uppercase; box-shadow: 0 20px 50px rgba(244, 63, 94, 0.5);
+            transition: var(--transition-titan); margin-top: 20px;
         }
 
         /* --- SHOP GRID (8 PACKS ALIGNÉS 480PX) --- */
-        .shop-titan-header {
-            padding: 0 30px; margin: 60px 0 30px; display: flex; align-items: center; gap: 20px;
-        }
-        @media (min-width: 992px) { .shop-titan-header { padding: 0 80px; } }
-        .shop-titan-header h2 { font-family: 'Space Grotesk'; font-weight: 900; font-size: 2.2rem; text-transform: uppercase; }
+        .shop-titan-title-box { padding: 0 35px; margin: 70px 0 35px; display: flex; align-items: center; gap: 25px; }
+        @media (min-width: 992px) { .shop-titan-title-box { padding: 0 85px; } }
+        .shop-titan-title-box h2 { font-family: 'Space Grotesk'; font-weight: 900; font-size: 2.6rem; text-transform: uppercase; }
 
-        .industrial-shop-grid {
+        .industrial-titan-grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 15px; padding: 0 15px 120px;
+            gap: 20px; padding: 0 20px 130px;
         }
-        @media (min-width: 1200px) { .industrial-shop-grid { grid-template-columns: repeat(4, 1fr); padding: 0 80px 180px; gap: 40px; } }
+        @media (min-width: 1200px) { .industrial-titan-grid { grid-template-columns: repeat(4, 1fr); padding: 0 85px 200px; gap: 45px; } }
 
-        .pack-titan-card {
-            background: #ffffff; border-radius: 50px; overflow: hidden;
-            color: #0f172a; height: 480px; /* ALIGNEMENT FIXE DEMANDÉ */
-            display: flex; flex-direction: column; box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-            transition: var(--transition-titan); border: none;
+        .pack-titan-card-box {
+            background: #ffffff; border-radius: 55px; overflow: hidden;
+            color: #0f172a; height: 480px; /* ALIGNEMENT FIXE CHIRURGICAL */
+            display: flex; flex-direction: column; box-shadow: 0 35px 70px rgba(0,0,0,0.55);
+            transition: var(--transition-titan); position: relative; border: none;
         }
-        .pack-titan-card:hover { transform: translateY(-20px); box-shadow: 0 45px 90px rgba(0,0,0,0.6); }
-        .is-active-pack { border: 8px solid var(--emerald) !important; transform: scale(1.05); }
+        .pack-titan-card-box:hover { transform: translateY(-25px); }
+        .active-pack-glow { border: 10px solid var(--emerald) !important; transform: scale(1.06); }
 
-        .pack-titan-head { padding: 25px; text-align: center; color: #fff; font-weight: 900; text-transform: uppercase; font-size: 1rem; letter-spacing: 2px; }
-        .pack-titan-body { padding: 35px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        /* VERROUILLAGE VISUEL 2028 */
+        .titan-locked-mode { filter: grayscale(1) brightness(0.7); }
+        .titan-lock-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.45); z-index: 50; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+        .titan-lock-tag { background: var(--gold); color: #000; padding: 12px 30px; border-radius: 60px; font-weight: 900; font-size: 1rem; box-shadow: 0 15px 30px rgba(0,0,0,0.6); }
+
+        .p-head-titan { padding: 30px; text-align: center; color: #fff; font-weight: 900; text-transform: uppercase; font-size: 1.1rem; letter-spacing: 2.5px; }
+        .p-body-titan { padding: 40px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
         
-        .pack-titan-price { font-size: 1.8rem; font-weight: 900; color: var(--bleu-bic); letter-spacing: -2px; margin: 15px 0; font-family: 'Space Grotesk'; word-break: break-all; }
-        @media (min-width: 768px) { .pack-titan-price { font-size: 2.6rem; } }
+        .p-price-titan { font-size: 2rem; font-weight: 900; color: var(--bleu-bic); margin: 15px 0 10px; font-family: 'Space Grotesk'; word-break: break-all; letter-spacing: -2px; }
+        @media (min-width: 768px) { .p-price-titan { font-size: 2.8rem; } }
+        
+        .p-bonus-titan { font-size: 0.8rem; font-weight: 900; color: var(--rose); background: #fff0f0; border: 2.5px dashed var(--rose); padding: 12px; border-radius: 20px; margin-bottom: 8px; }
+        .p-daily-titan { font-weight: 900; color: var(--emerald); font-size: 1.2rem; }
 
-        .pack-titan-bonus { font-size: 0.75rem; font-weight: 900; color: var(--rose); background: #fff0f0; border: 2px dashed var(--rose); padding: 10px; border-radius: 18px; margin-bottom: 15px; }
-        .pack-titan-daily { font-weight: 900; color: var(--emerald); font-size: 1.1rem; }
+        /* LOGIQUE BOUTONS DYNAMIQUES */
+        .btn-buy-titan-mode { background: var(--bleu-bic); color: #fff; }
+        .btn-activate-titan-mode { background: var(--emerald); color: #fff; box-shadow: 0 15px 30px rgba(16, 185, 129, 0.45); }
 
-        .btn-activate-titan {
-            width: 100%; padding: 20px; border-radius: 28px; border: none;
-            font-weight: 900; text-transform: uppercase; font-size: 0.9rem;
-            background: var(--bleu-bic); color: #fff; box-shadow: 0 15px 30px rgba(0, 51, 153, 0.3);
-            transition: 0.3s;
-        }
-        .btn-activate-titan:active { transform: scale(0.95); }
-
-        /* --- SYSTÈME DE TOASTS ÉLITE --- */
-        #titan-toast-container {
-            position: fixed; bottom: 30px; left: 30px; z-index: 9999;
-            background: #ffffff; color: #000; padding: 20px 30px;
-            border-radius: 25px; box-shadow: 0 20px 50px rgba(0,0,0,0.7);
-            display: none; align-items: center; gap: 20px; border-left: 10px solid var(--emerald);
+        .btn-titan-action-final {
+            width: 100%; padding: 22px; border-radius: 32px; border: none;
+            font-weight: 900; text-transform: uppercase; font-size: 1rem;
+            transition: 0.4s; box-shadow: 0 15px 35px rgba(0,0,0,0.25);
         }
 
-        /* --- ACCORDÉONS INFOS --- */
-        .footer-accordion-section { margin: 20px 20px 100px; }
-        @media (min-width: 992px) { .footer-accordion-section { margin: 60px 80px 150px; } }
-        .accordion-item { background: var(--glass-dark) !important; border: 1px solid rgba(255,255,255,0.1) !important; color: #fff !important; margin-bottom: 15px; border-radius: 30px !important; overflow: hidden; }
-        .accordion-button { background: transparent !important; color: #fff !important; font-weight: 800; padding: 30px; font-size: 1.1rem; box-shadow: none !important; }
-        .accordion-button:not(.collapsed) { color: var(--gold) !important; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .accordion-body { padding: 30px; opacity: 0.8; font-size: 1rem; line-height: 1.8; }
+        /* --- SYSTÈME DE TOASTS & ACCORDÉONS --- */
+        #titan-toast-box { position: fixed; bottom: 35px; left: 35px; z-index: 9999; background: #ffffff; color: #000; padding: 25px 35px; border-radius: 30px; box-shadow: 0 25px 60px rgba(0,0,0,0.75); display: none; align-items: center; gap: 25px; border-left: 12px solid var(--emerald); }
+        #scrollTopTitan { position: fixed; bottom: 35px; right: 35px; width: 75px; height: 75px; background: var(--gold); color: var(--bleu-bic); border-radius: 50%; border: none; display: none; align-items: center; justify-content: center; font-size: 2.5rem; z-index: 8500; box-shadow: 0 25px 50px rgba(0,0,0,0.65); }
 
-        /* --- BOUTON SCROLL TOP --- */
-        #backToTopTitan {
-            position: fixed; bottom: 30px; right: 30px;
-            width: 70px; height: 70px; background: var(--gold);
-            color: var(--bleu-bic); border-radius: 50%; border: none;
-            display: none; align-items: center; justify-content: center;
-            font-size: 2.2rem; z-index: 8000; box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            transition: 0.3s;
-        }
-
-        /* --- MODAL PAIEMENT --- */
-        .modal-industrial { border-radius: 50px !important; border: none; overflow: hidden; }
-        .payment-titan-card {
-            background: #f8fafc; padding: 30px; border-radius: 35px;
-            border: 4px solid #e2e8f0; margin-bottom: 20px; transition: 0.3s;
-        }
-        .payment-titan-card:hover { border-color: var(--bleu-bic); background: #fff; transform: translateX(15px); }
-
-        /* --- ANIMATIONS --- */
-        .glowing-bar { animation: glowPulse 2s infinite; }
-        @keyframes glowPulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+        .titan-faq-section { margin: 30px 25px 120px; }
+        @media (min-width: 992px) { .titan-faq-section { margin: 70px 85px 180px; } }
+        .accordion-item-titan { background: var(--glass-dark) !important; border: 1.5px solid rgba(255,255,255,0.15) !important; color: #fff !important; margin-bottom: 20px; border-radius: 35px !important; overflow: hidden; }
+        .accordion-button-titan { background: transparent !important; color: #fff !important; font-weight: 900; padding: 35px; font-size: 1.2rem; box-shadow: none !important; }
+        .accordion-button-titan:not(.collapsed) { color: var(--gold) !important; border-bottom: 1.5px solid rgba(255,255,255,0.15); }
+        .accordion-body-titan { padding: 40px; opacity: 0.85; font-size: 1.1rem; line-height: 2; }
     </style>
 </head>
 <body>
 
-    <div id="titan-toast-container" class="animate__animated animate__slideInLeft">
+    <div id="titan-toast-box" class="animate__animated animate__slideInLeft">
         <i class="bi bi-shield-fill-check text-success fs-1"></i>
         <div>
-            <div class="small opacity-50 fw-900 text-uppercase">Notification Réseau</div>
-            <div id="toast-message-content" class="fw-800 text-dark">Chargement des données...</div>
+            <div class="small opacity-50 fw-900 text-uppercase">Réseau CashLink Live</div>
+            <div id="toast-msg-final" class="fw-800 text-dark">Initialisation du terminal...</div>
         </div>
     </div>
 
-    <button id="backToTopTitan" onclick="scrollToTopTitan()"><i class="bi bi-arrow-up-circle-fill"></i></button>
+    <button id="scrollTopTitan" onclick="window.scrollTo({top:0, behavior:'smooth'})"><i class="bi bi-arrow-up-circle-fill"></i></button>
 
     <nav class="premium-nav">
         <a href="/" class="logo-brand animate__animated animate__fadeInLeft">CASHLINK</a>
-        
         <div class="nav-info-box animate__animated animate__zoomIn">
             <div class="solde-badge">
                 <span class="label-xs">SOLDE PRINCIPAL</span>
                 <div class="val-md"><%= (user.solde || 0).toLocaleString() %> FC</div>
             </div>
             <div>
-                <span class="label-xs text-success">BONUS MINAGE</span>
+                <span class="label-xs text-success">SOLDE BONUS</span>
                 <div class="val-md text-success">+<%= (user.bonus || 0).toLocaleString() %> FC</div>
             </div>
         </div>
-
-        <a href="/logout" class="btn-logout-circle shadow-lg"><i class="bi bi-power fs-3"></i></a>
+        <a href="/logout" class="btn-logout-titan shadow-lg"><i class="bi bi-power fs-3"></i></a>
     </nav>
 
-    <header class="marketing-hero">
-        <div class="m-content animate__animated animate__fadeIn">
-            <div class="user-identity-badge animate__animated animate__fadeInDown">
-                IDENTIFIANT : <%= user.username %> | RÉSEAU : +243 <%= user.phone %>
+    <header class="marketing-hero-titan">
+        <div class="animate__animated animate__fadeIn">
+            <div class="user-id-badge-titan animate__animated animate__fadeInDown">
+                TERMINAL ID : <%= user.username %> | ACCÈS : +243 <%= user.phone %>
             </div>
-            <h1>MINAGE <span class="text-primary">INDUSTRIEL</span></h1>
-            <p>Accédez à la technologie de minage cloud la plus performante de la République Démocratique du Congo. Nos algorithmes CASHLINK optimisent vos profits en temps réel, 24h/24.</p>
-            <div class="d-flex justify-content-center gap-3">
-                <button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-3 fw-900 shadow-lg">EXPLORER LES PACKS</button>
-            </div>
+            <h1 class="m-title-titan">MINAGE <span class="text-primary">INDUSTRIEL</span></h1>
+            <p class="m-para-titan">Exploitez la puissance du Cloud Mining décentralisé pour générer vos revenus passifs 24h/7j. Technologie CASHLINK v25.0 optimisée pour la République Démocratique du Congo.</p>
+            <button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-4 fw-900 shadow-lg fs-5">LANCER MON UNITÉ MAINTENANT</button>
         </div>
     </header>
 
-    <div class="stats-titan-container">
-        <div class="stat-titan-card">
-            <i class="bi bi-cpu-fill stat-titan-icon"></i>
+    <div class="stats-titan-grid">
+        <div class="stat-titan-glass">
+            <i class="bi bi-cpu-fill stat-titan-icon-box"></i>
             <span class="label-xs">Puissance Hash</span>
             <div class="val-md text-white"><%= (user.pack && user.pack !== 'Aucun') ? '104.2 TH/s' : '0.00 TH/s' %></div>
         </div>
-        <div class="stat-titan-card">
-            <i class="bi bi-patch-check-fill stat-titan-icon text-warning"></i>
-            <span class="label-xs">Niveau de Compte</span>
-            <div class="val-md text-white"><%= user.certified ? 'CERTIFIÉ ÉLITE' : 'BASIQUE' %></div>
+        <div class="stat-titan-glass">
+            <i class="bi bi-patch-check-fill stat-titan-icon-box text-warning"></i>
+            <span class="label-xs">Statut Certification</span>
+            <div class="val-md text-white"><%= user.certified ? 'CERTIFIÉ ÉLITE' : 'COMPTE BASIQUE' %></div>
             <% if(!user.certified) { %>
-                <button onclick="openPaymentModal('CERTIFICATION', 20000)" class="btn-certification-action">ACTIVER CERTIF (20.000 FC)</button>
+                <button onclick="openPaymentModal('CERTIFICATION', 25000)" class="btn-titan-certif">S'ACTIVER (25.000 FC)</button>
             <% } %>
         </div>
-        <div class="stat-titan-card">
-            <i class="bi bi-currency-exchange stat-titan-icon text-success"></i>
-            <span class="label-xs">Flux de Retrait</span>
-            <div class="val-md text-white">SÉCURISÉ</div>
+        <div class="stat-titan-glass">
+            <i class="bi bi-currency-exchange stat-titan-icon-box text-success"></i>
+            <span class="label-xs">Canal Retrait</span>
+            <div class="val-md text-white">OPÉRATIONNEL</div>
         </div>
-        <div class="stat-titan-card">
-            <i class="bi bi-people-fill stat-titan-icon text-info"></i>
+        <div class="stat-titan-glass">
+            <i class="bi bi-people-fill stat-titan-icon-box text-info"></i>
             <span class="label-xs">Membres Réseau</span>
-            <div class="val-md text-white">ACTIF</div>
+            <div class="val-md text-white">ACTIF (v25)</div>
         </div>
     </div>
 
-    <div class="referral-titan-section animate__animated animate__fadeInUp">
-        <h5>Votre lien de parrainage unique</h5>
-        <p class="small opacity-75 fw-bold">Gagnez une commission cash de 10% sur chaque investissement effectué par vos parrainés. Le montant est crédité instantanément sur votre solde bonus.</p>
-        <div class="copy-group-industrial">
-            <input type="text" id="refLinkTitan" value="https://cashlink-rdc.cd/register?ref=<%= user.id %>" readonly>
-            <button class="btn-copy-titan" onclick="copyRefTitan()">COPIER LE LIEN</button>
+    <div class="referral-titan-container animate__animated animate__fadeInUp">
+        <h3 class="ref-title-titan">Programme Parrainage Elite</h3>
+        <p class="small opacity-80 fw-bold">Partagez votre lien et gagnez instantanément 10% cash sur chaque investissement de vos amis directement sur votre solde bonus.</p>
+        <div class="copy-box-titan">
+            <input type="text" id="refLinkFinal" value="https://cashlink-rdc.cd/register?ref=<%= user.id %>" readonly>
+            <button class="btn-copy-titan-action" onclick="copyFinalLink()">COPIER LE LIEN</button>
         </div>
     </div>
 
-    <section class="mining-titan-area animate__animated animate__fadeInUp">
+    <section class="mining-titan-terminal animate__animated animate__fadeInUp">
         <div class="d-flex justify-content-between align-items-end mb-2">
             <div>
-                <h4 class="fw-900 mb-0 small text-uppercase">Statut du Terminal CASHLINK</h4>
-                <p class="label-xs text-muted mb-0">Moteur Actif : <%= user.pack %></p>
+                <h4 class="fw-900 mb-0 small text-uppercase">Statut Temps Réel du Moteur</h4>
+                <p class="label-xs text-muted mb-0">Unité Active : <%= user.pack %> Engine</p>
             </div>
             <div class="text-success fw-900 fs-1"><%= p || 0 %>%</div>
         </div>
-        <div class="progress-titan-master">
-            <div class="bar-titan-emerald glowing-bar" style="width: <%= p || 0 %>%"></div>
+        <div class="progress-titan-track">
+            <div class="bar-titan-emerald-fill animate__animated animate__pulse animate__infinite"></div>
         </div>
         <div class="d-flex flex-wrap justify-content-between mt-4 align-items-center gap-3">
-            <div class="small fw-bold text-warning"><i class="bi bi-clock-history me-2"></i>RECHARGEMENT DISPONIBLE DANS : <span id="titan-timer-gain">--:--:--</span></div>
-            <button onclick="handleWithdrawTitan()" class="btn btn-danger rounded-pill px-5 py-3 fw-900 shadow-lg animate__animated animate__pulse animate__infinite">RÉCUPÉRER MES PROFITS</button>
+            <div class="small fw-bold text-warning" style="font-size: 0.8rem;"><i class="bi bi-clock-history me-2"></i>RECHARGEMENT DES PROFITS DANS : <span id="titan-timer-final">--:--:--</span></div>
+            <button onclick="handleWithdrawTitan()" class="withdraw-titan-btn animate__animated animate__pulse animate__infinite">RÉCUPÉRER MES PROFITS (MONEY)</button>
         </div>
     </section>
 
-    <div class="shop-titan-header" id="catalog">
-        <div style="width: 10px; height: 45px; background: var(--gold); border-radius: 12px;"></div>
+    <div class="shop-titan-title-box" id="catalog">
+        <div style="width: 12px; height: 50px; background: var(--gold); border-radius: 15px;"></div>
         <h2>Unités de Minage 2026-2028</h2>
     </div>
 
-    <div class="industrial-shop-grid">
+    <div class="industrial-titan-grid">
         <% 
-        const packs = [
-            { id: 'BRONZE', price: 50000, daily: 5000, bonus: 5000, color: '#10b981' },
-            { id: 'SILVER', price: 150000, daily: 15000, bonus: 9000, color: '#4f46e5' },
-            { id: 'GOLD', price: 500000, daily: 40000, bonus: 40000, color: '#f59e0b' },
-            { id: 'DIAMOND', price: 1000000, daily: 100000, bonus: 120000, color: '#ef4444' },
-            { id: 'AMÉTHYSTE', price: 2500000, daily: 300000, bonus: 250000, color: '#9333ea' },
-            { id: 'ÉMERAUDE', price: 5000000, daily: 700000, bonus: 600000, color: '#059669' },
-            { id: 'RUBIS', price: 10000000, daily: 1500000, bonus: 1200000, color: '#dc2626' },
-            { id: 'SAPHIR', price: 25000000, daily: 4000000, bonus: 3500000, color: '#2563eb' }
+        const packsCatalog = [
+            { id: 'BRONZE', price: 50000, daily: 5000, bonus: 5000, color: '#10b981', locked: false },
+            { id: 'SILVER', price: 150000, daily: 15000, bonus: 9000, color: '#4f46e5', locked: false },
+            { id: 'GOLD', price: 500000, daily: 40000, bonus: 40000, color: '#f59e0b', locked: false },
+            { id: 'DIAMOND', price: 1000000, daily: 100000, bonus: 120000, color: '#ef4444', locked: false },
+            { id: 'AMÉTHYSTE', price: 2500000, daily: 300000, bonus: 250000, color: '#9333ea', locked: true },
+            { id: 'ÉMERAUDE', price: 5000000, daily: 700000, bonus: 600000, color: '#059669', locked: true },
+            { id: 'RUBIS', price: 10000000, daily: 1500000, bonus: 1200000, color: '#dc2626', locked: true },
+            { id: 'SAPHIR', price: 25000000, daily: 4000000, bonus: 3500000, color: '#2563eb', locked: true }
         ];
 
-        packs.forEach(item => {
+        packsCatalog.forEach(item => {
             const isOwned = (user.pack === item.id);
         %>
-        <div class="pack-titan-card animate__animated animate__fadeInUp <%= isOwned ? 'is-active-pack' : '' %>">
-            <div class="pack-titan-head" style="background: <%= item.color %>;"><%= item.id %> UNIT</div>
-            <div class="pack-titan-body">
+        <div class="pack-titan-card-box animate__animated animate__fadeInUp <%= item.locked ? 'titan-locked-mode' : '' %> <%= isOwned ? 'active-pack-glow' : '' %>">
+            <% if(item.locked) { %><div class="titan-lock-overlay"><div class="titan-lock-tag">PRÉVU 2028</div></div><% } %>
+            <div class="p-head-titan" style="background: <%= item.color %>;"><%= item.id %> ENGINE</div>
+            <div class="p-body-titan">
                 <div>
-                    <div class="pack-titan-bonus">CADEAU D'ACTIVATION : +<%= item.bonus.toLocaleString() %> FC</div>
-                    <div class="pack-titan-price"><%= item.price.toLocaleString() %> <span class="fs-6 fw-bold">FC</span></div>
-                    <div class="pack-titan-daily">+<%= item.daily.toLocaleString() %> FC / JOUR</div>
+                    <div class="p-price-titan"><%= item.price.toLocaleString() %> FC</div>
+                    <div class="p-bonus-titan">CADEAU D'ACTIVATION : +<%= item.bonus.toLocaleString() %> FC</div>
+                    <div class="p-daily-titan">+<%= item.daily.toLocaleString() %> FC / JOUR</div>
                 </div>
-                <button onclick="openPaymentModal('<%= item.id %>', <%= item.price %>)" class="btn-activate-titan mt-4 <%= isOwned ? 'opacity-50' : '' %>" <%= isOwned ? 'disabled' : '' %>>
-                    <%= isOwned ? 'UNITÉ ACTIVE' : 'ACTIVER MAINTENANT' %>
-                </button>
+                
+                <% if(isOwned) { %>
+                    <button onclick="submitTitanData('/activer-gain', { pack: '<%= item.id %>' })" class="btn-titan-action-final btn-activate-titan-mode">
+                        ACTIVER MAINTENANT
+                    </button>
+                <% } else { %>
+                    <button onclick="openPaymentModal('<%= item.id %>', <%= item.price %>)" class="btn-titan-action-final btn-buy-titan-mode">
+                        ACHETER VOTRE PACK
+                    </button>
+                <% } %>
             </div>
         </div>
         <% }) %>
     </div>
 
-    <div class="footer-accordion-section" id="accBottomTitan">
-        <div class="accordion-item shadow-sm">
-            <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#qa1"><i class="bi bi-info-circle-fill me-3 text-info"></i> QUI SOMMES-NOUS ?</button></h2>
-            <div id="qa1" class="accordion-collapse collapse" data-bs-parent="#accBottomTitan"><div class="accordion-body"><%= content.about_text %></div></div>
+    <div class="titan-faq-section" id="accTitan">
+        <div class="accordion-item-titan shadow-sm">
+            <h2 class="accordion-header"><button class="accordion-button-titan collapsed" data-bs-toggle="collapse" data-bs-target="#qa1"><i class="bi bi-info-circle-fill me-3 text-info"></i> QUI SOMMES-NOUS ?</button></h2>
+            <div id="qa1" class="accordion-collapse collapse" data-bs-parent="#accTitan"><div class="accordion-body-titan"><%= content.about_text %></div></div>
         </div>
-        <div class="accordion-item shadow-sm">
-            <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#qa2"><i class="bi bi-shield-lock-fill me-3 text-success"></i> RÈGLES DE SÉCURITÉ DU RÉSEAU</button></h2>
-            <div id="qa2" class="accordion-collapse collapse" data-bs-parent="#accBottomTitan"><div class="accordion-body" style="white-space: pre-line;"><%= content.rules_text %></div></div>
+        <div class="accordion-item-titan shadow-sm">
+            <h2 class="accordion-header"><button class="accordion-button-titan collapsed" data-bs-toggle="collapse" data-bs-target="#qa2"><i class="bi bi-shield-lock-fill me-3 text-success"></i> RÈGLES DE SÉCURITÉ ET RETRAITS</button></h2>
+            <div id="qa2" class="accordion-collapse collapse" data-bs-parent="#accTitan"><div class="accordion-body-titan" style="white-space: pre-line;"><%= content.rules_text %></div></div>
         </div>
-        <div class="accordion-item shadow-sm">
-            <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#qa3"><i class="bi bi-geo-alt-fill me-3 text-danger"></i> SIÈGE SOCIAL ET CONTACT</button></h2>
-            <div id="qa3" class="accordion-collapse collapse" data-bs-parent="#accBottomTitan">
-                <div class="accordion-body">
+        <div class="accordion-item-titan shadow-sm">
+            <h2 class="accordion-header"><button class="accordion-button-titan collapsed" data-bs-toggle="collapse" data-bs-target="#qa3"><i class="bi bi-geo-alt-fill me-3 text-danger"></i> SIÈGE SOCIAL ET SUPPORT WHATSAPP</button></h2>
+            <div id="qa3" class="accordion-collapse collapse" data-bs-parent="#accTitan">
+                <div class="accordion-body-titan">
                     <strong>ADRESSE :</strong> <%= content.contact_address %><br>
                     <strong>SUPPORT WHATSAPP :</strong> +243 <%= content.contact_phone %><br>
-                    <strong>EMAIL :</strong> <%= content.contact_email %>
+                    <strong>SUPPORT EMAIL :</strong> <%= content.contact_email %>
                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="text-center py-5 opacity-25">
-        <h1 class="footer-logo-text">CASHLINK</h1>
-        <p class="small fw-bold text-uppercase">Protocole de Minage v21.0 | Déployé en République Démocratique du Congo</p>
-        <p class="small">Sécurisé par CASHLINK MASTER RDC 2026</p>
+    <footer class="text-center py-5 opacity-20">
+        <h1 class="fw-900" style="font-family: 'Space Grotesk'; letter-spacing: -4px; font-size: 4rem;">CASHLINK</h1>
+        <p class="small fw-bold text-uppercase">Terminal de Minage Décentralisé v25.0 | RDC 2026</p>
     </footer>
 
-    <div class="modal fade" id="paymentTitanModal" tabindex="-1">
+    <div class="modal fade" id="payTitanModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered mx-3">
             <div class="modal-content modal-industrial text-dark shadow-lg">
                 <div class="modal-body p-5 text-center">
-                    <h3 class="fw-900 mb-4">RECHARGE DE COMPTE</h3>
-                    <p class="text-muted small fw-bold mb-4">Effectuez le transfert vers l'un des numéros administrateurs ci-dessous :</p>
-                    
+                    <h3 class="fw-900 mb-4">RECHARGE DU TERMINAL</h3>
                     <div class="payment-titan-card text-start">
-                        <span class="label-xs text-primary">M-PESA (VODACOM)</span>
+                        <small class="text-primary fw-bold">VODACOM (M-PESA)</small>
                         <div class="fw-900 fs-4"><%= content.admin_voda %></div>
                     </div>
                     <div class="payment-titan-card text-start">
-                        <span class="label-xs text-danger">AIRTEL MONEY</span>
+                        <small class="text-danger fw-bold">AIRTEL MONEY</small>
                         <div class="fw-900 fs-4 text-danger"><%= content.admin_airtel %></div>
                     </div>
                     <div class="payment-titan-card text-start">
-                        <span class="label-xs text-warning">ORANGE MONEY</span>
+                        <small class="text-warning fw-bold">ORANGE MONEY</small>
                         <div class="fw-900 fs-4 text-warning"><%= content.admin_orange %></div>
                     </div>
-                    
-                    <div class="alert alert-warning small fw-bold mt-4 rounded-4">
-                        <i class="bi bi-info-circle-fill me-2"></i> Après l'envoi, cliquez sur le bouton ci-dessous pour saisir la référence (TID).
+                    <div class="alert alert-danger rounded-4 fw-bold small my-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Veuillez saisir la référence (TID SMS) après avoir envoyé les fonds.
                     </div>
-                    
-                    <button onclick="processTID()" class="btn btn-primary w-100 py-3 rounded-pill fw-900 shadow-lg fs-5">J'AI ENVOYÉ LE PAIEMENT</button>
+                    <button onclick="commitFinalTID()" class="btn btn-primary w-100 py-4 rounded-pill fw-900 shadow-lg fs-5">J'AI ENVOYÉ LE PAIEMENT</button>
                 </div>
             </div>
         </div>
@@ -420,121 +397,65 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // --- VARIABLES GLOBALES ---
-        let packTitanName = ""; 
-        let packTitanPrice = 0;
-        const titanPayModal = new bootstrap.Modal(document.getElementById('paymentTitanModal'));
-        const titanBtnTop = document.getElementById('backToTopTitan');
-
-        // --- GESTION DU SCROLL ---
+        let selectedPack = ""; let selectedPrice = 0;
+        const titanPayModal = new bootstrap.Modal(document.getElementById('payTitanModal'));
+        
+        // SCROLL TOP
         window.onscroll = function() {
-            if (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) {
-                titanBtnTop.style.display = "flex";
-            } else {
-                titanBtnTop.style.display = "none";
-            }
+            const btn = document.getElementById('scrollTopTitan');
+            btn.style.display = (document.body.scrollTop > 400 || document.documentElement.scrollTop > 400) ? "flex" : "none";
         };
 
-        function scrollToTopTitan() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // COPY LINK
+        function copyFinalLink() {
+            const i = document.getElementById('refLinkFinal'); i.select();
+            document.execCommand('copy'); triggerToastTitan("Lien de parrainage copié avec succès !");
         }
 
-        // --- GESTION DU PARRAINAGE ---
-        function copyRefTitan() {
-            const input = document.getElementById('refLinkTitan');
-            input.select();
-            document.execCommand('copy');
-            triggerToast("Lien de parrainage copié avec succès !");
-        }
+        // ACTIONS BOUTIQUE
+        function openPaymentModal(id, price) { selectedPack = id; selectedPrice = price; titanPayModal.show(); }
 
-        // --- ACTIONS BOUTIQUE ---
-        function openPaymentModal(id, price) {
-            packTitanName = id;
-            packTitanPrice = price;
-            titanPayModal.show();
-        }
-
-        function processTID() {
+        function commitFinalTID() {
             titanPayModal.hide();
-            const tid = prompt("Veuillez saisir la référence (TID) de la transaction SMS :");
+            const tid = prompt("Veuillez saisir le TID de la transaction SMS :");
             if(tid && tid.length > 5) {
-                submitFinalData('/souscrire-pack', {
-                    packName: packTitanName,
-                    prix: packTitanPrice,
-                    reference: tid
-                });
+                submitTitanData('/souscrire-pack', { packName: selectedPack, prix: selectedPrice, reference: tid });
             } else {
-                alert("Référence TID invalide ou trop courte.");
+                alert("Référence invalide.");
             }
         }
 
         function handleWithdrawTitan() {
-            const montant = prompt("Montant du retrait (Minimum 1.000 FC) :");
-            if(montant && montant >= 1000) {
-                submitFinalData('/retrait', { montant: montant });
-            } else {
-                alert("Le montant minimum de retrait est de 1.000 FC.");
-            }
+            const m = prompt("Montant du retrait (Minimum 1.000 FC) :");
+            if(m >= 1000) submitTitanData('/retrait', { montant: m });
+            else alert("Le montant minimum est de 1.000 FC.");
         }
 
-        // --- FONCTION D'ENVOI AUTOMATIQUE (POST) ---
-        function submitFinalData(path, data) {
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = path;
-            for (const key in data) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = data[key];
-                form.appendChild(input);
-            }
-            document.body.appendChild(form);
-            form.submit();
+        function submitTitanData(path, data) {
+            const f = document.createElement('form'); f.method = 'POST'; f.action = path;
+            for (const k in data) { const i = document.createElement('input'); i.type = 'hidden'; i.name = k; i.value = data[k]; f.appendChild(i); }
+            document.body.appendChild(f); f.submit();
         }
 
-        // --- TIMER DE GAIN (24H) ---
-        function startTitanTimer() {
-            setInterval(() => {
-                const now = new Date();
-                const next = new Date();
-                next.setHours(24, 0, 0, 0);
-                const diff = next - now;
+        // TIMER 24H
+        setInterval(() => {
+            const now = new Date(); const next = new Date(); next.setHours(24, 0, 0, 0); const diff = next - now;
+            const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+            document.getElementById('titan-timer-final').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }, 1000);
 
-                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-                document.getElementById('titan-timer-gain').innerText = 
-                    (h < 10 ? "0"+h : h) + ":" + 
-                    (m < 10 ? "0"+m : m) + ":" + 
-                    (s < 10 ? "0"+s : s);
-            }, 1000);
-        }
-        
-        startTitanTimer();
-
-        // --- SYSTEME DE TOASTS ÉLITE (SIMULATION D'ACTIVITÉ) ---
-        function triggerToast(message) {
-            const toast = document.getElementById('titan-toast-container');
-            document.getElementById('toast-message-content').innerText = message;
-            toast.style.display = "flex";
-            setTimeout(() => {
-                toast.style.display = "none";
-            }, 5000);
+        // TOASTS & SIMULATION
+        function triggerToastTitan(m) {
+            const t = document.getElementById('titan-toast-box');
+            document.getElementById('toast-msg-final').innerText = m;
+            t.style.display = "flex"; setTimeout(() => t.style.display = "none", 5000);
         }
 
-        function simulateNetworkActivity() {
-            const names = ["Patrick", "Mado", "Guelord", "Sarah", "Elvis", "Clara", "Junior", "Bijou"];
-            const actions = ["vient de retirer 25.000 FC", "a activé le pack GOLD", "a reçu son bonus de parrainage", "vient de s'inscrire au réseau Elite"];
-            
-            setInterval(() => {
-                const name = names[Math.floor(Math.random() * names.length)];
-                const action = actions[Math.floor(Math.random() * actions.length)];
-                if(Math.random() > 0.5) triggerToast(name + " " + action);
-            }, 25000);
-        }
-        simulateNetworkActivity();
+        const names = ["Patrick", "Mado", "Sarah", "Guelord", "Elvis", "Bijou", "Junior"];
+        const acts = ["vient de retirer 25.000 FC", "a activé le pack GOLD", "vient de parrainer un ami", "a reçu son bonus de minage"];
+        setInterval(() => {
+            if(Math.random() > 0.5) triggerToastTitan(`${names[Math.floor(Math.random()*names.length)]} ${acts[Math.floor(Math.random()*acts.length)]}`);
+        }, 20000);
     </script>
 </body>
 </html>
