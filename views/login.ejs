@@ -2,246 +2,209 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CASHLINK ELITE | Accès Membres</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CASH LINK | ACCÈS SÉCURISÉ</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
         :root {
-            --bleu-bic: #003399;
-            --neon-blue: #00d9ff;
-            --dark-deep: #001133;
+            --primary: #003399;
+            --accent: #00d9ff;
+            --warning: #fbbf24;
+            --dark: #000c26;
+            --white: #ffffff;
         }
 
         body {
-            background-color: var(--bleu-bic);
-            background-image: radial-gradient(at 0% 0%, #0044cc 0, transparent 50%), 
-                              radial-gradient(at 100% 100%, var(--dark-deep) 0, transparent 50%);
-            background-attachment: fixed;
+            background-color: var(--dark);
+            background-image: radial-gradient(circle at 50% 50%, #001f5c, transparent), url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
             font-family: 'Plus Jakarta Sans', sans-serif;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0;
-            overflow: hidden;
-            letter-spacing: -0.4px;
+            color: var(--white);
+            display: flex; align-items: center; justify-content: center;
+            min-height: 100vh; margin: 0; padding: 20px;
         }
 
         .auth-container {
-            width: 100%;
-            max-width: 450px;
-            padding: 20px;
-            perspective: 1000px;
+            width: 100%; max-width: 450px;
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px; padding: 40px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
         }
 
-        .auth-card {
-            background: #ffffff;
-            border-radius: 40px;
-            padding: 50px 40px;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.5);
-            border: 1px solid rgba(255,255,255,0.2);
-            position: relative;
+        .auth-tab-btn {
+            background: transparent; border: none; color: rgba(255,255,255,0.4);
+            font-weight: 800; font-size: 0.9rem; padding: 10px 20px;
+            transition: 0.3s; border-bottom: 3px solid transparent;
         }
+        .auth-tab-btn.active { color: var(--warning); border-bottom-color: var(--warning); }
 
-        .brand-logo {
-            font-weight: 900;
-            color: var(--bleu-bic);
-            font-size: 2.2rem;
-            text-align: center;
-            letter-spacing: -2.5px;
-            margin-bottom: 5px;
-            display: block;
-            text-decoration: none;
+        .form-label { font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+        
+        .input-group-custom {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 18px; padding: 5px 15px;
+            display: flex; align-items: center; margin-bottom: 20px;
         }
-
-        .brand-subtitle {
-            text-align: center;
-            color: #64748b;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 20px; /* Réduit pour laisser place à l'alerte */
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .input-group-custom input {
+            background: transparent; border: none; color: white;
+            padding: 10px; width: 100%; font-weight: 600;
         }
-
-        /* --- ALERTE CUSTOM --- */
-        .alert-custom {
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 700;
-            border: none;
-            margin-bottom: 25px;
-        }
-
-        /* --- TABS --- */
-        .nav-pills {
-            background: #f1f5f9;
-            padding: 6px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-        }
-
-        .nav-pills .nav-link {
-            border-radius: 15px;
-            font-weight: 800;
-            font-size: 0.85rem;
-            color: #64748b;
-            padding: 12px;
-            transition: 0.3s;
-        }
-
-        .nav-pills .nav-link.active {
-            background-color: var(--bleu-bic);
-            color: #ffffff;
-            box-shadow: 0 10px 20px rgba(0,51,153,0.2);
-        }
-
-        .form-label {
-            font-weight: 700;
-            color: #1e293b;
-            font-size: 0.8rem;
-            margin-left: 10px;
-            margin-bottom: 8px;
-        }
-
-        .input-group-text {
-            background: #f8fafc;
-            border: 2px solid #f1f5f9;
-            border-right: none;
-            border-radius: 15px 0 0 15px;
-            color: #94a3b8;
-        }
-
-        .form-control {
-            background: #f8fafc;
-            border: 2px solid #f1f5f9;
-            border-left: none;
-            border-radius: 0 15px 15px 0;
-            padding: 14px;
-            font-weight: 600;
-            color: #0f172a;
-            font-size: 0.95rem;
-            transition: 0.3s;
-        }
-
-        .form-control:focus {
-            background: #ffffff;
-            border-color: var(--neon-blue);
-            box-shadow: none;
-            outline: none;
-        }
+        .input-group-custom i { color: var(--accent); font-size: 1.2rem; }
 
         .btn-auth {
-            background: var(--bleu-bic);
-            color: white;
-            border: none;
-            border-radius: 18px;
-            padding: 16px;
-            font-weight: 800;
-            font-size: 1rem;
-            width: 100%;
-            margin-top: 10px;
-            transition: 0.4s;
-            box-shadow: 0 10px 25px rgba(0,51,153,0.3);
+            background: var(--warning); color: var(--primary);
+            border: none; width: 100%; padding: 15px;
+            border-radius: 18px; font-weight: 900;
+            text-transform: uppercase; margin-top: 10px;
+            transition: 0.3s;
         }
+        .btn-auth:hover { transform: translateY(-3px); background: white; }
 
-        .btn-auth:hover {
-            transform: translateY(-3px);
-            background: var(--dark-deep);
-            color: white;
-        }
+        .toggle-pass { cursor: pointer; opacity: 0.5; transition: 0.3s; }
+        .toggle-pass:hover { opacity: 1; color: var(--warning); }
 
-        .footer-note {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 0.75rem;
-            color: rgba(255,255,255,0.5);
-            font-weight: 500;
-        }
+        .form-panel { display: none; }
+        .form-panel.active { display: block; animation: fadeInUp 0.5s; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <div class="auth-container animate__animated animate__zoomIn">
-        <div class="auth-card">
-            <a href="/" class="brand-logo">CASHLINK</a>
-            <div class="brand-subtitle">Elite Mining System</div>
+        <div class="text-center mb-4">
+            <h2 class="fw-900 mb-0">CASH LINK</h2>
+            <p class="small fw-bold opacity-50">TERMINAL SÉCURISÉ RDC</p>
+        </div>
 
-            <% if(typeof msg !== 'undefined' && msg) { %>
-                <div class="alert alert-info alert-custom animate__animated animate__shakeX text-center">
-                    <i class="bi bi-exclamation-circle-fill me-2"></i> <%= msg %>
-                </div>
-            <% } %>
+        <div class="d-flex justify-content-center gap-3 mb-5">
+            <button class="auth-tab-btn active" onclick="showTab('login-box', this)">CONNEXION</button>
+            <button class="auth-tab-btn" onclick="showTab('register-box', this)">INSCRIPTION</button>
+        </div>
 
-            <ul class="nav nav-pills nav-justified mb-4" id="authTab" role="tablist">
-                <li class="nav-item">
-                    <button class="nav-link active" id="login-tab" data-bs-toggle="pill" data-bs-target="#login" type="button">CONNEXION</button>
-                </li>
-                <li class="nav-item">
-                    <button class="nav-link" id="register-tab" data-bs-toggle="pill" data-bs-target="#register" type="button">INSCRIPTION</button>
-                </li>
-            </ul>
-
-            <div class="tab-content">
-                <div class="tab-pane fade show active" id="login">
-                    <form action="/login" method="POST">
-                        <div class="mb-3">
-                            <label class="form-label">Numéro de téléphone</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-phone"></i></span>
-                                <input type="text" name="phone" class="form-control" placeholder="Ex: 0812345678" required>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Mot de passe</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-auth">ACCÉDER AU DASHBOARD</button>
-                    </form>
+        <div id="login-box" class="form-panel active">
+            <form action="/login" method="POST">
+                <label class="form-label">Nom d'utilisateur</label>
+                <div class="input-group-custom">
+                    <i class="bi bi-person-fill"></i>
+                    <input type="text" name="username" required placeholder="Votre nom">
                 </div>
 
-                <div class="tab-pane fade" id="register">
-                    <form action="/register" method="POST">
-                        <div class="mb-3">
-                            <label class="form-label">Nom complet</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-person"></i></span>
-                                <input type="text" name="username" class="form-control" placeholder="Votre nom" required>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Téléphone (Définitif)</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-phone-vibrate"></i></span>
-                                <input type="text" name="phone" class="form-control" maxlength="10" placeholder="08..." required>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label">Créer un mot de passe</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="bi bi-shield-lock"></i></span>
-                                <input type="password" name="password" class="form-control" placeholder="Min. 6 caractères" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-auth">CRÉER MON COMPTE ELITE</button>
-                    </form>
+                <label class="form-label">Code Secret (Mot de passe)</label>
+                <div class="input-group-custom">
+                    <i class="bi bi-lock-fill"></i>
+                    <input type="password" name="password" id="pass-log" required placeholder="Min 4 chiffres">
+                    <i class="bi bi-eye-fill toggle-pass" onclick="toggleView('pass-log')"></i>
                 </div>
+
+                <button type="submit" class="btn-auth">Entrer dans le terminal</button>
+            </form>
+            <div class="text-center mt-4">
+                <a href="#" onclick="showTab('recovery-box', null)" class="small text-decoration-none text-accent fw-bold">Mot de passe oublié ?</a>
             </div>
         </div>
-        <div class="footer-note">
-            &copy; 2026 Cashlink Elite. Tous droits réservés.<br>
-            Système de minage cloud sécurisé.
+
+        <div id="register-box" class="form-panel">
+            <form action="/register" method="POST" onsubmit="return validateReg()">
+                <label class="form-label">Nom Complet</label>
+                <div class="input-group-custom">
+                    <i class="bi bi-person-plus-fill"></i>
+                    <input type="text" name="username" required placeholder="Ex: Anash Master">
+                </div>
+
+                <label class="form-label">Téléphone (9 chiffres)</label>
+                <div class="input-group-custom">
+                    <span class="fw-bold text-accent me-2">+243</span>
+                    <input type="number" name="phone" id="reg-phone" required placeholder="82XXXXXXX">
+                </div>
+
+                <label class="form-label">Mot de passe (4 chiffres minimum)</label>
+                <div class="input-group-custom">
+                    <i class="bi bi-shield-lock-fill"></i>
+                    <input type="password" name="password" id="pass-reg" required placeholder="Ex: 1234">
+                    <i class="bi bi-eye-fill toggle-pass" onclick="toggleView('pass-reg')"></i>
+                </div>
+
+                <hr class="opacity-10 my-4">
+                <p class="small fw-bold text-warning mb-3">QUESTIONS DE SÉCURITÉ (Récupération)</p>
+
+                <label class="form-label">Votre Lieu de Naissance</label>
+                <div class="input-group-custom">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    <input type="text" name="q_naissance" required placeholder="Ex: Goma">
+                </div>
+
+                <label class="form-label">Le Nom de votre Père</label>
+                <div class="input-group-custom">
+                    <i class="bi bi-person-heart"></i>
+                    <input type="text" name="q_pere" required placeholder="Ex: Justin">
+                </div>
+
+                <button type="submit" class="btn-auth">Créer mon compte & Miner</button>
+            </form>
+        </div>
+
+        <div id="recovery-box" class="form-panel">
+            <h6 class="text-center text-warning fw-bold mb-4">RÉCUPÉRATION DE COMPTE</h6>
+            <form action="/recovery" method="POST">
+                <label class="form-label">Votre numéro (9 chiffres)</label>
+                <div class="input-group-custom">
+                    <span class="fw-bold text-accent me-2">+243</span>
+                    <input type="number" name="phone" required placeholder="82XXXXXXX">
+                </div>
+
+                <label class="form-label">Lieu de Naissance</label>
+                <div class="input-group-custom">
+                    <input type="text" name="q_naissance" required placeholder="Réponse 1">
+                </div>
+
+                <label class="form-label">Nom du Père</label>
+                <div class="input-group-custom">
+                    <input type="text" name="q_pere" required placeholder="Réponse 2">
+                </div>
+
+                <button type="submit" class="btn-auth">Afficher mon mot de passe</button>
+                <button type="button" onclick="showTab('login-box', null)" class="btn btn-link w-100 text-white opacity-50 small mt-2">Retour</button>
+            </form>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showTab(id, btn) {
+            document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if(btn) {
+                document.querySelectorAll('.auth-tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+        }
+
+        function toggleView(id) {
+            const input = document.getElementById(id);
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function validateReg() {
+            const phone = document.getElementById('reg-phone').value;
+            const pass = document.getElementById('pass-reg').value;
+
+            if(phone.length !== 9) {
+                alert("Le numéro doit contenir exactement 9 chiffres après le +243.");
+                return false;
+            }
+            if(pass.length < 4 || isNaN(pass)) {
+                alert("Le mot de passe doit contenir au moins 4 chiffres.");
+                return false;
+            }
+            return true;
+        }
+    </script>
 </body>
 </html>
