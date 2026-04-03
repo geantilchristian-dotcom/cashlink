@@ -1,8 +1,8 @@
 /**
  * ==============================================================================
- * CASHLINK ELITE v27.4 - CORRECTIF CRITIQUE SAUVEGARDE (RDC 2026)
+ * CASHLINK ELITE v27.5 - RÉSOLUTIONS DES ERREURS DE SAUVEGARDE (RDC 2026)
  * ------------------------------------------------------------------------------
- * CHANGEMENT : Utilisation de db.config.remove + insert pour forcer l'écriture.
+ * CORRECTIF : Suppression des contraintes d'ID pour permettre l'écriture libre.
  * ==============================================================================
  */
 
@@ -43,7 +43,7 @@ app.use(session({
     cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 }
 }));
 
-// --- 3. DONNÉES INITIALES ---
+// --- 3. DONNÉES PAR DÉFAUT ---
 const MASTER_UID = "ANASH_MASTER_SESSION_2026";
 const INITIAL_SITE_CONTENT = {
     _id: "UI_CONTENT",
@@ -90,7 +90,7 @@ function addSystemLog(type, msg) {
     db.logs.insert({ date: new Date().toLocaleString('fr-FR'), type, msg, ts: Date.now() });
 }
 
-// --- 5. ROUTES DASHBOARD ---
+// --- 5. DASHBOARD ---
 app.get('/', (req, res) => {
     const defaultUser = { _id: MASTER_UID, username: "ANASH MASTER", solde: 0, bonus: 0, pack: 'Aucun', investDate: null };
     db.users.findOne({ _id: MASTER_UID }, (err, user) => {
@@ -107,24 +107,26 @@ app.get('/', (req, res) => {
     });
 });
 
-// --- 6. SAUVEGARDE ADMIN (VERSION FORCE BRUTE) ---
+// --- 6. SAUVEGARDE ADMIN (VERSION RÉPARÉE) ---
 app.post('/admin/update-content', (req, res) => {
     const updateData = req.body;
-    updateData._id = "UI_CONTENT"; // On s'assure de garder le bon ID
+    
+    // On retire l'ID s'il est présent dans le body pour éviter les conflits NeDB
+    delete updateData._id;
 
-    // ÉTAPE 1 : Supprimer l'ancienne config
-    db.config.remove({ _id: "UI_CONTENT" }, { multi: true }, (err) => {
-        // ÉTAPE 2 : Insérer la nouvelle config
-        db.config.insert(updateData, (err, newDoc) => {
-            if (err) return res.status(500).send("Erreur fatale");
-            
-            // ÉTAPE 3 : Forcer NeDB à écrire sur le disque immédiatement
-            db.config.persistence.compactDatafile();
-            
-            addSystemLog("CMS", "Changement de contenu forcé par Admin.");
-            
-            setTimeout(() => { res.redirect('/admin'); }, 500);
-        });
+    // On force la mise à jour de l'unique document de config
+    db.config.update({ _id: "UI_CONTENT" }, { $set: updateData }, { upsert: true }, (err) => {
+        if (err) {
+            console.log("Erreur NeDB:", err);
+            return res.redirect('/admin?err=SAVE_FAILED');
+        }
+        
+        // On force NeDB à écrire sur le disque immédiatement
+        db.config.persistence.compactDatafile();
+        
+        addSystemLog("CMS", "Informations du site mises à jour.");
+        
+        setTimeout(() => { res.redirect('/admin'); }, 500);
     });
 });
 
@@ -200,5 +202,5 @@ app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-    console.log("💎 CASHLINK v27.4 INDUSTRIEL ACTIF");
+    console.log("💎 CASHLINK v27.5 INDUSTRIEL ACTIF");
 });
