@@ -1,8 +1,8 @@
 /**
  * ============================================================
- * CASHLINK ELITE v10.0 - MOTEUR DE CONTRÔLE ABSOLU
- * FIX : ZÉRO REDIRECTION (ANTI-BOUCLE RENDER)
- * FONCTION : PILOTAGE DYNAMIQUE DU DASHBOARD & LOGIQUE GAINS
+ * CASHLINK ELITE v11.0 - SYSTÈME DE CONTRÔLE TOTAL
+ * FIX RENDRE : ZÉRO REDIRECTION (AFFICHAGE DIRECT)
+ * FONCTION : PILOTAGE CMS + LOGIQUE FINANCIÈRE
  * ============================================================
  */
 
@@ -15,17 +15,12 @@ const fs = require('fs');
 
 const app = express();
 
-// --- 1. GESTION DES RÉPERTOIRES (FIX PERMISSIONS RENDER) ---
-const dbPath = '/tmp/cashlink_v10_prod';
+// --- 1. CONFIGURATION BASES DE DONNÉES (MODE SURVIE CLOUD) ---
+const dbPath = '/tmp/cashlink_v11_data';
 if (!fs.existsSync(dbPath)) {
-    try {
-        fs.mkdirSync(dbPath, { recursive: true });
-    } catch (e) {
-        console.log("⚠️ Dossier /tmp inaccessible, NeDB en mode volatile.");
-    }
+    try { fs.mkdirSync(dbPath, { recursive: true }); } catch (e) {}
 }
 
-// Initialisation des bases de données
 const db = {
     users: new Datastore({ filename: path.join(dbPath, 'users.db'), autoload: true }),
     tx: new Datastore({ filename: path.join(dbPath, 'transactions.db'), autoload: true }),
@@ -33,23 +28,22 @@ const db = {
     logs: new Datastore({ filename: path.join(dbPath, 'activity.db'), autoload: true })
 };
 
-// --- 2. CONFIGURATION DU SERVEUR ---
+// --- 2. CONFIGURATION SERVEUR ---
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Session stable
 app.use(session({
-    secret: 'anash_master_blockchain_key_2026',
+    secret: 'anash_master_ultra_2026_fixed',
     resave: true,
     saveUninitialized: true,
     cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// --- 3. PARAMÈTRES D'AFFICHAGE DYNAMIQUES (CMS) ---
-const INITIAL_SITE_DATA = {
+// --- 3. PARAMÈTRES CMS (TEXTES MODIFIABLES VIA ADMIN) ---
+const INITIAL_SITE_CONTENT = {
     _id: "UI_CONTENT",
     tag_tech: "TECHNOLOGIE RDC 2026",
     titre_principal: "MINAGE AUTO",
@@ -64,8 +58,8 @@ const INITIAL_SITE_DATA = {
     admin_airtel: "0990000000"
 };
 
-// Initialisation de la config si vide
-db.config.update({ _id: "UI_CONTENT" }, { $setOnInsert: INITIAL_SITE_DATA }, { upsert: true });
+// Initialisation de la configuration
+db.config.update({ _id: "UI_CONTENT" }, { $setOnInsert: INITIAL_SITE_CONTENT }, { upsert: true });
 
 const PACKS_SETTINGS = {
     'BRONZE':  { prix: 50000,   bonus: 5000 },
@@ -74,55 +68,55 @@ const PACKS_SETTINGS = {
     'DIAMOND': { prix: 1000000, bonus: 120000 }
 };
 
-const MASTER_ID = "ANASH_MASTER_SESSION_2026";
+const MASTER_UID = "ANASH_MASTER_SESSION_2026";
 
 // --- 4. FONCTIONS DE CALCUL & LOGS ---
 
-function getProgress(startDate) {
+function getMiningProgress(startDate) {
     if (!startDate) return 0;
     const diff = (new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24);
     return Math.min((diff / 30) * 100, 100).toFixed(2);
 }
 
-function addLog(msg) {
-    db.logs.insert({ date: new Date().toLocaleString('fr-FR'), text: msg });
+function addLogEntry(text) {
+    db.logs.insert({ date: new Date().toLocaleString('fr-FR'), text: text });
 }
 
-// --- 5. ROUTE UNIQUE (C'EST ICI QUE LA BOUCLE SE CASSE) ---
+// --- 5. LA ROUTE UNIQUE (PLUS DE REDIRECTION = PLUS DE BUG) ---
 
-// Au lieu de rediriger vers /dashboard, on rend directement la vue
+/**
+ * Route / : Elle gère la création ET l'affichage du Dashboard en un seul bloc.
+ * C'est la solution pour arriver directement devant ton Dashboard.
+ */
 app.get('/', (req, res) => {
-    const userDefault = {
-        _id: MASTER_ID,
+    const userSeed = {
+        _id: MASTER_UID,
         username: "ANASH MASTER",
         phone: "970000000",
         solde: 0, bonus: 0, pack: 'Aucun', investDate: null, certified: true
     };
 
-    // 1. On s'assure que l'utilisateur existe
-    db.users.update({ _id: MASTER_ID }, { $set: userDefault }, { upsert: true }, () => {
+    // 1. Assurer l'existence de l'user sans redirect
+    db.users.update({ _id: MASTER_UID }, { $set: userSeed }, { upsert: true }, (err) => {
         
-        // 2. On récupère les données à afficher (User + Config Site)
-        db.users.findOne({ _id: MASTER_ID }, (err, user) => {
+        // 2. Récupérer l'user + la config des textes
+        db.users.findOne({ _id: MASTER_UID }, (err, user) => {
             db.config.findOne({ _id: "UI_CONTENT" }, (err, site) => {
                 
-                const p = getProgress(user.investDate);
+                const progress = getMiningProgress(user.investDate);
                 
-                // 3. AFFICHAGE DIRECT (Zéro redirection)
+                // 3. AFFICHAGE DIRECT
                 res.render('dashboard', {
                     user: user,
-                    p: p,
-                    content: site || INITIAL_SITE_DATA
+                    p: progress,
+                    content: site || INITIAL_SITE_CONTENT
                 });
             });
         });
     });
 });
 
-// Alias au cas où, mais / est la route principale désormais
-app.get('/dashboard', (req, res) => { res.redirect('/'); });
-
-// --- 6. LOGIQUE ADMINISTRATION (LE CERVEAU) ---
+// --- 6. LOGIQUE ADMINISTRATION ---
 
 app.get('/admin', (req, res) => {
     db.users.find({}, (err, users) => {
@@ -140,7 +134,7 @@ app.get('/admin', (req, res) => {
                         users: users || [],
                         transactions: txs || [],
                         stats: stats,
-                        site: site || INITIAL_SITE_DATA,
+                        site: site || INITIAL_SITE_CONTENT,
                         messages: logs || []
                     });
                 });
@@ -149,19 +143,15 @@ app.get('/admin', (req, res) => {
     });
 });
 
-/**
- * MISE À JOUR DU DASHBOARD DEPUIS L'ADMIN
- */
+// Mise à jour des textes (TECHNOLOGIE RDC, etc.)
 app.post('/admin/update-content', (req, res) => {
     db.config.update({ _id: "UI_CONTENT" }, { $set: req.body }, {}, () => {
-        addLog("Modification des textes promotionnels du Dashboard");
-        res.redirect('/admin?msg=MISE_A_JOUR_OK');
+        addLogEntry("Mise à jour des textes promotionnels par l'Admin");
+        res.redirect('/admin');
     });
 });
 
-/**
- * VALIDATION DE PAIEMENT (TRANSFERT SOLDE + BONUS)
- */
+// Validation des paiements (Solde + Bonus)
 app.post('/valider-depot', (req, res) => {
     const { txId } = req.body;
     db.tx.findOne({ _id: txId }, (err, tx) => {
@@ -174,8 +164,8 @@ app.post('/valider-depot', (req, res) => {
             $inc: { solde: tx.montant, bonus: bonusAmount } 
         }, {}, () => {
             db.tx.update({ _id: txId }, { $set: { statut: "Validé" } }, {}, () => {
-                addLog(`Validation TID ${tx.reference} : Solde +${tx.montant} FC / Bonus +${bonusAmount} FC`);
-                res.redirect('/admin?msg=VALIDE');
+                addLogEntry(`TID ${tx.reference} validé (+${bonusAmount} Bonus)`);
+                res.redirect('/admin');
             });
         });
     });
@@ -186,7 +176,7 @@ app.post('/valider-depot', (req, res) => {
 app.post('/souscrire-pack', (req, res) => {
     const { packName, prix, reference } = req.body;
     const tx = {
-        userId: MASTER_ID,
+        userId: MASTER_UID,
         type: "ACHAT " + packName,
         montant: Number(prix),
         reference: reference,
@@ -194,19 +184,19 @@ app.post('/souscrire-pack', (req, res) => {
         date: new Date().toLocaleString('fr-FR')
     };
     db.tx.insert(tx, () => {
-        addLog(`Demande de pack ${packName} soumise (Réf: ${reference})`);
-        res.redirect('/?msg=TID_ENVOYE');
+        addLogEntry(`Nouveau TID soumis : ${reference}`);
+        res.redirect('/?msg=TID_OK');
     });
 });
 
 app.post('/activer-investissement', (req, res) => {
     const prix = Number(req.body.prix);
-    db.users.findOne({ _id: MASTER_ID }, (err, user) => {
+    db.users.findOne({ _id: MASTER_UID }, (err, user) => {
         if (user && user.solde >= prix) {
-            db.users.update({ _id: MASTER_ID }, {
+            db.users.update({ _id: MASTER_UID }, {
                 $set: { solde: user.solde - prix, pack: req.body.packName, investDate: new Date().toISOString() }
             }, {}, () => {
-                addLog(`Démarrage du minage : Pack ${req.body.packName}`);
+                addLogEntry(`Minage activé : Pack ${req.body.packName}`);
                 res.redirect('/');
             });
         } else {
@@ -218,7 +208,8 @@ app.post('/activer-investissement', (req, res) => {
 // --- 8. DÉMARRAGE ---
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-    console.log("==========================================");
-    console.log(`🚀 MASTER ENGINE v10.0 ACTIF SUR PORT ${PORT}`);
-    console.log("==========================================");
+    console.log("====================================================");
+    console.log(`🚀 MASTER ENGINE v11.0 DÉPLOYÉ SUR TERMINAL RDC`);
+    console.log(`🌍 ACCÈS DIRECT SUR PORT : ${PORT}`);
+    console.log("====================================================");
 });
