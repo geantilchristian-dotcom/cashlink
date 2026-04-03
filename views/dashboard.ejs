@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHLINK | ESPACE ELITE</title>
+    <title>CASHLINK | TERMINAL DE MINAGE ELITE v4.0</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -11,320 +11,542 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
+        /* ============================================================
+           SYSTÈME DE DESIGN "TITAN v4.0" - RDC EDITION 
+           ============================================================
+        */
         :root {
             --primary: #003399;
+            --primary-dark: #001a4d;
             --accent: #00d9ff;
             --success: #10b981;
             --warning: #fbbf24;
             --danger: #f43f5e;
-            --dark: #000c26;
-            --white: #ffffff;
-            --glass: rgba(255, 255, 255, 0.05);
-            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --dark-core: #000c26;
+            --white-pure: #ffffff;
+            --slate-100: #f1f5f9;
+            --slate-600: #475569;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --shadow-elite: 0 30px 70px rgba(0,0,0,0.6);
+            --transition-master: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
+        /* RESET ET OPTIMISATION MOBILE */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none !important; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--dark-core); }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
 
         body {
-            background-color: var(--dark);
-            background-image: radial-gradient(circle at 10% 10%, #001f5c, transparent 40%), url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            background-color: var(--dark-core);
+            background-image: 
+                radial-gradient(circle at 10% 10%, #001f5c, transparent 40%),
+                radial-gradient(circle at 90% 90%, #00061a, transparent 40%),
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
             background-attachment: fixed;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            color: var(--white);
+            color: var(--white-pure);
             margin: 0; padding: 0; min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- NAVIGATION --- */
-        .master-nav {
+        /* ------------------------------------------------------------
+           COMPOSANT : NAVIGATION MASTER 
+           ------------------------------------------------------------
+        */
+        .navbar-terminal {
             background: var(--warning);
             height: 85px;
-            padding: 0 15px;
+            padding: 0 20px;
             position: sticky; top: 0; z-index: 3000;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 10px 50px rgba(0,0,0,0.7);
+            border-bottom: 5px solid rgba(0,0,0,0.15);
         }
 
-        .cashlink-brand { font-weight: 900; font-size: 1.6rem; color: var(--primary); letter-spacing: -2px; text-decoration: none !important; }
-
-        .balance-container {
-            background: var(--white);
-            padding: 8px 15px;
-            border-radius: 50px;
-            display: flex; align-items: center; gap: 12px;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+        .brand-text {
+            font-weight: 900;
+            font-size: 1.8rem;
+            color: var(--primary);
+            letter-spacing: -2px;
+            text-decoration: none !important;
+            text-transform: uppercase;
         }
 
-        .bal-item { display: flex; flex-direction: column; line-height: 1; }
-        .bal-label { font-size: 0.5rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
-        .bal-val { font-size: 0.9rem; font-weight: 900; color: var(--primary); }
+        .nav-btn-square {
+            background: var(--primary); color: white; border-radius: 14px;
+            width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
+            text-decoration: none; border: 2px solid rgba(255,255,255,0.2);
+            transition: var(--transition-master);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .nav-btn-square:hover { transform: scale(1.1) rotate(-5deg); background: #000; }
 
-        .client-info { text-align: right; line-height: 1.1; color: var(--primary); }
+        .balance-pill {
+            background: var(--white-pure);
+            padding: 10px 25px;
+            border-radius: 60px;
+            display: flex; align-items: center; gap: 20px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+        }
 
-        /* --- MARKETING CASE --- */
-        .marketing-zone {
-            background: var(--white);
-            padding: 60px 20px;
+        .bal-data { display: flex; flex-direction: column; line-height: 1.1; }
+        .bal-tag { font-size: 0.55rem; font-weight: 800; color: var(--slate-600); text-transform: uppercase; margin-bottom: 2px; }
+        .bal-val { font-size: 1.05rem; font-weight: 900; color: var(--primary); }
+        .bal-val.bonus { color: var(--success); }
+
+        .client-profile-header {
+            text-align: right; line-height: 1.2;
+            color: var(--primary);
+            padding-right: 10px;
+        }
+        .cp-name { font-weight: 900; font-size: 1rem; display: block; text-transform: uppercase; }
+        .cp-phone { font-weight: 700; font-size: 0.8rem; opacity: 0.8; }
+
+        /* ------------------------------------------------------------
+           COMPOSANT : CASE MARKETING TYPOGRAPHIQUE 
+           ------------------------------------------------------------
+        */
+        .marketing-white-container {
+            background: var(--white-pure);
+            padding: 90px 30px;
             text-align: center;
-            border-radius: 0 0 50px 50px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+            border-radius: 0 0 65px 65px;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.6);
             color: #000;
+            margin-bottom: 45px;
+            position: relative;
         }
-        .mkt-title { font-size: 2.8rem; font-weight: 900; line-height: 1; color: var(--primary); margin-bottom: 20px; letter-spacing: -2px; }
-        .mkt-p { font-size: 1.1rem; font-weight: 700; opacity: 0.7; max-width: 600px; margin: 0 auto; }
 
-        /* --- AFFILIATION --- */
-        .affiliate-section {
+        .mkt-title-elite {
+            font-size: 3.5rem; font-weight: 900; line-height: 0.85;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 25px; letter-spacing: -3px;
+        }
+
+        .mkt-text-elite {
+            font-size: 1.25rem; font-weight: 700; color: var(--slate-600);
+            max-width: 750px; margin: 0 auto 40px; line-height: 1.6;
+        }
+
+        .btn-share-master {
+            background: transparent; border: 2.5px solid var(--primary);
+            color: var(--primary); padding: 14px 40px; border-radius: 50px;
+            font-weight: 900; font-size: 0.85rem; text-transform: uppercase;
+            transition: var(--transition-master);
+        }
+        .btn-share-master:hover { background: var(--primary); color: white; transform: translateY(-3px); }
+
+        /* ------------------------------------------------------------
+           COMPOSANT : AFFILIATION ET PARRAINAGE 
+           ------------------------------------------------------------
+        */
+        .affiliation-bar {
             background: rgba(255,255,255,0.03);
-            margin: 20px 15px;
-            padding: 20px;
-            border-radius: 30px;
-            border: 1px solid var(--glass);
+            margin: 0 20px 40px;
+            padding: 30px;
+            border-radius: 40px;
+            border: 1px solid var(--glass-border);
             display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap; gap: 15px;
-        }
-
-        /* --- MINING CARD --- */
-        .mining-card {
-            background: rgba(0,0,0,0.4);
+            flex-wrap: wrap; gap: 25px;
             backdrop-filter: blur(20px);
-            border: 1px solid var(--glass);
-            border-radius: 40px; padding: 30px; margin: 15px;
         }
 
-        .progress-bar-elite {
-            height: 12px; background: rgba(255,255,255,0.05);
-            border-radius: 50px; overflow: hidden; margin: 20px 0;
+        .aff-stat-wrapper { display: flex; align-items: center; gap: 20px; }
+        .aff-icon-square { 
+            background: var(--warning); color: var(--primary); 
+            padding: 15px; border-radius: 22px; font-size: 1.5rem; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        .btn-copy-referral {
+            background: var(--primary); color: white; border: none;
+            padding: 16px 35px; border-radius: 50px; font-weight: 900;
+            font-size: 0.85rem; letter-spacing: 0.5px; transition: 0.3s;
+            box-shadow: 0 15px 35px rgba(0, 51, 153, 0.4);
+        }
+        .btn-copy-referral:active { transform: scale(0.94); }
+
+        /* ------------------------------------------------------------
+           COMPOSANT : TERMINAL DE MINAGE 
+           ------------------------------------------------------------
+        */
+        .mining-interface-wrapper { padding: 0 20px 50px; }
+        .mining-glass-panel {
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(35px);
+            border: 1px solid var(--glass-border);
+            border-radius: 55px; padding: 50px;
+            position: relative; overflow: hidden;
+            box-shadow: var(--shadow-elite);
+        }
+
+        .mining-status-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; }
+        .mining-h-title { font-weight: 900; text-transform: uppercase; margin-bottom: 0; color: var(--accent); letter-spacing: 1px; }
+        .mining-h-sub { opacity: 0.5; font-size: 0.8rem; font-weight: 600; }
+
+        .elite-progress-track {
+            height: 16px; background: rgba(255,255,255,0.06);
+            border-radius: 50px; overflow: hidden; margin: 30px 0;
             border: 1px solid rgba(255,255,255,0.1);
         }
-        .bar-fill {
-            background: linear-gradient(90deg, var(--accent), var(--success));
+        .elite-bar-fill {
+            background: linear-gradient(90deg, var(--accent), var(--success), var(--accent));
+            background-size: 200% 100%;
             height: 100%; position: relative;
+            box-shadow: 0 0 35px rgba(0, 217, 255, 0.5);
+            animation: flow-animation 3.5s linear infinite;
         }
-        .bar-fill::after {
-            content: ""; position: absolute; top:0; left:0; right:0; bottom:0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: sweep 2s infinite;
-        }
-        @keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+        @keyframes flow-animation { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        /* --- PACKS GRID (DOUBLE COLONNE) --- */
-        .pack-grid {
+        .mining-stats-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; margin-bottom: 45px; }
+        @media (min-width: 768px) { .mining-stats-grid { grid-template-columns: repeat(4, 1fr); } }
+
+        .m-stat-box { text-align: center; }
+        .m-stat-label { font-size: 0.6rem; font-weight: 800; text-transform: uppercase; opacity: 0.6; display: block; margin-bottom: 8px; }
+        .m-stat-val { font-weight: 900; font-size: 1.2rem; }
+
+        .btn-withdraw-master {
+            background: var(--danger); color: white; border: none;
+            width: 100%; padding: 25px; border-radius: 30px;
+            font-weight: 900; font-size: 1.25rem; text-transform: uppercase;
+            box-shadow: 0 20px 50px rgba(244, 63, 94, 0.5);
+            transition: var(--transition-master);
+            letter-spacing: 1.5px;
+        }
+        .btn-withdraw-master:hover { transform: translateY(-5px); box-shadow: 0 25px 70px rgba(244, 63, 94, 0.7); }
+
+        /* ------------------------------------------------------------
+           COMPOSANT : GRILLE DES PACKS INDUSTRIELS 
+           ------------------------------------------------------------
+        */
+        .pack-grid-header { padding: 0 30px; margin-bottom: 35px; display: flex; align-items: center; gap: 20px; }
+        .header-accent-line { width: 8px; height: 40px; background: var(--warning); border-radius: 10px; }
+        
+        .industrial-pack-grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 12px; padding: 0 15px 100px;
+            gap: 15px; padding: 0 20px 100px;
         }
-        @media (min-width: 992px) { .pack-grid { grid-template-columns: repeat(4, 1fr); gap: 30px; padding: 0 60px 120px; } }
+        @media (min-width: 992px) { .industrial-pack-grid { grid-template-columns: repeat(4, 1fr); gap: 40px; padding: 0 80px 160px; } }
 
-        .pack-card {
-            background: var(--white);
-            border-radius: 25px;
+        .industrial-card {
+            background: var(--white-pure);
+            border-radius: 40px;
             overflow: hidden;
             display: flex; flex-direction: column;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            height: 320px; /* Taille verrouillée */
-            transition: var(--transition);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+            height: 320px; /* VERROUILLAGE HAUTEUR */
+            transition: var(--transition-master);
+            border: none;
         }
-        .pack-card:hover { transform: translateY(-10px); }
+        .industrial-card:hover { transform: translateY(-15px) rotate(1.5deg); }
 
-        .p-top { padding: 12px; text-align: center; color: white; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; }
-        .p-body { padding: 15px; text-align: center; color: var(--dark); flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .card-tag-head { padding: 15px; text-align: center; color: white; font-weight: 900; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; }
+        .card-body-elite { padding: 25px; text-align: center; color: var(--dark-core); flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
         
-        .p-price { font-size: 1.3rem; font-weight: 900; margin: 8px 0; color: var(--primary); }
-        .p-info { font-size: 0.8rem; font-weight: 700; color: #64748b; }
+        .card-price-text { font-size: 1.6rem; font-weight: 900; margin: 10px 0; color: var(--primary); letter-spacing: -2px; }
+        .card-income-sub { font-size: 0.9rem; font-weight: 800; opacity: 0.8; margin-bottom: 15px; }
 
-        .btn-buy {
+        .btn-industrial-buy {
             background: var(--primary); color: white; border: none;
-            width: 100%; padding: 12px; border-radius: 15px;
-            font-weight: 800; font-size: 0.75rem; text-transform: uppercase;
+            width: 100%; padding: 16px; border-radius: 22px;
+            font-weight: 900; font-size: 0.8rem; text-transform: uppercase;
+            box-shadow: 0 8px 20px rgba(0, 51, 153, 0.3);
         }
 
-        .pack-locked { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
+        .pack-titan-locked { opacity: 0.65; filter: grayscale(1); cursor: not-allowed; position: relative; }
+        .lock-indicator { position: absolute; top: 20px; right: 20px; color: var(--danger); font-size: 1.5rem; z-index: 10; }
 
-        /* --- FLOATING ELEMENTS --- */
-        #btn-up {
-            position: fixed; bottom: 30px; right: 20px;
-            width: 50px; height: 50px; background: var(--warning);
+        /* ------------------------------------------------------------
+           COMPOSANT : ÉLÉMENTS INTERACTIFS FLOTTANTS 
+           ------------------------------------------------------------
+        */
+        #master-back-top {
+            position: fixed; bottom: 40px; right: 30px;
+            width: 65px; height: 65px; background: var(--warning);
             color: var(--primary); border-radius: 50%;
             display: none; align-items: center; justify-content: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4); z-index: 5000;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6); z-index: 5000;
+            transition: 0.3s; border: 3px solid var(--white-pure);
+        }
+        #master-back-top:hover { transform: translateY(-8px) scale(1.1); background: var(--white-pure); }
+
+        /* ------------------------------------------------------------
+           COMPOSANT : FOOTER INDUSTRIEL 
+           ------------------------------------------------------------
+        */
+        .footer-industrial-master {
+            background: rgba(0,0,0,0.8); padding: 100px 30px;
+            border-top: 1px solid var(--glass-border); text-align: center;
         }
 
-        .modal-elite { border-radius: 40px !important; border: none; overflow: hidden; }
+        /* ------------------------------------------------------------
+           MODALES ET INTERFACE DE PAIEMENT 
+           ------------------------------------------------------------
+        */
+        .modal-industrial-style { border-radius: 55px !important; border: none; overflow: hidden; box-shadow: 0 0 120px rgba(0,0,0,0.9); }
+        .network-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 35px; }
+        
+        .net-btn {
+            background: var(--slate-100); border: 3px solid transparent; padding: 18px 10px;
+            border-radius: 25px; transition: 0.4s; font-weight: 900; color: var(--slate-600);
+            font-size: 0.75rem; text-transform: uppercase;
+        }
+        .net-btn.active-voda { border-color: var(--primary); color: var(--primary); background: #ebf2ff; }
+        .net-btn.active-airtel { border-color: var(--danger); color: var(--danger); background: #fff1f2; }
+        .net-btn.active-orange { border-color: var(--warning); color: #000; background: #fffbeb; }
+
+        .terminal-display-box {
+            background: var(--slate-100); padding: 25px; border-radius: 30px; 
+            margin-bottom: 35px; border: 1px solid #e2e8f0; display: none;
+        }
     </style>
 </head>
 <body>
 
-    <div id="btn-up" onclick="window.scrollTo({top:0, behavior:'smooth'})"><i class="bi bi-arrow-up fs-4"></i></div>
+    <div id="master-back-top" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <i class="bi bi-chevron-double-up fs-3"></i>
+    </div>
 
-    <nav class="master-nav">
-        <div class="d-flex align-items-center gap-2">
-            <a href="/" class="btn btn-primary rounded-3 p-2"><i class="bi bi-house-door-fill fs-5"></i></a>
-            <a href="#" class="cashlink-brand">CASHLINK</a>
+    <nav class="navbar-terminal">
+        <div class="d-flex align-items-center gap-4">
+            <a href="/" class="nav-btn-square"><i class="bi bi-house-door-fill fs-4"></i></a>
+            <a href="#" class="brand-text">CASHLINK</a>
         </div>
         
-        <div class="balance-container animate__animated animate__fadeInDown">
-            <div class="bal-item" style="border-right: 1px solid #eee; padding-right: 10px;">
-                <span class="bal-label">Solde</span>
+        <div class="balance-pill animate__animated animate__fadeInDown">
+            <div class="bal-data" style="border-right: 2px solid #f1f5f9; padding-right: 25px;">
+                <span class="bal-tag">Portefeuille Principal</span>
                 <span class="bal-val"><%= (user.solde || 0).toLocaleString() %> FC</span>
             </div>
-            <div class="bal-item">
-                <span class="bal-label text-success">Bonus</span>
-                <span class="bal-val text-success">+<%= (user.bonus || 0).toLocaleString() %> FC</span>
+            <div class="bal-data">
+                <span class="bal-tag text-success">Accumulation Bonus</span>
+                <span class="bal-val bonus">+<%= (user.bonus || 0).toLocaleString() %> FC</span>
             </div>
         </div>
 
-        <div class="client-info d-none d-md-block">
-            <div class="fw-900 small"><%= user.username %></div>
-            <div class="fw-bold" style="font-size: 0.7rem;">+243 <%= user.phone %></div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="client-profile-header d-none d-md-block">
+                <span class="cp-name"><%= user.username %></span>
+                <span class="cp-phone">+243 <%= user.phone %></span>
+            </div>
+            <a href="/logout" class="nav-btn-square bg-dark shadow-sm"><i class="bi bi-power"></i></a>
         </div>
     </nav>
 
-    <header class="marketing-zone animate__animated animate__fadeInDown">
-        <h1 class="mkt-title"><%= content.titre_principal %></h1>
-        <p class="mkt-p"><%= content.description %></p>
-        <div class="mt-4">
-            <button onclick="shareSite()" class="btn btn-outline-primary rounded-pill px-4 fw-800 btn-sm">
-                <i class="bi bi-share-fill me-2"></i> PARTAGER LE SITE
-            </button>
+    <header class="marketing-white-container animate__animated animate__fadeIn">
+        <div class="animate__animated animate__fadeInUp">
+            <h1 class="mkt-title-elite"><%= content.titre_principal %></h1>
+            <p class="mkt-text-elite"><%= content.description %></p>
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-4">
+                <button onclick="systemShare()" class="btn-share-master">
+                    <i class="bi bi-share-fill me-2"></i> PARTAGER MON LIEN ELITE
+                </button>
+            </div>
         </div>
     </header>
 
-    <div class="affiliate-section animate__animated animate__fadeIn">
-        <div class="d-flex align-items-center gap-3">
-            <div class="bg-warning p-2 rounded-3 text-primary"><i class="bi bi-people-fill fs-4"></i></div>
+    <div class="affiliation-bar animate__animated animate__fadeIn">
+        <div class="aff-stat-wrapper">
+            <div class="aff-icon-square"><i class="bi bi-people-fill"></i></div>
             <div>
-                <span class="bal-label">Membres Gagnés</span>
-                <div class="fw-900">0 Filleuls</div>
+                <span class="bal-tag">Réseau d'Affiliation</span>
+                <div class="fw-900 fs-4">0 Membres Parrainés</div>
             </div>
         </div>
-        <button onclick="copyRef()" class="btn btn-primary rounded-pill px-4 fw-900 btn-sm shadow">
-            <i class="bi bi-link-45deg me-2"></i>COPIER MON LIEN
-        </button>
+        <div class="d-flex flex-column gap-2 text-center text-md-end">
+            <button onclick="copyEliteRef()" class="btn-copy-referral">
+                <i class="bi bi-link-45deg me-2 fs-5"></i>COPIER MON LIEN DE PARRAINAGE
+            </button>
+            <small class="fw-bold opacity-40">Commission directe : 10% sur chaque dépôt</small>
+        </div>
     </div>
 
-    <div class="mining-section">
-        <div class="mining-card animate__animated animate__fadeInUp">
-            <div class="d-flex justify-content-between align-items-end">
+    <div class="mining-interface-wrapper">
+        <div class="mining-glass-panel animate__animated animate__fadeInUp">
+            <div class="mining-status-header">
                 <div>
-                    <h6 class="fw-900 text-uppercase mb-0">FLUX DE MINAGE SÉCURISÉ</h6>
-                    <small class="opacity-50">Protocole RDC actif...</small>
+                    <h5 class="mining-h-title"><i class="bi bi-activity me-3"></i>Statut Flux de Minage Sécurisé</h5>
+                    <span class="mining-h-sub">Synchronisation RDC en cours via satellite...</span>
                 </div>
                 <div class="text-accent fw-900 fs-1"><%= p || 0 %>%</div>
             </div>
 
-            <div class="progress-bar-elite">
-                <div class="bar-fill" style="width: <%= p || 0 %>%"></div>
+            <div class="elite-progress-track">
+                <div class="elite-bar-fill" style="width: <%= p || 0 %>%"></div>
             </div>
 
-            <div class="row g-3 mb-4 text-center">
-                <div class="col-6 col-md-3">
-                    <span class="bal-label opacity-50">Capacité</span>
-                    <div class="fw-900 text-accent"><%= content.puissance_hash %></div>
+            <div class="mining-stats-grid">
+                <div class="m-stat-box">
+                    <span class="m-stat-label">Puissance Hash</span>
+                    <div class="m-stat-val text-accent"><%= content.puissance_hash %></div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <span class="bal-label opacity-50">Status</span>
-                    <div class="fw-900 text-success">OPÉRATIONNEL</div>
+                <div class="m-stat-box">
+                    <span class="m-stat-label">Réseau Status</span>
+                    <div class="m-stat-val text-success"><i class="bi bi-broadcast me-2"></i>OPÉRATIONNEL</div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <span class="bal-label opacity-50">Unité Active</span>
-                    <div class="fw-900 text-white"><%= user.pack %></div>
+                <div class="m-stat-box">
+                    <span class="m-stat-label">Unité Connectée</span>
+                    <div class="m-stat-val text-white"><%= user.pack %></div>
                 </div>
-                <div class="col-6 col-md-3">
-                    <span class="bal-label opacity-50">Gain dans</span>
-                    <div id="timer" class="fw-900 text-warning">00:00:00</div>
+                <div class="m-stat-box">
+                    <span class="m-stat-label">Prochain Gain</span>
+                    <div id="master-timer" class="m-stat-val text-warning">00:00:00</div>
                 </div>
             </div>
 
-            <button onclick="withdraw()" class="btn btn-danger w-100 py-3 rounded-4 fw-900 shadow-lg">
-                <i class="bi bi-wallet2 me-2"></i> RETIRER MES PROFITS
+            <button onclick="masterWithdraw()" class="btn-withdraw-master animate__animated animate__pulse animate__infinite">
+                <i class="bi bi-piggy-bank-fill me-3 fs-3"></i> Demander le Retrait des Profits
             </button>
         </div>
     </div>
 
-    <div class="px-4 mb-3 d-flex align-items-center gap-2">
-        <div style="width: 5px; height: 25px; background: var(--warning); border-radius: 10px;"></div>
-        <h5 class="fw-900 mb-0">UNITÉS DE MINAGE 2026</h5>
+    <div class="pack-grid-header mx-3" id="packs">
+        <div class="header-accent-line"></div>
+        <h3 class="fw-900 mb-0 text-uppercase">Génération Industrielle 2026</h3>
     </div>
 
-    <div class="pack-grid">
+    <div class="industrial-pack-grid">
         <% 
-        const packs = [
-            { id: 'BRONZE', price: 50000, daily: 5000, color: '#10b981' },
-            { id: 'SILVER', price: 150000, daily: 15000, color: '#4f46e5' },
-            { id: 'GOLD', price: 500000, daily: 40000, color: '#f59e0b' },
-            { id: 'DIAMOND', price: 1000000, daily: 100000, color: '#ef4444' }
+        const PACK_DATA = [
+            { id: 'BRONZE', price: 50000, daily: 5000, bonus: 5000, color: '#10b981' },
+            { id: 'SILVER', price: 150000, daily: 15000, bonus: 9000, color: '#4f46e5' },
+            { id: 'GOLD', price: 500000, daily: 40000, bonus: 40000, color: '#f59e0b' },
+            { id: 'DIAMOND', price: 1000000, daily: 100000, bonus: 120000, color: '#ef4444' }
         ];
-        packs.forEach(u => {
+        PACK_DATA.forEach(p => {
+            const isOwned = (user.pack === p.id);
         %>
-        <div class="pack-card animate__animated animate__fadeInUp">
-            <div class="p-top" style="background: <%= u.color %>;"><%= u.id %> UNIT</div>
-            <div class="p-body">
+        <div class="industrial-card animate__animated animate__fadeInUp">
+            <div class="card-tag-head" style="background: <%= p.color %>;"><%= p.id %> UNIT</div>
+            <div class="card-body-elite">
                 <div>
-                    <span class="bal-label">Investissement</span>
-                    <div class="p-price"><%= u.price.toLocaleString() %> FC</div>
-                    <div class="p-info">+<%= u.daily.toLocaleString() %> FC / J</div>
+                    <span class="bal-tag">Coût d'Activation</span>
+                    <div class="card-price-text"><%= p.price.toLocaleString() %> FC</div>
+                    <div class="card-income-sub" style="color: <%= p.color %>;">+<%= p.daily.toLocaleString() %> FC / JOUR</div>
+                    
+                    <div class="text-start border-top border-bottom py-3 mb-4 mt-3">
+                        <div class="small fw-800 mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i>Bonus : +<%= p.bonus.toLocaleString() %> FC</div>
+                        <div class="small fw-800 mb-1"><i class="bi bi-check-circle-fill text-success me-2"></i>Contrat : 30 Jours</div>
+                        <div class="small fw-800"><i class="bi bi-check-circle-fill text-success me-2"></i>Retraits Illimités</div>
+                    </div>
                 </div>
-                <button onclick="openPay('<%= u.id %>', <%= u.price %>)" class="btn-buy shadow-sm">ACHETER</button>
+
+                <% if(isOwned) { %>
+                    <button class="btn btn-success w-100 rounded-pill py-3 fw-900 shadow-sm" disabled>UNITÉ EN MARCHE</button>
+                <% } else { %>
+                    <button onclick="triggerEliteGateway('<%= p.id %>', <%= p.price %>)" class="btn-industrial-buy">ACTIVER CETTE UNITÉ</button>
+                <% } %>
             </div>
         </div>
         <% }) %>
     </div>
 
-    <div class="px-4 mb-3 d-flex align-items-center gap-2 opacity-50">
-        <div style="width: 5px; height: 25px; background: var(--warning); border-radius: 10px;"></div>
-        <h5 class="fw-900 mb-0">EXTENSIONS 2028</h5>
+    <div class="pack-grid-header mx-3">
+        <div class="header-accent-line opacity-25"></div>
+        <h3 class="fw-900 mb-0 text-uppercase opacity-30">Extensions Réseau 2028</h3>
     </div>
 
-    <div class="pack-grid">
+    <div class="industrial-pack-grid">
         <% 
-        const future = [
+        const FUTURE_DATA = [
             { id: 'AMÉTHYSTE', price: 2500000, color: '#9333ea' },
             { id: 'ÉMERAUDE', price: 5000000, color: '#059669' },
             { id: 'RUBIS', price: 10000000, color: '#dc2626' },
             { id: 'SAPHIR', price: 25000000, color: '#2563eb' }
         ];
-        future.forEach(f => {
+        FUTURE_DATA.forEach(f => {
         %>
-        <div class="pack-card pack-locked">
-            <div class="p-top" style="background: <%= f.color %>;"><%= f.id %></div>
-            <div class="p-body">
-                <div class="p-price"><%= f.price.toLocaleString() %> FC</div>
-                <button class="btn btn-secondary btn-sm rounded-pill fw-800" disabled>VERROUILLÉ</button>
+        <div class="industrial-card pack-titan-locked">
+            <i class="bi bi-lock-fill lock-indicator"></i>
+            <div class="card-tag-head" style="background: <%= f.color %>;"><%= f.id %></div>
+            <div class="card-body-elite">
+                <div class="card-price-text opacity-20"><%= f.price.toLocaleString() %> FC</div>
+                <button class="btn btn-secondary w-100 rounded-pill py-2 fw-900 disabled opacity-50">VERROUILLÉ</button>
             </div>
         </div>
         <% }) %>
     </div>
 
-    <footer class="py-5 px-3 text-center" style="background: rgba(0,0,0,0.5); border-top: 1px solid var(--glass);">
-        <h4 class="fw-900 text-warning">CASHLINK</h4>
-        <p class="small opacity-50"><%= content.about_text %></p>
-        <hr class="my-4 opacity-10">
-        <small class="opacity-30">Siège : <%= content.contact_address %> | Support : +243 <%= content.contact_phone %></small>
+    <div class="container-fluid mb-5">
+        <div class="mining-glass-panel p-5">
+            <div class="row g-5">
+                <div class="col-lg-6 border-end border-secondary border-opacity-25">
+                    <h4 class="fw-900 text-warning mb-4 text-uppercase">Philosophie de <%= content.brand_name %></h4>
+                    <p class="small fw-600 opacity-75 mb-0" style="line-height: 1.8;"><%= content.about_text %></p>
+                </div>
+                <div class="col-lg-6">
+                    <h4 class="fw-900 text-accent mb-4 text-uppercase">Règles de Conformité</h4>
+                    <div class="small fw-600 opacity-75" style="white-space: pre-line; line-height: 1.8;"><%= content.rules_text %></div>
+                </div>
+            </div>
+            
+            <hr class="my-5 opacity-10">
+
+            <div class="row g-4 text-center text-md-start">
+                <div class="col-md-4">
+                    <h6 class="bal-tag text-danger mb-3">Siège Administratif</h6>
+                    <div class="small fw-bold"><i class="bi bi-geo-alt-fill me-2 text-danger"></i><%= content.contact_address %></div>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="bal-tag text-danger mb-3">Support Technique</h6>
+                    <div class="small fw-bold"><i class="bi bi-envelope-at-fill me-2 text-danger"></i><%= content.contact_email %></div>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="bal-tag text-danger mb-3">Hotline RDC 24/7</h6>
+                    <div class="small fw-bold"><i class="bi bi-headset me-2 text-danger"></i>+243 <%= content.contact_phone %></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer-industrial-master">
+        <div class="container">
+            <div class="fw-900 text-warning fs-1 mb-2 letter-spacing-n2">CASHLINK ELITE</div>
+            <p class="small opacity-50 mb-5 text-uppercase letter-spacing-2 fw-bold"><%= content.footer_text %> | SYSTÈME DE MINAGE RDC v4.0</p>
+            <div class="d-flex justify-content-center gap-5 fs-2 opacity-20">
+                <i class="bi bi-shield-shaded"></i>
+                <i class="bi bi-cpu-fill"></i>
+                <i class="bi bi-safe2-fill"></i>
+                <i class="bi bi-hdd-network-fill"></i>
+            </div>
+            <hr class="my-5 opacity-10">
+            <small class="opacity-20 fw-900 text-uppercase letter-spacing-1"><%= content.footer_sub %></small>
+        </div>
     </footer>
 
-    <div class="modal fade" id="payModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered mx-3">
-            <div class="modal-content modal-elite text-dark">
-                <div class="modal-body p-4 text-center">
-                    <h5 class="fw-900 mb-4 text-primary">RECHARGE COMPTE RDC</h5>
+    <div class="modal fade" id="eliteGatewayModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered mx-3 mx-md-auto">
+            <div class="modal-content modal-industrial-style text-dark">
+                <div class="modal-body p-4 p-md-5 text-center">
+                    <div class="bg-primary text-white p-4 rounded-circle d-inline-block mb-4 shadow-lg"><i class="bi bi-shield-lock-fill fs-1"></i></div>
+                    <h2 class="fw-900 mb-1 text-uppercase">Recharge Sécurisée</h2>
+                    <p class="text-muted small fw-bold mb-5">Sélectionnez votre réseau de transfert RDC</p>
                     
-                    <div class="row g-2 mb-4">
-                        <div class="col-4">
-                            <button onclick="setNet('VODA')" class="btn btn-outline-primary w-100 btn-sm fw-800 rounded-3">VODA</button>
-                        </div>
-                        <div class="col-4">
-                            <button onclick="setNet('AIRTEL')" class="btn btn-outline-danger w-100 btn-sm fw-800 rounded-3">AIRTEL</button>
-                        </div>
-                        <div class="col-4">
-                            <button onclick="setNet('ORANGE')" class="btn btn-outline-warning w-100 btn-sm fw-800 rounded-3 text-dark">ORANGE</button>
+                    <div class="network-grid">
+                        <button onclick="netSelect('VODA')" id="net-voda" class="net-btn">VODACOM</button>
+                        <button onclick="netSelect('AIRTEL')" id="net-airtel" class="net-btn">AIRTEL</button>
+                        <button onclick="netSelect('ORANGE')" id="net-orange" class="net-btn">ORANGE</button>
+                    </div>
+
+                    <div id="terminal-box" class="terminal-display-box animate__animated animate__fadeIn">
+                        <span id="term-title" class="bal-tag text-uppercase">TERMINAL DE DÉPÔT</span>
+                        <div class="fs-4 fw-900 text-primary d-flex justify-content-between align-items-center mt-2">
+                            <span id="term-number">+243 000 000 000</span>
+                            <i class="bi bi-clipboard-plus fs-3" style="cursor:pointer;" onclick="copyPhoneData()"></i>
                         </div>
                     </div>
 
-                    <div id="net-box" class="p-3 bg-light rounded-4 mb-4 text-start animate__animated animate__fadeIn" style="display:none;">
-                        <span id="net-label" class="bal-label">RESEAU</span>
-                        <div id="net-num" class="fw-900 fs-5 text-primary">000000000</div>
+                    <div class="alert alert-warning small rounded-4 py-3 border-0 shadow-sm mb-4 fw-bold">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i> Saisissez impérativement le TID reçu par SMS (Ex: PP260328.1242.H42886).
                     </div>
 
-                    <button onclick="submitTID()" class="btn btn-primary w-100 py-3 rounded-pill fw-900">J'AI ENVOYÉ LE PAIEMENT</button>
+                    <button onclick="submitFinalTID()" class="btn btn-primary w-100 py-3 rounded-pill fw-900 shadow-lg fs-5">J'AI EFFECTUÉ LE TRANSFERT</button>
+                    <button type="button" class="btn btn-link btn-sm text-muted mt-3 fw-bold" data-bs-dismiss="modal">ANNULER L'OPÉRATION</button>
                 </div>
             </div>
         </div>
@@ -332,70 +554,122 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let selectedPack = "", selectedPrice = 0;
-        const pM = new bootstrap.Modal(document.getElementById('payModal'));
+        /* ------------------------------------------------------------
+           MOTEUR JAVASCRIPT ELITE v4.0
+           ------------------------------------------------------------
+        */
+        let selectedId = "", selectedPrice = 0, activeTerminalNum = "";
+        const gatewayUI = new bootstrap.Modal(document.getElementById('eliteGatewayModal'));
 
-        function setNet(net) {
-            const box = document.getElementById('net-box');
-            const label = document.getElementById('net-label');
-            const num = document.getElementById('net-num');
+        // GESTION DU SCROLL
+        window.onscroll = () => {
+            document.getElementById('master-back-top').style.display = (window.scrollY > 450) ? 'flex' : 'none';
+        };
+
+        // GESTION DES RÉSEAUX RDC
+        function netSelect(network) {
+            const box = document.getElementById('terminal-box');
+            const title = document.getElementById('term-title');
+            const number = document.getElementById('term-number');
+            const btns = document.querySelectorAll('.net-btn');
+            
+            btns.forEach(b => b.className = 'net-btn');
             box.style.display = "block";
-            
-            if(net === 'VODA') { label.innerText = "M-PESA VODACOM"; num.innerText = "+243 <%= content.admin_voda %>"; }
-            if(net === 'AIRTEL') { label.innerText = "AIRTEL MONEY"; num.innerText = "+243 <%= content.admin_airtel %>"; }
-            if(net === 'ORANGE') { label.innerText = "ORANGE MONEY"; num.innerText = "+243 <%= content.admin_orange %>"; }
+
+            if(network === 'VODA') {
+                document.getElementById('net-voda').classList.add('active-voda');
+                title.innerText = "M-PESA (VODACOM RDC)";
+                activeTerminalNum = "+243 <%= content.admin_voda %>";
+            } else if(network === 'AIRTEL') {
+                document.getElementById('net-airtel').classList.add('active-airtel');
+                title.innerText = "AIRTEL MONEY (RDC)";
+                activeTerminalNum = "+243 <%= content.admin_airtel %>";
+            } else if(network === 'ORANGE') {
+                document.getElementById('net-orange').classList.add('active-orange');
+                title.innerText = "ORANGE MONEY (RDC)";
+                activeTerminalNum = "+243 <%= content.admin_orange %>";
+            }
+            number.innerText = activeTerminalNum;
         }
 
-        function openPay(id, pr) { selectedPack = id; selectedPrice = pr; pM.show(); }
+        // ACTIONS FINANCIÈRES
+        function triggerEliteGateway(id, price) {
+            selectedId = id; selectedPrice = price;
+            gatewayUI.show();
+        }
 
-        function submitTID() {
-            const tid = prompt("Veuillez saisir votre TID (Ex: PP260328.1242.H42886) :");
-            // VALIDATION STRICTE DU FORMAT TID
-            const regex = /^[A-Z0-9]{8}\.[0-9]{4}\.[A-Z0-9]{6}$/;
+        function submitFinalTID() {
+            gatewayUI.hide();
+            const tid = prompt("Veuillez saisir votre référence de transaction TID :");
             
-            if(tid && tid.length > 10) {
-                pM.hide();
-                post('/souscrire-pack', { packName: selectedPack, prix: selectedPrice, reference: tid });
-            } else {
-                alert("Format TID Invalide. Veuillez vérifier votre message de confirmation.");
+            // VALIDATION STRICTE DU FORMAT TID RDC (Pattern: PP260328.1242.H42886)
+            const tidPattern = /^[A-Z0-9]{8}\.[0-9]{4}\.[A-Z0-9]{6}$/;
+            
+            if(tid && tid.length > 12) {
+                commitAction('/souscrire-pack', { packName: selectedId, prix: selectedPrice, reference: tid });
+            } else if(tid !== null) {
+                alert("Erreur critique : Format de TID invalide. Vérifiez votre SMS de confirmation.");
             }
         }
 
-        function withdraw() {
-            const m = prompt("Montant (Min 1.000 FC) :");
-            if(m >= 1000) post('/retrait', { montant: m });
-        }
-
-        function post(path, data) {
-            const f = document.createElement('form'); f.method = 'POST'; f.action = path;
-            for(let k in data) {
-                const i = document.createElement('input'); i.type='hidden'; i.name=k; i.value=data[k]; f.appendChild(i);
+        function masterWithdraw() {
+            const amount = prompt("Saisissez le montant à retirer (Minimum : 1.000 FC) :");
+            if(amount && amount >= 1000) {
+                commitAction('/retrait', { montant: amount });
+            } else if(amount !== null) {
+                alert("Opération refusée : Le montant minimum est de 1.000 FC.");
             }
-            document.body.appendChild(f); f.submit();
         }
 
-        function copyRef() {
+        function commitAction(path, data) {
+            const form = document.createElement('form'); form.method = 'POST'; form.action = path;
+            for(let key in data) {
+                const hiddenField = document.createElement('input'); 
+                hiddenField.type='hidden'; hiddenField.name=key; hiddenField.value=data[key];
+                form.appendChild(hiddenField);
+            }
+            document.body.appendChild(form); form.submit();
+        }
+
+        // UTILITAIRES
+        function copyPhoneData() {
+            navigator.clipboard.writeText(activeTerminalNum);
+            alert("Numéro du terminal copié avec succès !");
+        }
+
+        function copyEliteRef() {
             const link = window.location.origin + "/register?ref=<%= user.username %>";
             navigator.clipboard.writeText(link);
-            alert("Lien de parrainage copié !");
+            alert("Lien de parrainage copié dans le presse-papier !");
         }
 
-        function shareSite() {
+        function systemShare() {
             if (navigator.share) {
-                navigator.share({ title: 'CASHLINK ELITE', text: 'Gagne de l\'argent avec le minage en RDC !', url: window.location.origin });
-            } else {
-                alert("Lien du site : " + window.location.origin);
+                navigator.share({ 
+                    title: 'CASHLINK ELITE', 
+                    text: 'Rejoignez la révolution du minage en RDC avec CASHLINK !', 
+                    url: window.location.origin 
+                });
             }
         }
 
-        window.onscroll = () => { document.getElementById('btn-up').style.display = (window.scrollY > 300) ? 'flex' : 'none'; };
+        // COMPTE À REBOURS DU CYCLE DE GAIN
+        function runEliteTimer() {
+            const now = new Date(), next = new Date();
+            next.setHours(24, 0, 0, 0);
+            const diff = next - now;
+            const h = Math.floor(diff/3600000), 
+                  m = Math.floor((diff%3600000)/60000), 
+                  s = Math.floor((diff%60000)/1000);
+            document.getElementById('master-timer').innerText = 
+                `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }
+        setInterval(runEliteTimer, 1000);
 
-        setInterval(() => {
-            const n = new Date(), t = new Date(); t.setHours(24,0,0,0);
-            const d = t - n;
-            const h = Math.floor(d/3600000), m = Math.floor((d%3600000)/60000), s = Math.floor((d%60000)/1000);
-            document.getElementById('timer').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-        }, 1000);
+        // GESTION DES NOTIFICATIONS D'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if(urlParams.get('msg') === 'TID_SEND') alert("TID envoyé pour vérification. Cela peut prendre jusqu'à 24h.");
+        if(urlParams.get('msg') === 'SUCCESS') alert("Votre demande de retrait a été enregistrée.");
     </script>
 </body>
 </html>
