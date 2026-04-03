@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MASTER CONTROL | CASH LINK v5.0</title>
+    <title>ELITE SYSTEM COMMAND | CASHLINK MASTER</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -11,397 +11,266 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
-        /* ============================================================
-           MOTEUR DE DESIGN "ADMIN TITAN" 
-           ============================================================ */
         :root {
-            --bg-dark: #00081a;
-            --sidebar-bg: rgba(0, 0, 0, 0.9);
-            --card-glass: rgba(255, 255, 255, 0.02);
+            --bg-master: #000c24;
+            --card-glass: rgba(255, 255, 255, 0.03);
             --border-glass: rgba(255, 255, 255, 0.08);
             --neon-blue: #00d9ff;
-            --neon-green: #10b981;
-            --neon-red: #f43f5e;
-            --sidebar-width: 280px;
-            --transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            --neon-purple: #bc13fe;
+            --emerald: #10b981;
+            --rose: #f43f5e;
+            --gold: #ffb400;
+            --sidebar-width: 290px;
         }
 
-        /* CONFIGURATION GÉNÉRALE */
-        * { box-sizing: border-box; outline: none !important; }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: var(--neon-blue); border-radius: 10px; }
-
         body {
-            background-color: var(--bg-dark);
+            background-color: var(--bg-master);
             background-image: radial-gradient(circle at 50% -20%, #001a4d, transparent);
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: #ffffff; margin: 0; overflow-x: hidden;
         }
 
-        /* --- SIDEBAR DE CONTRÔLE --- */
-        .sidebar-master {
+        /* --- SIDEBAR --- */
+        .admin-sidebar {
             width: var(--sidebar-width); height: 100vh;
-            background: var(--sidebar-bg); backdrop-filter: blur(40px);
+            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(30px);
             position: fixed; left: 0; top: 0; padding: 40px 20px;
-            border-right: 1px solid var(--border-glass); z-index: 2000;
+            border-right: 1px solid var(--border-glass); z-index: 1000;
+            display: flex; flex-direction: column;
         }
 
-        .brand-admin {
-            text-align: center; margin-bottom: 50px;
-            border-bottom: 1px solid var(--border-glass); padding-bottom: 30px;
-        }
-
-        .nav-link-custom {
-            display: flex; align-items: center; gap: 15px; padding: 16px 20px;
+        .nav-item-custom {
+            display: flex; align-items: center; gap: 15px; padding: 15px 22px;
             color: rgba(255,255,255,0.4); text-decoration: none; border-radius: 20px;
-            margin-bottom: 8px; font-weight: 700; cursor: pointer; transition: var(--transition);
+            margin-bottom: 10px; font-weight: 700; cursor: pointer; transition: 0.3s;
         }
-        .nav-link-custom:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        .nav-link-custom.active { background: var(--neon-blue); color: #000; box-shadow: 0 0 30px rgba(0, 217, 255, 0.3); }
 
-        /* --- CONTENU PRINCIPAL --- */
-        .main-engine { margin-left: var(--sidebar-width); padding: 50px; min-height: 100vh; }
+        .nav-item-custom:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .nav-item-custom.active { background: var(--neon-blue); color: #000; box-shadow: 0 0 25px rgba(0, 217, 255, 0.3); }
 
-        .glass-panel {
+        /* --- MAIN CONTENT --- */
+        .admin-main-content { margin-left: var(--sidebar-width); padding: 50px; }
+
+        .glass-card {
             background: var(--card-glass); border: 1px solid var(--border-glass);
             border-radius: 40px; padding: 40px; margin-bottom: 40px;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
         }
 
-        /* STATS CARDS */
-        .stat-card {
-            background: rgba(255,255,255,0.01); border: 1px solid var(--border-glass);
-            border-radius: 30px; padding: 30px; text-align: center; transition: 0.3s;
+        .stat-val { font-size: 2.2rem; font-weight: 800; color: var(--neon-blue); letter-spacing: -1px; }
+        .stat-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 800; opacity: 0.5; letter-spacing: 1px; }
+
+        /* --- TABLES --- */
+        .premium-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
+        .premium-table thead th { padding: 0 20px 10px; font-size: 0.7rem; text-transform: uppercase; color: var(--neon-blue); border: none; }
+        .premium-table td { background: rgba(255,255,255,0.02); padding: 20px; border: none; font-size: 0.95rem; font-weight: 600; vertical-align: middle; transition: 0.3s; }
+        .premium-table tr td:first-child { border-radius: 20px 0 0 20px; border-left: 4px solid transparent; }
+        .premium-table tr:hover td { background: rgba(255,255,255,0.05); }
+        .premium-table tr:hover td:first-child { border-left-color: var(--neon-blue); }
+        .premium-table tr td:last-child { border-radius: 0 20px 20px 0; }
+
+        .admin-label { font-size: 0.7rem; font-weight: 800; color: var(--neon-blue); text-transform: uppercase; margin-bottom: 8px; display: block; }
+        .admin-input {
+            background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-glass);
+            border-radius: 18px; padding: 15px 20px; color: white; width: 100%; margin-bottom: 20px;
+            font-weight: 600; transition: 0.3s;
         }
-        .stat-card:hover { transform: translateY(-5px); border-color: var(--neon-blue); }
-        .stat-icon { font-size: 2rem; color: var(--neon-blue); margin-bottom: 15px; display: block; }
-        .stat-value { font-size: 2.2rem; font-weight: 900; line-height: 1; }
-        .stat-label { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; opacity: 0.5; margin-top: 10px; display: block; }
+        .btn-update { background: var(--neon-blue); color: #000; border: none; padding: 18px; border-radius: 20px; font-weight: 800; width: 100%; text-transform: uppercase; cursor: pointer; }
 
-        /* TABLES PREMIUM */
-        .table-titan { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-        .table-titan td { background: rgba(255,255,255,0.03); padding: 18px 25px; border: none; font-size: 0.9rem; border-radius: 18px; vertical-align: middle; }
-        .table-titan tr { transition: 0.3s; }
-        .table-titan tr:hover td { background: rgba(255,255,255,0.06); }
-
-        /* FORMULAIRES ADMIN */
-        .admin-form-label { font-size: 0.75rem; font-weight: 800; color: var(--neon-blue); text-transform: uppercase; margin-bottom: 10px; display: block; }
-        .admin-input-field {
-            background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border-glass);
-            border-radius: 20px; padding: 16px 22px; color: white; width: 100%; margin-bottom: 25px;
-            transition: 0.3s; font-weight: 600;
-        }
-        .admin-input-field:focus { border-color: var(--neon-blue); box-shadow: 0 0 20px rgba(0, 217, 255, 0.15); }
-
-        .btn-titan-update {
-            background: var(--neon-blue); color: #000; border: none; 
-            padding: 22px; border-radius: 25px; font-weight: 900; width: 100%; 
-            text-transform: uppercase; cursor: pointer; letter-spacing: 1px;
-            box-shadow: 0 10px 30px rgba(0, 217, 255, 0.2); transition: 0.3s;
-        }
-        .btn-titan-update:hover { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(0, 217, 255, 0.4); }
-
-        /* SECTIONS */
-        .panel-hidden { display: none; }
-        .panel-visible { display: block; animation: fadeInUp 0.6s cubic-bezier(0.23, 1, 0.32, 1); }
-
-        /* BADGES */
-        .badge-rdc { padding: 8px 15px; border-radius: 50px; font-weight: 800; font-size: 0.65rem; text-transform: uppercase; }
-
+        .section-panel { display: none; animation: fadeInUp 0.5s ease-out; }
+        .section-panel.active { display: block; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* MONITORING DOT */
-        .dot-pulse {
-            width: 10px; height: 10px; background: var(--neon-green);
-            border-radius: 50%; display: inline-block; margin-right: 10px;
-            box-shadow: 0 0 10px var(--neon-green); animation: pulse-green 2s infinite;
-        }
-        @keyframes pulse-green { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+        .badge-vip { background: rgba(255, 180, 0, 0.15); color: var(--gold); border: 1px solid var(--gold); padding: 5px 12px; border-radius: 10px; font-size: 0.7rem; }
+        .badge-std { background: rgba(255, 255, 255, 0.05); color: #fff; padding: 5px 12px; border-radius: 10px; font-size: 0.7rem; }
+
+        .btn-action { width: 40px; height: 40px; border-radius: 12px; border: none; display: inline-flex; align-items: center; justify-content: center; cursor: pointer; }
+        .btn-del { background: rgba(244, 63, 94, 0.1); color: var(--rose); }
+        .cover-preview { width: 100%; height: 180px; border-radius: 20px; object-fit: cover; border: 2px dashed var(--border-glass); margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar-master">
-        <div class="brand-admin">
-            <h3 class="fw-900 mb-1 text-white">CASH LINK</h3>
-            <div class="d-flex align-items-center justify-content-center">
-                <span class="dot-pulse"></span>
-                <small class="fw-bold text-success" style="font-size: 0.65rem;">MONITORING ACTIF</small>
+    <div class="admin-sidebar">
+        <div class="text-center mb-5">
+            <div class="p-3 mb-3 animate__animated animate__pulse animate__infinite" style="background: var(--neon-blue); border-radius: 22px; display: inline-block; box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);">
+                <i class="bi bi-shield-lock-fill text-dark fs-3"></i>
             </div>
+            <h5 class="fw-900">ELITE COMMAND</h5>
+            <span class="badge bg-danger rounded-pill" style="font-size: 0.6rem;">MASTER 2026</span>
         </div>
 
-        <nav class="nav-menu">
-            <div class="nav-link-custom active" onclick="switchPanel('dashboard', this)">
-                <i class="bi bi-speedometer2 fs-5"></i> Vue d'ensemble
-            </div>
-            <div class="nav-link-custom" onclick="switchPanel('deposits', this)">
-                <i class="bi bi-shield-lock fs-5"></i> Dépôts (TID) 
-                <% if(stats.enAttente > 0) { %>
-                    <span class="badge bg-danger ms-auto rounded-circle"><%= stats.enAttente %></span>
-                <% } %>
-            </div>
-            <div class="nav-link-custom" onclick="switchPanel('withdrawals', this)">
-                <i class="bi bi-bank fs-5"></i> Retraits 
-            </div>
-            <div class="nav-link-custom" onclick="switchPanel('design', this)">
-                <i class="bi bi-brush fs-5"></i> Design Dashboard
-            </div>
-            <div class="nav-link-custom" onclick="switchPanel('legal', this)">
-                <i class="bi bi-file-earmark-medical fs-5"></i> Contenu Légal
-            </div>
-            <div class="nav-link-custom" onclick="switchPanel('users', this)">
-                <i class="bi bi-people fs-5"></i> Investisseurs
-            </div>
-        </nav>
-
-        <div style="position: absolute; bottom: 40px; width: 80%;">
-            <a href="/logout" class="nav-link-custom text-danger bg-transparent"><i class="bi bi-power"></i> QUITTER LE TERMINAL</a>
+        <div class="nav-menu">
+            <div class="nav-item-custom active" onclick="openTab('stats', this)"><i class="bi bi-cpu"></i> Performances CA</div>
+            <div class="nav-item-custom" onclick="openTab('validations', this)"><i class="bi bi-shield-check"></i> Validations TID <% if(stats.enAttente > 0){ %><span class="badge bg-danger ms-auto"><%= stats.enAttente %></span><% } %></div>
+            <div class="nav-item-custom" onclick="openTab('clients', this)"><i class="bi bi-people"></i> Gestion Membres</div>
+            <div class="nav-item-custom" onclick="openTab('interface', this)"><i class="bi bi-palette"></i> Design & Pubs</div>
+            <div class="nav-item-custom" onclick="openTab('packs', this)"><i class="bi bi-box-seam"></i> Config Machines</div>
+            <div class="nav-item-custom" onclick="openTab('logs', this)"><i class="bi bi-journal-text"></i> Journal Activité</div>
+            <div class="nav-item-custom" onclick="openTab('security', this)"><i class="bi bi-lock"></i> Accès & Sécurité</div>
         </div>
-    </aside>
 
-    <main class="main-engine">
+        <div style="margin-top: auto;">
+            <a href="/logout" class="nav-item-custom text-danger"><i class="bi bi-power"></i> SHUTDOWN ADMIN</a>
+        </div>
+    </div>
 
-        <section id="dashboard" class="panel-hidden panel-visible">
-            <div class="d-flex justify-content-between align-items-center mb-5">
-                <h2 class="fw-900 m-0">PERFORMANCES DU RÉSEAU</h2>
-                <span class="badge-rdc bg-primary">RDC SERVER CLOUD v5.0</span>
-            </div>
+    <div class="admin-main-content">
 
+        <div id="stats" class="section-panel active">
+            <h3 class="fw-800 mb-5 text-uppercase">Rapport de Croissance</h3>
             <div class="row g-4 mb-5">
-                <div class="col-md-4">
-                    <div class="stat-card">
-                        <i class="bi bi-people-fill stat-icon"></i>
-                        <div class="stat-value"><%= stats.totalUsers %></div>
-                        <span class="stat-label">Total Investisseurs</span>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="stat-card">
-                        <i class="bi bi-hourglass-split stat-icon text-warning"></i>
-                        <div class="stat-value text-warning"><%= stats.enAttente %></div>
-                        <span class="stat-label">Paiements en Attente</span>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="stat-card">
-                        <i class="bi bi-cash-coin stat-icon text-success"></i>
-                        <div class="stat-value text-success"><%= stats.soldeTotalUsers.toLocaleString() %> <small style="font-size: 1rem;">FC</small></div>
-                        <span class="stat-label">Capital Global Réseau</span>
-                    </div>
-                </div>
+                <div class="col-md-3"><div class="glass-card text-center"><span class="stat-label">CA Journalier</span><div class="stat-val text-success"><%= (stats.packsToday || 0).toLocaleString() %></div></div></div>
+                <div class="col-md-3"><div class="glass-card text-center"><span class="stat-label">Inscrits (24h)</span><div class="stat-val text-primary"><%= stats.usersToday || 0 %></div></div></div>
+                <div class="col-md-3"><div class="glass-card text-center"><span class="stat-label">En Attente</span><div class="stat-val text-warning"><%= stats.enAttente || 0 %></div></div></div>
+                <div class="col-md-3"><div class="glass-card text-center"><span class="stat-label">Dette Membres</span><div class="stat-val text-danger" style="font-size: 1.3rem;"><%= (stats.soldeTotalUsers || 0).toLocaleString() %> FC</div></div></div>
             </div>
-
-            <div class="glass-panel">
-                <h5 class="fw-900 mb-4 text-info text-uppercase">Logs de Sécurité en Temps Réel</h5>
-                <div id="log-monitor" class="bg-black p-4 rounded-4" style="height: 200px; overflow-y: auto; font-family: monospace; font-size: 0.8rem; border: 1px solid var(--border-glass);">
-                    <div class="text-success">[SYSTEM] Moteur de minage stabilisé...</div>
-                    <div class="text-info">[AUTH] Admin connecté depuis l'adresse IP 197.xxx.xxx.xxx</div>
-                    <div class="text-warning">[SYNC] Synchronisation avec Vodacom M-Pesa OK.</div>
-                    <div class="text-white opacity-50">[INFO] Vérification des cycles de 24h terminée.</div>
-                    <div class="text-danger">[ALERT] Tentative de retrait bloquée pour l'utilisateur Anash (Délai non atteint).</div>
-                </div>
-            </div>
-        </section>
-
-        <section id="deposits" class="panel-hidden">
-            <h2 class="fw-900 mb-5 text-uppercase">Validation des ID de Transaction (TID)</h2>
-            <div class="glass-panel">
-                <% if(transactions.length === 0) { %>
-                    <div class="text-center py-5 opacity-50">Aucun dépôt en attente pour le moment.</div>
-                <% } else { %>
-                <div class="table-responsive">
-                    <table class="table-titan">
-                        <thead><tr class="text-muted" style="font-size: 0.7rem; text-transform: uppercase;"><th>Utilisateur</th><th>Pack</th><th>ID Transaction (TID)</th><th>Montant</th><th>Action</th></tr></thead>
-                        <tbody>
-                            <% transactions.forEach(tx => { %>
-                            <tr>
-                                <td class="fw-bold text-white"><%= tx.username %></td>
-                                <td><span class="badge bg-primary rounded-pill"><%= tx.type %></span></td>
-                                <td><code class="text-info fs-6"><%= tx.reference %></code></td>
-                                <td class="fw-bold"><%= tx.montant.toLocaleString() %> FC</td>
-                                <td>
-                                    <form action="/admin/approve-tx" method="POST" class="d-inline">
-                                        <input type="hidden" name="txId" value="<%= tx.id %>">
-                                        <button class="btn btn-success btn-sm rounded-pill px-4 fw-bold">APPROUVER</button>
-                                    </form>
-                                    <button class="btn btn-link text-danger btn-sm text-decoration-none ms-2">Rejeter</button>
-                                </td>
-                            </tr>
-                            <% }) %>
-                        </tbody>
-                    </table>
-                </div>
-                <% } %>
-            </div>
-        </section>
-
-        <section id="withdrawals" class="panel-hidden">
-            <h2 class="fw-900 mb-5 text-uppercase">Demandes de Retraits (Profits)</h2>
-            <div class="glass-panel">
-                <div class="table-responsive">
-                    <table class="table-titan">
-                        <thead><tr class="text-muted" style="font-size: 0.7rem; text-transform: uppercase;"><th>Client</th><th>Téléphone</th><th>Montant</th><th>Status</th><th>Action</th></tr></thead>
-                        <tbody>
-                            <% retraits.forEach(r => { %>
-                            <tr>
-                                <td class="fw-bold text-white"><%= r.username %></td>
-                                <td class="fw-bold text-info">+243 <%= r.phone %></td>
-                                <td class="fw-bold text-warning"><%= r.montant.toLocaleString() %> FC</td>
-                                <td><span class="badge bg-dark border border-warning text-warning"><%= r.certified ? 'CERTIFIÉ (24h)' : 'STANDARD (3j)' %></span></td>
-                                <td>
-                                    <form action="/admin/confirm-pay" method="POST">
-                                        <input type="hidden" name="reqId" value="<%= r.id %>">
-                                        <button class="btn btn-warning btn-sm rounded-pill px-4 fw-900 text-dark">MARQUER PAYÉ</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            <% }) %>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="design" class="panel-hidden">
-            <h2 class="fw-900 mb-5 text-uppercase">Pilotage du Dashboard</h2>
-            <form action="/admin/update-content" method="POST">
-                <div class="glass-panel">
-                    <div class="row">
-                        <div class="col-md-6 border-end border-secondary border-opacity-25 pe-md-5">
-                            <h5 class="text-info fw-bold mb-4">NUMÉROS DE RÉCEPTION (RDC)</h5>
-                            <label class="admin-form-label">Numéro M-PESA</label>
-                            <input type="text" name="admin_voda" class="admin-input-field" value="<%= site.admin_voda %>">
-                            
-                            <label class="admin-form-label">Numéro AIRTEL MONEY</label>
-                            <input type="text" name="admin_airtel" class="admin-input-field" value="<%= site.admin_airtel %>">
-                            
-                            <label class="admin-form-label">Numéro ORANGE MONEY</label>
-                            <input type="text" name="admin_orange" class="admin-input-field" value="<%= site.admin_orange %>">
-                        </div>
-                        <div class="col-md-6 ps-md-5">
-                            <h5 class="text-warning fw-bold mb-4">TEXTES MARKETING</h5>
-                            <label class="admin-form-label">Titre Marketing (H1)</label>
-                            <input type="text" name="titre_principal" class="admin-input-field" value="<%= site.titre_principal %>">
-                            
-                            <label class="admin-form-label">Phrase d'Espoir (Slogan)</label>
-                            <textarea name="description" class="admin-input-field" rows="4"><%= site.description %></textarea>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-titan-update">💾 Enregistrer la nouvelle configuration</button>
-                </div>
-            </form>
-        </section>
-
-        <section id="legal" class="panel-hidden">
-            <h2 class="fw-900 mb-5 text-uppercase">Gestion des Règles & Infos</h2>
-            <form action="/admin/update-content" method="POST">
-                <div class="glass-panel">
-                    <label class="admin-form-label">À Propos de CASH LINK (Philosophie)</label>
-                    <textarea name="about_text" class="admin-input-field" rows="6"><%= site.about_text %></textarea>
-
-                    <label class="admin-form-label">Règles de Conformité (Sauts de ligne autorisés)</label>
-                    <textarea name="rules_text" class="admin-input-field" rows="10"><%= site.rules_text %></textarea>
-
-                    <div class="row mt-4">
-                        <div class="col-md-6">
-                            <label class="admin-form-label">Adresse Physique (Kinshasa)</label>
-                            <input type="text" name="contact_address" class="admin-input-field" value="<%= site.contact_address %>">
-                        </div>
-                        <div class="col-md-6">
-                            <label class="admin-form-label">Téléphone de Support (+243...)</label>
-                            <input type="text" name="contact_phone" class="admin-input-field" value="<%= site.contact_phone %>">
-                        </div>
-                    </div>
-                    <button type="submit" class="btn-titan-update">💾 Mettre à jour les pages légales</button>
-                </div>
-            </form>
-        </section>
-
-        <section id="users" class="panel-hidden">
-            <h2 class="fw-900 mb-5 text-uppercase">Journal des Investisseurs Actifs</h2>
-            <div class="glass-panel">
-                <div class="table-responsive">
-                    <table class="table-titan">
-                        <thead><tr class="text-muted" style="font-size: 0.7rem; text-transform: uppercase;"><th>Utilisateur</th><th>Machine Active</th><th>Status</th><th>Capital</th><th>Action</th></tr></thead>
-                        <tbody>
-                            <% users.forEach(u => { %>
-                            <tr>
-                                <td class="fw-bold text-white"><%= u.username %></td>
-                                <td><span class="badge bg-dark"><%= u.pack %></span></td>
-                                <td>
-                                    <% if(u.certified) { %>
-                                        <span class="text-success small fw-bold"><i class="bi bi-patch-check-fill me-1"></i> CERTIFIÉ</span>
-                                    <% } else { %>
-                                        <span class="text-muted small fw-bold">STANDARD</span>
-                                    <% } %>
-                                </td>
-                                <td class="fw-bold text-info"><%= u.solde.toLocaleString() %> FC</td>
-                                <td>
-                                    <button class="btn btn-outline-light btn-sm rounded-circle"><i class="bi bi-pencil"></i></button>
-                                    <button class="btn btn-outline-danger btn-sm rounded-circle ms-2"><i class="bi bi-trash"></i></button>
-                                </td>
-                            </tr>
-                            <% }) %>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        /**
-         * Système de navigation par Panel
-         */
-        function switchPanel(panelId, btn) {
-            // Cacher tous les panels
-            document.querySelectorAll('.panel-hidden').forEach(p => p.classList.remove('panel-visible'));
             
-            // Afficher le panel cible
-            const target = document.getElementById(panelId);
-            target.classList.add('panel-visible');
+            <div class="glass-card">
+                <h5 class="fw-800 mb-4 text-info">Analyse Périodique</h5>
+                <div class="row text-center g-4">
+                    <div class="col-md-4 border-end border-secondary">
+                        <span class="stat-label">Mensuel</span>
+                        <div class="h2 fw-900 mt-2 text-white"><%= (stats.packsMonth || 0).toLocaleString() %> FC</div>
+                    </div>
+                    <div class="col-md-4 border-end border-secondary">
+                        <span class="stat-label">Annuel</span>
+                        <div class="h2 fw-900 mt-2 text-white"><%= (stats.packsYear || 0).toLocaleString() %> FC</div>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="stat-label">Chiffre d'Affaire Total</span>
+                        <div class="h2 fw-900 mt-2" style="color: var(--neon-blue); text-shadow: 0 0 15px rgba(0, 217, 255, 0.4);"><%= (stats.totalGagne || 0).toLocaleString() %> FC</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-            // Gérer le style des liens du menu
-            document.querySelectorAll('.nav-link-custom').forEach(l => l.classList.remove('active'));
+        <div id="validations" class="section-panel">
+            <div class="glass-card">
+                <h4 class="fw-900 text-info mb-4">Transactions en attente</h4>
+                <div class="table-responsive">
+                    <table class="premium-table">
+                        <thead>
+                            <tr><th>Client</th><th>Opération</th><th>Référence / TID</th><th>Montant</th><th>Action</th></tr>
+                        </thead>
+                        <tbody>
+                            <% (typeof transactions !== 'undefined' ? transactions : []).filter(t => t.statut === 'En attente').forEach(tx => { %>
+                            <tr>
+                                <td><b><%= tx.utilisateur %></b><br><small class="opacity-50"><%= tx.phone %></small></td>
+                                <td><span class="badge bg-info text-dark"><%= tx.type %></span></td>
+                                <td><code class="text-white fs-6"><%= tx.reference || 'N/A' %></code></td>
+                                <td class="text-info fw-900"><%= (tx.montant || 0).toLocaleString() %> FC</td>
+                                <td>
+                                    <form action="/valider-depot" method="POST">
+                                        <input type="hidden" name="txId" value="<%= tx._id %>">
+                                        <button class="btn btn-success rounded-pill px-4 fw-bold">APPROUVER</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="clients" class="section-panel">
+            <div class="glass-card">
+                <h4 class="fw-900 mb-4">Investisseurs</h4>
+                <div class="table-responsive">
+                    <table class="premium-table">
+                        <thead>
+                            <tr><th>Nom</th><th>Téléphone</th><th>Pack</th><th>Statut</th><th>Gains</th><th>Actions</th></tr>
+                        </thead>
+                        <tbody>
+                            <% (typeof users !== 'undefined' ? users : []).forEach(u => { %>
+                            <tr id="row-<%= u._id %>">
+                                <td><i class="bi bi-person-circle me-2 text-info"></i> <%= u.username %></td>
+                                <td><%= u.phone %></td>
+                                <td><span class="badge bg-dark px-3 py-2"><%= u.pack || 'Aucun' %></span></td>
+                                <td><% if(u.certified){ %><span class="badge-vip">CERTIFIÉ VIP</span><% } else { %><span class="badge-std">STANDARD</span><% } %></td>
+                                <td class="text-success fw-bold"><%= (u.bonus || 0).toLocaleString() %> FC</td>
+                                <td><button class="btn-action btn-del" onclick="deleteUser('<%= u._id %>')"><i class="bi bi-trash"></i></button></td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="interface" class="section-panel">
+            <div class="glass-card">
+                <h4 class="fw-900 text-info mb-4">Design & Pubs</h4>
+                <form action="/admin/update-content" method="POST">
+                    <div class="row">
+                        <div class="col-md-7">
+                            <label class="admin-label">URL Photo de Couverture</label>
+                            <input type="text" name="cover_url" class="admin-input" value="<%= (typeof content !== 'undefined' ? content.cover_url : '') %>" id="cover_input" onchange="previewImg()">
+                            <img src="<%= (typeof content !== 'undefined' ? content.cover_url : '') %>" id="preview" class="cover-preview" alt="Preview">
+                            <label class="admin-label">Nom de la Marque</label>
+                            <input type="text" name="brand_name" class="admin-input" value="<%= (typeof content !== 'undefined' ? content.brand_name : 'CASHLINK') %>">
+                        </div>
+                        <div class="col-md-5">
+                            <label class="admin-label">Grand Titre</label>
+                            <input type="text" name="main_title" class="admin-input" value="<%= (typeof content !== 'undefined' ? content.main_title : '') %>">
+                            <label class="admin-label">Prix Certification VIP (FC)</label>
+                            <input type="number" name="cert_price" class="admin-input" value="<%= (typeof content !== 'undefined' ? content.cert_price : 0) %>">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-update mt-4">SAUVEGARDER L'INTERFACE</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="packs" class="section-panel">
+            <div class="glass-card">
+                <h4 class="fw-900 mb-4 text-info">Config Machines</h4>
+                <form action="/admin/update-packs-config" method="POST">
+                    <div class="row g-4">
+                        <% ['bronze', 'silver', 'gold', 'diamond'].forEach(p => { %>
+                        <div class="col-md-6">
+                            <div class="p-4 border border-secondary rounded-4" style="background: rgba(0,0,0,0.2);">
+                                <h6 class="fw-900 text-uppercase mb-3">Pack <%= p %></h6>
+                                <div class="row">
+                                    <div class="col-6"><label class="admin-label">Achat (FC)</label><input type="number" name="price_<%= p %>" class="admin-input" value="<%= (typeof content !== 'undefined' ? content['price_'+p] : 0) %>"></div>
+                                    <div class="col-6"><label class="admin-label">Gain / 24h (FC)</label><input type="number" name="daily_<%= p %>" class="admin-input" value="<%= (typeof content !== 'undefined' ? content['daily_'+p] : 0) %>"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <% }) %>
+                    </div>
+                    <button type="submit" class="btn-update mt-5">METTRE À JOUR LES PACKS</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="logs" class="section-panel">
+            <div class="glass-card">
+                <h4 class="fw-900 mb-4">Journal d'Activité</h4>
+                <div class="table-responsive">
+                    <table class="premium-table">
+                        <tbody>
+                            <% (typeof messages !== 'undefined' ? messages : []).forEach(log => { %>
+                            <tr><td class="small opacity-50"><%= log.date %></td><td class="text-white small fw-bold"><%= log.text %></td></tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function openTab(tabId, btn) {
+            document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('.nav-item-custom').forEach(n => n.classList.remove('active'));
             btn.classList.add('active');
-
-            // Log de navigation
-            console.log("[ADMIN] Accès à la section : " + panelId);
         }
-
-        /**
-         * Système de son pour les alertes TID
-         */
-        let checkTID = <%= stats.enAttente %>;
-        if(checkTID > 0) {
-            document.getElementById('notif-sound').play().catch(e => console.log("Audio bloqué par le navigateur"));
-        }
-
-        /**
-         * Auto-scroll du Moniteur de logs
-         */
-        const logMonitor = document.getElementById('log-monitor');
-        logMonitor.scrollTop = logMonitor.scrollHeight;
-
-        /**
-         * Système d'auto-actualisation des logs (Simulation)
-         */
-        setInterval(() => {
-            const logs = [
-                "Vérification du flux de minage...",
-                "Utilisateur en ligne : " + Math.floor(Math.random()*100),
-                "Sauvegarde de la base de données terminée.",
-                "Ping serveur : 12ms",
-                "Validation SSL OK."
-            ];
-            const logEntry = document.createElement('div');
-            logEntry.className = "text-white opacity-25";
-            logEntry.innerText = "[SYSTEM] " + logs[Math.floor(Math.random()*logs.length)];
-            logMonitor.appendChild(logEntry);
-            logMonitor.scrollTop = logMonitor.scrollHeight;
-        }, 10000);
+        function previewImg() { document.getElementById('preview').src = document.getElementById('cover_input').value; }
+        function deleteUser(id) { if(confirm("Supprimer cet utilisateur ?")) { /* fetch... */ } }
     </script>
 </body>
 </html>
