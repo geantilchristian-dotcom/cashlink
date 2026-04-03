@@ -267,16 +267,16 @@
         }
 
         /* ============================================================
-            MODIFICATION : GRILLE DE 3 PACKS (MOBILE)
+            AJUSTEMENT MOBILE : STYLE ALIBABA COMPACT (GRILLE DE 2)
            ============================================================ */
         .shop-industrial-header { padding: 0 40px; margin: 100px 0 50px; display: flex; align-items: center; gap: 35px; }
         .shop-industrial-header h2 { font-family: 'Space Grotesk'; font-weight: 900; font-size: 3.5rem; text-transform: uppercase; letter-spacing: -2px; }
 
         .industrial-shop-grid-full {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 COLONNES SUR MOBILE */
-            gap: 10px;
-            padding: 0 10px 100px;
+            grid-template-columns: repeat(2, 1fr); /* GRILLE DE 2 SUR MOBILE */
+            gap: 12px;
+            padding: 0 15px 100px;
         }
 
         @media (min-width: 992px) { 
@@ -288,10 +288,10 @@
 
         .pack-industrial-heavy-card {
             background: #ffffff;
-            border-radius: 20px; /* Adapté pour grille de 3 */
+            border-radius: 20px; 
             overflow: hidden;
             color: #0f172a;
-            min-height: 400px; 
+            min-height: auto; 
             display: flex;
             flex-direction: column;
             box-shadow: 0 15px 30px rgba(0,0,0,0.5);
@@ -301,18 +301,24 @@
         }
 
         @media (max-width: 768px) {
-            .p-head-industrial-heavy { padding: 12px 2px !important; font-size: 0.55rem !important; letter-spacing: 0px !important; }
-            .p-body-industrial-heavy { padding: 10px 5px !important; }
-            .p-price-industrial-heavy { font-size: 0.8rem !important; letter-spacing: -1px !important; margin: 8px 0 !important; }
-            .p-bonus-industrial-heavy { font-size: 0.45rem !important; padding: 5px 2px !important; border-radius: 8px !important; margin-bottom: 8px !important; }
-            .p-daily-industrial-heavy { font-size: 0.65rem !important; margin-bottom: 10px !important; }
+            /* SUPPRESSION DE L'ESPACE VIDE BLANC */
+            .p-head-industrial-heavy { padding: 12px 5px !important; font-size: 0.65rem !important; letter-spacing: 0px !important; }
+            .p-body-industrial-heavy { padding: 10px 8px !important; } /* Réduction drastique du padding interne */
+            
+            /* TAILLE DE TEXTE COMPACTE (STYLE ALIBABA) */
+            .p-price-industrial-heavy { font-size: 1.1rem !important; letter-spacing: -1px !important; margin: 8px 0 !important; }
+            .p-bonus-industrial-heavy { font-size: 0.55rem !important; padding: 5px !important; border-radius: 8px !important; border-width: 1px !important; margin-bottom: 8px !important; }
+            .p-daily-industrial-heavy { font-size: 0.8rem !important; margin-bottom: 12px !important; }
+            
             .industrial-details-list { margin: 5px 0 !important; padding: 5px 0 !important; border-top: 1px solid #f1f5f9 !important; }
-            .industrial-details-list li { font-size: 0.4rem !important; margin-bottom: 3px !important; gap: 3px !important; }
-            .industrial-details-list li i { font-size: 0.5rem !important; }
-            .btn-industrial-heavy-action { padding: 10px 2px !important; border-radius: 10px !important; font-size: 0.55rem !important; }
-            .lock-industrial-badge { padding: 8px 15px !important; font-size: 0.6rem !important; border-radius: 50px !important; }
+            .industrial-details-list li { font-size: 0.5rem !important; margin-bottom: 4px !important; gap: 4px !important; }
+            .industrial-details-list li i { font-size: 0.7rem !important; }
+            
+            .btn-industrial-heavy-action { padding: 12px 5px !important; border-radius: 12px !important; font-size: 0.7rem !important; }
+            .lock-industrial-badge { padding: 10px 20px !important; font-size: 0.8rem !important; border-radius: 50px !important; }
         }
 
+        /* Styles Desktop d'origine conservés */
         .pack-industrial-heavy-card:hover { transform: translateY(-30px); filter: brightness(1.05); }
         .pack-industrial-active-border { border: 8px solid var(--emerald) !important; transform: scale(1.02); z-index: 50; }
         .pack-industrial-locked-mode { filter: grayscale(1) opacity(0.6); }
@@ -334,12 +340,13 @@
         #titan-toast-industrial-heavy { position: fixed; bottom: 50px; left: 50px; z-index: 9999; background: #ffffff; color: #000; padding: 40px 55px; border-radius: 45px; box-shadow: 0 40px 100px rgba(0,0,0,0.9); display: none; align-items: center; gap: 40px; border-left: 20px solid var(--emerald); }
         #scrollTopIndustrialHeavy { position: fixed; bottom: 50px; right: 50px; width: 100px; height: 100px; background: var(--gold); color: var(--bleu-bic); border-radius: 50%; border: none; display: none; align-items: center; justify-content: center; font-size: 4rem; z-index: 9500; box-shadow: 0 40px 80px rgba(0,0,0,0.8); }
 
-        /* --- FAQ --- */
+        /* FAQ ET FOOTER */
         .industrial-faq-titan { margin: 80px 30px 200px; }
         .accordion-titan-industrial-item { background: var(--glass-dark) !important; border: 3px solid rgba(255,255,255,0.25) !important; color: #fff !important; margin-bottom: 40px; border-radius: 60px !important; overflow: hidden; }
         .accordion-titan-industrial-button { background: transparent !important; color: #fff !important; font-weight: 900; padding: 50px; font-size: 1.8rem; }
         .accordion-titan-industrial-body { padding: 60px; opacity: 1; font-size: 1.4rem; line-height: 2.5; }
 
+        /* MODAL */
         .modal-titan-industrial-heavy { border-radius: 80px !important; border: none; overflow: hidden; }
         .payment-titan-industrial-heavy-card { background: #f8fafc; padding: 45px; border-radius: 50px; border: 6px solid #e2e8f0; margin-bottom: 35px; transition: 0.5s; }
         .payment-titan-industrial-heavy-card:hover { border-color: var(--bleu-bic); transform: translateX(30px); }
@@ -407,7 +414,7 @@
         </div>
         <div class="progress-industrial-track"><div class="bar-industrial-emerald-fill animate__animated animate__pulse animate__infinite"></div></div>
         <div class="d-flex flex-wrap justify-content-between mt-5 align-items-center gap-5">
-            <div class="fw-900 text-warning fs-3"><i class="bi bi-clock-history me-3"></i>RECHARGE DANS : <span id="titan-heavy-timer">--:--:--</span></div>
+            <div class="fw-900 text-warning fs-3"><i class="bi bi-clock-history me-3"></i>RECHARGE DISPONIBLE DANS : <span id="titan-heavy-timer">--:--:--</span></div>
             <button onclick="handleWithdrawHeavy()" class="btn-withdraw-industrial-heavy animate__animated animate__pulse animate__infinite">RÉCUPÉRER MES PROFITS (MONEY)</button>
         </div>
     </section>
@@ -434,26 +441,26 @@
             const isOwned = (user.pack === item.id);
         %>
         <div class="pack-industrial-heavy-card animate__animated animate__fadeInUp <%= item.locked ? 'pack-industrial-locked-mode' : '' %> <%= isOwned ? 'pack-industrial-active-border' : '' %>">
-            <% if(item.locked) { %><div class="lock-industrial-overlay"><div class="lock-industrial-badge">2028</div></div><% } %>
-            <div class="p-head-industrial-heavy" style="background: <%= item.color %>;"><%= item.id %> UNIT</div>
+            <% if(item.locked) { %><div class="lock-industrial-overlay"><div class="lock-industrial-badge">VERROUILLÉ 2028</div></div><% } %>
+            <div class="p-head-industrial-heavy" style="background: <%= item.color %>;"><%= item.id %> MASTER UNIT</div>
             <div class="p-body-industrial-heavy">
                 <div>
                     <div class="p-price-industrial-heavy"><%= item.price.toLocaleString() %> FC</div>
-                    <div class="p-bonus-industrial-heavy">+<%= item.bonus.toLocaleString() %> FC</div>
-                    <div class="p-daily-industrial-heavy">+<%= item.daily.toLocaleString() %> FC/J</div>
+                    <div class="p-bonus-industrial-heavy">CADEAU D'ACTIVATION : +<%= item.bonus.toLocaleString() %> FC</div>
+                    <div class="p-daily-industrial-heavy">+<%= item.daily.toLocaleString() %> FC / JOUR</div>
                     
                     <ul class="industrial-details-list">
-                        <li><i class="bi bi-shield-fill-check"></i> 30 Jours</li>
-                        <li><i class="bi bi-shield-fill-check"></i> Support 24/7</li>
-                        <li><i class="bi bi-shield-fill-check"></i> Retrait Money</li>
-                        <li><i class="bi bi-shield-fill-check"></i> Cloud v28</li>
+                        <li><i class="bi bi-shield-fill-check"></i> Contrat Certifié : 30 Jours</li>
+                        <li><i class="bi bi-shield-fill-check"></i> Support Prioritaire : 24h/7j</li>
+                        <li><i class="bi bi-shield-fill-check"></i> Retrait Money : Instantané</li>
+                        <li><i class="bi bi-shield-fill-check"></i> Technologie : Cloud Master v28</li>
                     </ul>
                 </div>
                 
                 <% if(isOwned) { %>
-                    <button onclick="submitHeavyPost('/activer-gain', { pack: '<%= item.id %>' })" class="btn-industrial-heavy-action btn-activate-industrial-heavy">ACTIVER</button>
+                    <button onclick="submitHeavyPost('/activer-gain', { pack: '<%= item.id %>' })" class="btn-industrial-heavy-action btn-activate-industrial-heavy">ACTIVER MAINTENANT</button>
                 <% } else { %>
-                    <button onclick="openPaymentModal('<%= item.id %>', <%= item.price %>)" class="btn-industrial-heavy-action btn-buy-industrial-heavy">ACHETER</button>
+                    <button onclick="openPaymentModal('<%= item.id %>', <%= item.price %>)" class="btn-industrial-heavy-action btn-buy-industrial-heavy">ACHETER VOTRE PACK</button>
                 <% } %>
             </div>
         </div>
@@ -462,15 +469,15 @@
 
     <div class="industrial-faq-titan" id="accTitanHeavy">
         <div class="accordion-titan-industrial-item shadow-lg">
-            <h2 class="accordion-header"><button class="accordion-button-titan-industrial collapsed" data-bs-toggle="collapse" data-bs-target="#qa1">VISION CASHLINK RDC</button></h2>
+            <h2 class="accordion-header"><button class="accordion-button-titan-industrial collapsed" data-bs-toggle="collapse" data-bs-target="#qa1"><i class="bi bi-info-circle-fill me-5 text-info"></i> VISION CASHLINK RDC 2026</button></h2>
             <div id="qa1" class="accordion-collapse collapse" data-bs-parent="#accTitanHeavy"><div class="accordion-titan-industrial-body"><%= content.about_text %></div></div>
         </div>
         <div class="accordion-titan-industrial-item shadow-lg">
-            <h2 class="accordion-header"><button class="accordion-button-titan-industrial collapsed" data-bs-toggle="collapse" data-bs-target="#qa2">RÈGLES DU RÉSEAU</button></h2>
+            <h2 class="accordion-header"><button class="accordion-button-titan-industrial collapsed" data-bs-toggle="collapse" data-bs-target="#qa2"><i class="bi bi-shield-lock-fill me-5 text-success"></i> PROTOCOLE DE SÉCURITÉ ET RETRAITS</button></h2>
             <div id="qa2" class="accordion-collapse collapse" data-bs-parent="#accTitanHeavy"><div class="accordion-titan-industrial-body" style="white-space: pre-line;"><%= content.rules_text %></div></div>
         </div>
         <div class="accordion-titan-industrial-item shadow-lg">
-            <h2 class="accordion-header"><button class="accordion-button-titan-industrial collapsed" data-bs-toggle="collapse" data-bs-target="#qa3">SUPPORT TECHNIQUE</button></h2>
+            <h2 class="accordion-header"><button class="accordion-button-titan-industrial collapsed" data-bs-toggle="collapse" data-bs-target="#qa3"><i class="bi bi-geo-alt-fill me-5 text-danger"></i> SIÈGE SOCIAL ET CONTACT</button></h2>
             <div id="qa3" class="accordion-collapse collapse" data-bs-parent="#accTitanHeavy">
                 <div class="accordion-titan-industrial-body fs-3">
                     <strong>ADRESSE :</strong> <%= content.contact_address %><br>
@@ -482,7 +489,7 @@
 
     <footer class="text-center py-5 opacity-30">
         <h1 class="fw-900" style="font-family: 'Space Grotesk'; letter-spacing: -10px; font-size: 8rem;">CASHLINK</h1>
-        <p class="small fw-bold text-uppercase fs-4">v28.0 | RDC 2026</p>
+        <p class="small fw-bold text-uppercase fs-4">Protocole Cloud Mining v28.0 | RDC 2026</p>
     </footer>
 
     <div class="modal fade" id="payHeavyModal" tabindex="-1">
