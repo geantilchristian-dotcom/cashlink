@@ -225,6 +225,34 @@
         .btn-invest { background: var(--emerald); color: #fff; }
         .btn-active { background: #64748b; color: #fff; cursor: not-allowed; }
 
+        /* --- SECTIONS LÉGALES --- */
+        .legal-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            margin: 20px 15px;
+            padding: 30px;
+            border-radius: 35px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        @media (min-width: 992px) { .legal-section { margin: 40px 60px; padding: 50px; } }
+
+        /* --- NOTIFICATION FLOTTANTE --- */
+        #floating-notif {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            background: white;
+            color: black;
+            padding: 12px 20px;
+            border-radius: 20px;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 5000;
+            animation: slideInUp 0.5s forwards;
+        }
+
         /* --- BOUTON RETOUR EN HAUT --- */
         #backToTop {
             position: fixed;
@@ -266,6 +294,14 @@
 </head>
 <body>
 
+    <div id="floating-notif">
+        <div class="bg-success rounded-circle p-2 text-white"><i class="bi bi-check-lg"></i></div>
+        <div>
+            <div class="fw-900 small" id="notif-user">Jean-Pierre</div>
+            <div class="small text-muted">Vient de retirer <span class="fw-bold text-success" id="notif-sum">45.000 FC</span></div>
+        </div>
+    </div>
+
     <div id="backToTop" onclick="scrollToTop()">
         <i class="bi bi-arrow-up"></i>
     </div>
@@ -300,9 +336,9 @@
 
     <header class="hero-banner">
         <div class="banner-left">
-            <span class="badge bg-primary mb-3 px-3 py-2 rounded-pill">TECHNOLOGIE RDC 2026</span>
-            <h1 class="fw-900 display-5 mb-2">MINAGE <span class="text-primary">AUTO</span></h1>
-            <p class="text-muted fw-bold mb-4">Générez des profits passifs sécurisés grâce à nos fermes de minage décentralisées.</p>
+            <span class="badge bg-primary mb-3 px-3 py-2 rounded-pill"><%= content.tag_tech %></span>
+            <h1 class="fw-900 display-5 mb-2"><%= content.titre_principal %></h1>
+            <p class="text-muted fw-bold mb-4"><%= content.description %></p>
             <button onclick="document.getElementById('boutique').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-3 fw-900 shadow">DÉCOUVRIR LES OFFRES</button>
         </div>
         <div class="banner-right">
@@ -326,22 +362,22 @@
         <div class="stat-glass-card">
             <i class="bi bi-lightning-charge-fill stat-icon"></i>
             <span class="label-xs">Puissance Hash</span>
-            <div class="fs-4 fw-900"><%= (user.pack && user.pack !== 'Aucun') ? '104.2 TH/s' : '0.00 TH/s' %></div>
+            <div class="fs-4 fw-900"><%= content.puissance_hash %></div>
         </div>
         <div class="stat-glass-card">
             <i class="bi bi-people-fill stat-icon" style="color: var(--emerald);"></i>
             <span class="label-xs">Réseau Elite</span>
-            <div class="fs-4 fw-900">Actif</div>
+            <div class="fs-4 fw-900"><%= content.reseau_status %></div>
         </div>
         <div class="stat-glass-card">
             <i class="bi bi-shield-shaded stat-icon" style="color: var(--gold);"></i>
             <span class="label-xs">Sécurité</span>
-            <div class="fs-4 fw-900">SSL-256</div>
+            <div class="fs-4 fw-900"><%= content.securite_type %></div>
         </div>
         <div class="stat-glass-card">
             <i class="bi bi-currency-exchange stat-icon" style="color: var(--rose);"></i>
             <span class="label-xs">Retraits 24h</span>
-            <div class="fs-4 fw-900">Ouverts</div>
+            <div class="fs-4 fw-900"><%= content.retraits_status %></div>
         </div>
     </div>
 
@@ -418,9 +454,26 @@
         <% }) %>
     </div>
 
-    <footer class="text-center py-5 opacity-50" style="background: rgba(0,0,0,0.3);">
-        <p class="fw-bold small mb-0">CASHLINK ELITE v3.0 - DÉPLOYÉ SUR TERMINAL RDC</p>
-        <p class="small">Sécurisé par Protocole Blockchain 2026</p>
+    <div class="legal-section animate__animated animate__fadeIn">
+        <h3 class="fw-900 text-gold mb-3 text-uppercase">À Propos de <%= content.brand_name %></h3>
+        <p class="opacity-75"><%= content.about_text %></p>
+    </div>
+
+    <div class="legal-section animate__animated animate__fadeIn">
+        <h3 class="fw-900 text-info mb-3 text-uppercase">Règles du Système</h3>
+        <div class="opacity-75" style="white-space: pre-line;"><%= content.rules_text %></div>
+    </div>
+
+    <div class="legal-section animate__animated animate__fadeIn mb-5" id="contact-info">
+        <h3 class="fw-900 text-rose mb-3 text-uppercase">Contact et Adresse</h3>
+        <p class="mb-2 fw-bold"><i class="bi bi-geo-alt-fill me-2"></i> Siège Social : <span class="fw-normal"><%= content.contact_address %></span></p>
+        <p class="mb-2 fw-bold"><i class="bi bi-envelope-fill me-2"></i> Support Email : <span class="fw-normal"><%= content.contact_email %></span></p>
+        <p class="mb-0 fw-bold"><i class="bi bi-telephone-fill me-2"></i> Hotline : <span class="fw-normal"><%= content.contact_phone %></span></p>
+    </div>
+
+    <footer class="text-center py-5" style="background: rgba(0,0,0,0.5);">
+        <p class="fw-bold small mb-1"><%= content.footer_text %></p>
+        <p class="small opacity-50"><%= content.footer_sub %></p>
     </footer>
 
     <div class="modal fade" id="paymentModal" tabindex="-1">
@@ -555,17 +608,21 @@
         
         startTimer();
 
-        // --- NOTIFICATIONS AUTOMATIQUES ---
-        function simulateNotif() {
-            const names = ["Jean", "Mado", "Patrick", "Guelord", "Sarah", "Elvis"];
-            const amount = [50000, 150000, 500000];
-            setInterval(() => {
-                const n = names[Math.floor(Math.random()*names.length)];
-                const a = amount[Math.floor(Math.random()*amount.length)];
-                // Optionnel : ajouter un toast ici
-            }, 15000);
+        // --- NOTIFICATIONS AUTOMATIQUES RÉELLES ---
+        function showNotification() {
+            const names = ["Jean-Paul", "Modeste", "Mado", "Patrick", "Guelord", "Sarah", "Elvis", "Clémentine", "Justin"];
+            const amounts = ["25.000", "45.000", "150.000", "500.000", "12.500", "200.000"];
+            
+            const n = document.getElementById('floating-notif');
+            document.getElementById('notif-user').innerText = names[Math.floor(Math.random() * names.length)];
+            document.getElementById('notif-sum').innerText = amounts[Math.floor(Math.random() * amounts.length)] + " FC";
+            
+            n.style.display = "flex";
+            setTimeout(() => { n.style.display = "none"; }, 5000);
         }
-        simulateNotif();
+        
+        // Lance une notification toutes les 15-20 secondes
+        setInterval(showNotification, 18000);
     </script>
 </body>
 </html>
