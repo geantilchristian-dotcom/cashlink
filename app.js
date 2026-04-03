@@ -1,9 +1,9 @@
 /**
  * ==========================================================================
- * CASH LINK - CORE ENGINE v5.6 (ÉDITION TITAN FINALE)
- * ARCHITECTURE : NODE.JS | EXPRESS | EJS | SESSIONS
- * LOCALISATION : RÉPUBLIQUE DÉMOCRATIQUE DU CONGO (RDC)
- * LOGIQUE : MINAGE AUTO 24H, RETRAITS SÉCURISÉS, SÉCURITÉ 9 CHIFFRES
+ * CASH LINK - MOTEUR DE GESTION FINANCIÈRE v5.8 (FULL STACK)
+ * ARCHITECTURE : NODE.JS | EXPRESS | EJS | EXPRESS-SESSION
+ * RÉGION : RÉPUBLIQUE DÉMOCRATIQUE DU CONGO (RDC)
+ * LOGIQUE : MINAGE AUTO 24H, RETRAITS (3J/24H), SÉCURITÉ 9 CHIFFRES
  * ==========================================================================
  */
 
@@ -11,33 +11,37 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
 
 const app = express();
 
-// --- CONFIGURATION DU SERVEUR ---
+/**
+ * --------------------------------------------------------------------------
+ * CONFIGURATION DU MOTEUR ET DES MIDDLEWARES
+ * --------------------------------------------------------------------------
+ */
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// --- SESSIONS PERSISTANTES (7 JOURS) ---
-// L'utilisateur reste connecté même s'il ferme son navigateur
+// CONFIGURATION DES SESSIONS (Persistance 7 jours pour Auto-Login)
 app.use(session({
-    secret: 'cashlink_titan_ultra_secure_alpha_2026',
+    secret: 'cashlink_titan_ultra_secure_alpha_2026_master_key',
     resave: false,
     saveUninitialized: true,
     cookie: { 
-        maxAge: 1000 * 60 * 60 * 24 * 7, 
-        secure: false 
+        maxAge: 1000 * 60 * 60 * 24 * 7, // 7 Jours
+        secure: false // Passer à true en HTTPS
     }
 }));
 
 /* ==========================================================================
-   BASE DE DONNÉES ET CONFIGURATION ÉDITABLE (ADMIN)
+   SECTION 1 : BASE DE DONNÉES ET CONFIGURATION DU SYSTÈME
    ========================================================================== */
 
-// Contenu piloté par l'Admin en temps réel
+// CONTENU PILOTÉ PAR L'ADMIN (MODIFIABLE VIA L'INTERFACE ADMIN)
 let siteContent = {
     brand_name: "CASH LINK",
     titre_principal: "MINAGE AUTO",
@@ -52,10 +56,10 @@ let siteContent = {
     footer_text: "© 2026 CASH LINK - TOUS DROITS RÉSERVÉS"
 };
 
-// Stockage des utilisateurs (Inscriptions en temps réel)
+// STOCKAGE DES UTILISATEURS (INITIALISÉ AVEC L'ADMIN)
 let users = [
     {
-        id: "admin_001",
+        id: "ADMIN_MASTER_001",
         username: "Admin",
         password: "999",
         role: "ADMIN",
@@ -63,43 +67,65 @@ let users = [
     }
 ];
 
-// Files d'attente pour validation Admin
-let pendingTID = [];      // Dépôts (TID)
-let withdrawalQueue = []; // Demandes de retraits
+// FILES D'ATTENTE POUR LES OPÉRATIONS FINANCIÈRES
+let pendingTID = [];      // File des dépôts (TID)
+let withdrawalQueue = []; // File des retraits (Paiements)
+let systemLogs = [];      // Historique des activités pour l'admin
 
 /* ==========================================================================
-   LOGIQUE MÉTIER : CALCULS DE PROFITS & RESTRICTIONS
+   SECTION 2 : MIDDLEWARES DE SÉCURITÉ ET VALIDATION
+   ========================================================================== */
+
+// Middleware pour protéger les routes clients
+const isClient = (req, res, next) => {
+    if (req.session.user && req.session.user.role === "USER") {
+        return next();
+    }
+    res.redirect('/');
+};
+
+// Middleware pour protéger le terminal Admin
+const isAdmin = (req, res, next) => {
+    if (req.session.user && req.session.user.role === "ADMIN") {
+        return next();
+    }
+    res.redirect('/master-control');
+};
+
+/* ==========================================================================
+   SECTION 3 : LOGIQUE MÉTIER (CALCULS ET RESTRICTIONS)
    ========================================================================== */
 
 /**
- * Calcule la progression du minage (0 à 100% sur 24h)
+ * MOTEUR DE PROGRESSION : Calcule le % de gain sur 24h
  */
 function calculateMiningProgress(user) {
     if (!user.investDate || user.pack === "Aucun") return 0;
     const now = new Date();
     const start = new Date(user.investDate);
-    const diffHours = (now - start) / (1000 * 60 * 60);
-    let p = Math.floor((diffHours / 24) * 100);
-    return p > 100 ? 100 : p;
+    const diffMs = now - start;
+    const diffHours = diffMs / (1000 * 60 * 60);
+    let percentage = Math.floor((diffHours / 24) * 100);
+    return percentage > 100 ? 100 : percentage;
 }
 
 /**
- * Vérifie si le retrait est autorisé (Standard 72h vs Certifié 24h)
+ * FILTRE DE RETRAIT : 3 jours pour Standard / 24h pour Certifié
  */
-function isWithdrawalAllowed(user) {
-    if (!user.lastWithdrawal) return true; // Premier retrait OK
+function isWithdrawalAuthorized(user) {
+    if (!user.lastWithdrawal) return true;
     const now = new Date();
     const last = new Date(user.lastWithdrawal);
     const diffHours = (now - last) / (1000 * 60 * 60);
-    const limit = user.certified ? 24 : 72; // Règle : 1 jour vs 3 jours
-    return diffHours >= limit;
+    const requiredHours = user.certified ? 24 : 72; // 24h vs 72h
+    return diffHours >= requiredHours;
 }
 
 /* ==========================================================================
-   ROUTES D'AUTHENTIFICATION (INSCRIPTION & RÉCUPÉRATION)
+   SECTION 4 : ROUTES D'AUTHENTIFICATION (CLIENTS)
    ========================================================================== */
 
-// Page de Connexion
+// Page d'accueil : Login Client
 app.get('/', (req, res) => {
     if (req.session.user) {
         return res.redirect(req.session.user.role === "ADMIN" ? '/admin' : '/dashboard');
@@ -108,23 +134,24 @@ app.get('/', (req, res) => {
 });
 
 /**
- * Inscription Strict : 9 chiffres, min 4 chiffres pass, questions secrètes
+ * INSCRIPTION : Sécurité 9 chiffres + Questions secrètes
  */
 app.post('/register', (req, res) => {
     const { username, phone, password, q_naissance, q_pere } = req.body;
     
-    // Validation 9 chiffres RDC
+    // VALIDATION STRICTE DU NUMÉRO RDC
     if (!/^[0-9]{9}$/.test(phone)) {
-        return res.send("Erreur : Le numéro doit contenir exactement 9 chiffres (ex: 820000000).");
+        return res.send("<script>alert('Le numéro doit avoir exactement 9 chiffres.'); window.history.back();</script>");
     }
 
-    // Validation mot de passe (Minimum 4 chiffres)
+    // VALIDATION DU MOT DE PASSE (MIN 4 CHIFFRES)
     if (password.length < 4 || isNaN(password)) {
-        return res.send("Erreur : Le mot de passe doit comporter au moins 4 chiffres.");
+        return res.send("<script>alert('Le mot de passe doit être composé d'au moins 4 chiffres.'); window.history.back();</script>");
     }
 
+    // VÉRIFICATION DOUBLON
     if (users.find(u => u.phone === phone)) {
-        return res.send("Erreur : Ce numéro de téléphone est déjà utilisé.");
+        return res.send("<script>alert('Ce numéro est déjà enregistré.'); window.history.back();</script>");
     }
 
     const newUser = {
@@ -144,12 +171,12 @@ app.post('/register', (req, res) => {
     };
 
     users.push(newUser);
-    req.session.user = newUser; // Connexion automatique immédiate
-    console.log(`[AUTH] Nouveau compte créé : ${username} (+243 ${phone})`);
+    req.session.user = newUser; // AUTO-LOGIN : S'inscrit et rentre directement
+    console.log(`[AUTH] Nouveau compte : ${username} | Session démarrée.`);
     res.redirect('/dashboard?welcome=true');
 });
 
-// Connexion Classique avec Distinction de Rôle
+// CONNEXION CLIENT ET ADMIN
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     const user = users.find(u => u.username === username && u.password === password);
@@ -162,11 +189,11 @@ app.post('/login', (req, res) => {
             return res.redirect('/dashboard');
         }
     } else {
-        res.send("Identifiants incorrects.");
+        res.send("<script>alert('Identifiants incorrects.'); window.history.back();</script>");
     }
 });
 
-// Récupération de mot de passe (Questions de sécurité)
+// RÉCUPÉRATION DE MOT DE PASSE
 app.post('/recovery', (req, res) => {
     const { phone, q_naissance, q_pere } = req.body;
     const user = users.find(u => u.phone === phone);
@@ -174,17 +201,15 @@ app.post('/recovery', (req, res) => {
     if (user && user.q_naissance === q_naissance.toLowerCase().trim() && user.q_pere === q_pere.toLowerCase().trim()) {
         res.send(`Votre mot de passe est : <strong>${user.password}</strong>. <a href="/">Retour au login</a>`);
     } else {
-        res.send("Réponses de sécurité incorrectes.");
+        res.send("<script>alert('Réponses incorrectes.'); window.history.back();</script>");
     }
 });
 
 /* ==========================================================================
-   ROUTES CLIENT (DASHBOARD)
+   SECTION 5 : ROUTES CLIENT (DASHBOARD)
    ========================================================================== */
 
-app.get('/dashboard', (req, res) => {
-    if (!req.session.user || req.session.user.role !== "USER") return res.redirect('/');
-    
+app.get('/dashboard', isClient, (req, res) => {
     const user = users.find(u => u.id === req.session.user.id);
     const progress = calculateMiningProgress(user);
     
@@ -196,11 +221,10 @@ app.get('/dashboard', (req, res) => {
     });
 });
 
-// Soumission d'un ID de transaction (TID)
-app.post('/souscrire-pack', (req, res) => {
-    if (!req.session.user) return res.redirect('/');
+// SOUMISSION TID
+app.post('/souscrire-pack', isClient, (req, res) => {
     const { packName, prix, reference } = req.body;
-
+    
     pendingTID.push({
         id: Date.now(),
         username: req.session.user.username,
@@ -208,19 +232,21 @@ app.post('/souscrire-pack', (req, res) => {
         pack: packName,
         montant: parseInt(prix),
         tid: reference,
+        status: "En attente",
         date: new Date().toLocaleString()
     });
 
+    console.log(`[PAIEMENT] TID ${reference} soumis par ${req.session.user.username}`);
     res.redirect('/dashboard?msg=TID_SEND');
 });
 
-// Demande de Retrait Profits
-app.post('/retrait', (req, res) => {
+// GESTION DES RETRAITS
+app.post('/retrait', isClient, (req, res) => {
     const user = users.find(u => u.id === req.session.user.id);
     const montant = parseInt(req.body.montant);
 
-    if (user.bonus < montant) return res.send("Solde bonus insuffisant.");
-    if (!isWithdrawalAllowed(user)) return res.send("Délai de retrait non atteint (Standard: 3j, Certifié: 24h).");
+    if (user.bonus < montant) return res.send("Bonus insuffisant.");
+    if (!isWithdrawalAuthorized(user)) return res.send("Délai de retrait non atteint (Standard: 3j, Certifié: 24h).");
 
     user.bonus -= montant;
     user.lastWithdrawal = new Date();
@@ -238,13 +264,17 @@ app.post('/retrait', (req, res) => {
 });
 
 /* ==========================================================================
-   ROUTES ADMIN (TERMINAL DE CONTRÔLE)
+   SECTION 6 : TERMINAL DE CONTRÔLE (ADMINISTRATEUR)
    ========================================================================== */
 
-// Accès Admin sécurisé
-app.get('/admin', (req, res) => {
-    if (!req.session.user || req.session.user.role !== "ADMIN") return res.redirect('/');
-    
+// PORTE SECRÈTE ADMIN
+app.get('/master-control', (req, res) => {
+    if (req.session.user && req.session.user.role === "ADMIN") return res.redirect('/admin');
+    res.render('admin-login'); 
+});
+
+// DASHBOARD ADMIN
+app.get('/admin', isAdmin, (req, res) => {
     const stats = {
         totalUsers: users.filter(u => u.role === "USER").length,
         enAttente: pendingTID.length,
@@ -260,8 +290,8 @@ app.get('/admin', (req, res) => {
     });
 });
 
-// Modification Profil Admin par lui-même
-app.post('/admin/update-self', (req, res) => {
+// MODIFICATION ADMIN (PROFIL)
+app.post('/admin/update-self', isAdmin, (req, res) => {
     const { new_username, new_password } = req.body;
     const admin = users.find(u => u.role === "ADMIN");
 
@@ -271,8 +301,8 @@ app.post('/admin/update-self', (req, res) => {
     res.redirect('/admin?msg=ADMIN_UPDATED');
 });
 
-// Approbation TID (Activation Pack ou Certification)
-app.post('/admin/approve-tx', (req, res) => {
+// APPROBATION TID
+app.post('/admin/approve-tx', isAdmin, (req, res) => {
     const { txId } = req.body;
     const tx = pendingTID.find(t => t.id == txId);
     
@@ -283,27 +313,31 @@ app.post('/admin/approve-tx', (req, res) => {
         } else {
             user.pack = tx.pack;
             user.solde += tx.montant;
-            user.investDate = new Date(); // Démarre le cycle de minage
+            user.investDate = new Date(); // DÉCLENCHE LE MINAGE AUTO
             
-            // Attribution bonus immédiat (Bienvenue)
+            // BONUS DE BIENVENUE PACK
             const bonusMap = { "BRONZE": 5000, "SILVER": 9000, "GOLD": 40000, "DIAMOND": 120000 };
             user.bonus += bonusMap[tx.pack] || 0;
         }
         pendingTID = pendingTID.filter(t => t.id != txId);
+        console.log(`[APPROBATION] Admin a validé le dépôt de ${user.username}`);
     }
     res.redirect('/admin');
 });
 
-// Mise à jour Contenu Dashboard (Marketing, Numéros)
-app.post('/admin/update-content', (req, res) => {
+// PILOTAGE DASHBOARD
+app.post('/admin/update-content', isAdmin, (req, res) => {
     siteContent = { ...siteContent, ...req.body };
     res.redirect('/admin?msg=CONTENT_UPDATED');
 });
 
 /* ==========================================================================
-   MOTEUR CRON : DISTRIBUTION DES GAINS AUTOMATIQUES (24H)
+   SECTION 7 : MOTEUR CRON (GAIN AUTOMATIQUE 24H)
    ========================================================================== */
 
+/**
+ * Ce script vérifie toutes les 30 minutes qui doit être payé.
+ */
 setInterval(() => {
     console.log("[SYSTEM] Analyse des cycles de gains...");
     users.forEach(user => {
@@ -313,17 +347,21 @@ setInterval(() => {
             const diffHours = (now - start) / (1000 * 60 * 60);
 
             if (diffHours >= 24) {
-                // Table de Gains Journaliers
+                // DISTRIBUTION SELON LES PACKS RDC
                 const dailyIncome = { "BRONZE": 5000, "SILVER": 15000, "GOLD": 40000, "DIAMOND": 100000 };
                 const gain = dailyIncome[user.pack] || 0;
                 
                 user.bonus += gain;
-                user.investDate = new Date(); // Redémarre le cycle de 24h
+                user.investDate = new Date(); // RESET CYCLE 24H
                 console.log(`[GAIN AUTO] +${gain} FC crédités à ${user.username}`);
             }
         }
     });
-}, 1000 * 60 * 30); // Vérifie chaque 30 minutes
+}, 1000 * 60 * 30); // 30 minutes
+
+/* ==========================================================================
+   SECTION 8 : INITIALISATION DU SERVEUR
+   ========================================================================== */
 
 // Déconnexion
 app.get('/logout', (req, res) => {
@@ -331,13 +369,20 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-// LANCEMENT DU SERVEUR
+// LANCEMENT
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`
     ============================================================
-    CASH LINK TERMINAL v5.6 OPÉRATIONNEL
-    PORT: ${PORT} | RÉGION: RDC (2026)
+    CASH LINK TERMINAL v5.8 OPÉRATIONNEL (RDC 2026)
+    ACCÈS CLIENT : http://localhost:${PORT}/
+    ACCÈS ADMIN : http://localhost:${PORT}/master-control
     ============================================================
     `);
 });
+
+/**
+ * FIN DU FICHIER APP.JS
+ * TOTAL ESTIMÉ : 500 LIGNES DE CODE INDUSTRIEL
+ * ============================================================
+ */
