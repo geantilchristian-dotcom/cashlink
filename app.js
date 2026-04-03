@@ -1,95 +1,133 @@
-/* ============================================================
-   CASHLINK TERMINAL ENGINE v4.0 - BACKEND CORE
-   Congo RDC Edition - 2026
-   ============================================================ */
+/**
+ * ==========================================================================
+ * NOM DU PROJET : CASH LINK - MOTEUR BACKEND v5.0
+ * ARCHITECTURE : NODE.JS | EXPRESS | EJS
+ * LOCALISATION : RÉPUBLIQUE DÉMOCRATIQUE DU CONGO (RDC)
+ * LOGIQUE : GESTION DES FLUX DE MINAGE ET VALIDATION DES PAIEMENTS
+ * ==========================================================================
+ */
 
 const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const path = require('path');
+const fs = require('fs');
+
 const app = express();
 
-// --- CONFIGURATION DU MOTEUR DE VUE ---
+// --- CONFIGURATION DU SERVEUR ---
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-// --- SYSTÈME DE SESSION SÉCURISÉ ---
+// --- GESTION DES SESSIONS SÉCURISÉES ---
 app.use(session({
-    secret: 'cashlink_ultra_secret_2026_rdc',
+    secret: 'cashlink_titan_secret_key_2026_rdc',
     resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 heures
+    cookie: { 
+        maxAge: 1000 * 60 * 60 * 24, // Session de 24h
+        secure: false // Mettre à true si HTTPS
+    }
 }));
 
-/* ============================================================
-   BASE DE DONNÉES SIMULÉE (À RELIER À MONGODB PLUS TARD)
-   ============================================================ */
-let users = [
-    { 
-        username: "Anash", 
-        phone: "820000000", 
-        password: "123", 
-        solde: 25000, 
-        bonus: 0, 
-        pack: "Aucun", 
-        investDate: null,
-        referrals: 0,
-        role: "USER"
-    },
-    { username: "Admin", password: "999", role: "ADMIN" }
-];
+/* ==========================================================================
+   BASE DE DONNÉES ET ÉTATS DU SYSTÈME (SIMULATION PERSISTANTE)
+   ==========================================================================
+*/
 
-let pendingPayments = []; // Stocke les TID à valider par l'admin
-let withdrawalRequests = []; // Stocke les demandes de retraits
-
-// --- CONFIGURATION GLOBALE DU SITE (Variables EJS) ---
-const siteContent = {
-    brand_name: "CASHLINK",
-    tag_tech: "PROTOCOLE DE MINAGE CLOUD RDC",
-    titre_principal: "GÉNÉREZ DES PROFITS QUOTIDIENS",
-    description: "Le premier terminal de minage décentralisé en République Démocratique du Congo. Simple, Rapide et Sécurisé.",
-    puissance_hash: "85.4 TH/s",
-    reseau_status: "OPÉRATIONNEL",
+// État initial du contenu éditable par l'Admin
+let siteContent = {
+    brand_name: "CASH LINK",
+    titre_principal: "MINAGE AUTO",
+    description: "Changez de vie aujourd'hui. Laissez nos serveurs travailler pour vous et encaissez vos profits chaque jour sans aucun effort physique.",
+    puissance_hash: "85.4 TH/s", // Utilisé comme "UNITÉ CONNECTÉE"
     admin_voda: "810000000",
     admin_airtel: "970000000",
     admin_orange: "890000000",
     contact_phone: "820000000",
     contact_address: "Gombe, Kinshasa, RDC",
     contact_email: "support@cashlink.cd",
-    footer_text: "© 2026 CASHLINK ELITE - TOUS DROITS RÉSERVÉS",
-    footer_sub: "PLATEFORME AGRÉÉE POUR LE MINAGE NUMÉRIQUE"
+    footer_text: "© 2026 CASH LINK - TOUS DROITS RÉSERVÉS",
+    footer_sub: "PLATEFORME DE MINAGE NUMÉRIQUE AGRÉÉE RDC"
 };
 
-/* ============================================================
-   LOGIQUE DE CALCUL DES PROFITS (MOTEUR TEMPS RÉEL)
-   ============================================================ */
-function calculateMiningProgress(user) {
+// Liste des utilisateurs
+let users = [
+    {
+        id: "1",
+        username: "Anash",
+        phone: "820000000", // 9 chiffres sans le +243
+        password: "123",
+        solde: 50000,
+        bonus: 10000,
+        pack: "Aucun",
+        certified: false, // false = 3 jours, true = 24h
+        investDate: null,
+        lastWithdrawal: null,
+        role: "USER"
+    },
+    {
+        id: "admin_master",
+        username: "Admin",
+        password: "999",
+        role: "ADMIN"
+    }
+];
+
+// Files d'attente
+let pendingTransactions = []; // Dépôts TID
+let withdrawalRequests = [];  // Retraits
+let globalLogs = [];         // Historique des activités
+
+/* ==========================================================================
+   MOTEUR DE CALCULS TECHNIQUES (LOGIQUE DE GAIN)
+   ==========================================================================
+*/
+
+/**
+ * Calcule la progression du minage (0 à 100%)
+ * Un cycle complet de minage dure 24h
+ */
+function getMiningProgress(user) {
     if (!user.investDate || user.pack === "Aucun") return 0;
     
     const now = new Date();
-    const start = new Date(user.investDate);
-    const diffMs = now - start;
-    const diffHours = diffMs / (1000 * 60 * 60);
+    const startTime = new Date(user.investDate);
+    const elapsedMs = now - startTime;
+    const cycleMs = 24 * 60 * 60 * 1000; // 24 heures
     
-    // On calcule le % basé sur un cycle de 24h
-    let progress = (diffHours / 24) * 100;
-    if (progress > 100) progress = 100;
-    
-    return Math.floor(progress);
+    let progress = Math.floor((elapsedMs / cycleMs) * 100);
+    return progress > 100 ? 100 : progress;
 }
 
-/* ============================================================
-   ROUTES DES UTILISATEURS (DASHBOARD)
-   ============================================================ */
+/**
+ * Vérifie si le retrait est autorisé selon le statut (Standard/Certifié)
+ */
+function canUserWithdraw(user) {
+    if (!user.lastWithdrawal) return true; // Premier retrait toujours OK
+    
+    const now = new Date();
+    const lastDate = new Date(user.lastWithdrawal);
+    const diffHours = (now - lastDate) / (1000 * 60 * 60);
+    
+    const requiredHours = user.certified ? 24 : 72; // 24h vs 3 jours (72h)
+    return diffHours >= requiredHours;
+}
 
-// Page d'accueil / Connexion
+/* ==========================================================================
+   ROUTES UTILISATEURS (FRONT-END)
+   ==========================================================================
+*/
+
+// Redirection vers Login ou Dashboard
 app.get('/', (req, res) => {
-    res.render('login'); // Crée un fichier login.ejs simple
+    if (req.session.user) return res.redirect('/dashboard');
+    res.render('login'); 
 });
 
-// Traitement de la connexion
+// Authentification
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     const user = users.find(u => u.username === username && u.password === password);
@@ -99,7 +137,7 @@ app.post('/login', (req, res) => {
         if (user.role === "ADMIN") return res.redirect('/admin');
         res.redirect('/dashboard');
     } else {
-        res.send("Identifiants incorrects.");
+        res.render('login', { error: "Nom d'utilisateur ou mot de passe incorrect." });
     }
 });
 
@@ -107,86 +145,187 @@ app.post('/login', (req, res) => {
 app.get('/dashboard', (req, res) => {
     if (!req.session.user) return res.redirect('/');
     
-    const user = users.find(u => u.username === req.session.user.username);
-    const progress = calculateMiningProgress(user);
+    // On récupère les données fraîches de l'utilisateur
+    const user = users.find(u => u.id === req.session.user.id);
+    const progress = getMiningProgress(user);
     
-    res.render('dashboard', { 
-        user: user, 
-        content: siteContent, 
-        p: progress 
+    res.render('dashboard', {
+        user: user,
+        content: siteContent,
+        p: progress
     });
 });
 
-// --- GESTION DES PAIEMENTS (TID) ---
+/**
+ * Soumission d'un TID (Dépôt ou Certification)
+ * Format TID : PP260328.1242.H42886
+ */
 app.post('/souscrire-pack', (req, res) => {
-    if (!req.session.user) return res.redirect('/');
+    if (!req.session.user) return res.status(403).send("Session expirée");
     
     const { packName, prix, reference } = req.body;
     
-    // Validation du format TID RDC
-    const tidRegex = /^[A-Z0-9]{8}\.[0-9]{4}\.[A-Z0-9]{6}$/;
-    
-    pendingPayments.push({
-        user: req.session.user.username,
-        pack: packName,
-        montant: prix,
-        tid: reference,
+    // Regex de validation TID RDC
+    const tidPattern = /^[A-Z0-9]{8}\.[0-9]{4}\.[A-Z0-9]{6}$/;
+
+    // On accepte les formats un peu plus souples si besoin, mais on log
+    pendingTransactions.push({
+        id: Date.now(),
+        username: req.session.user.username,
+        type: packName,
+        montant: parseInt(prix),
+        reference: reference,
+        statut: "En attente",
         date: new Date().toLocaleString()
     });
-    
+
+    console.log(`[PAIEMENT] Nouveau TID reçu de ${req.session.user.username} : ${reference}`);
     res.redirect('/dashboard?msg=TID_SEND');
 });
 
-// --- GESTION DES RETRAITS ---
+/**
+ * Demande de retrait des profits
+ */
 app.post('/retrait', (req, res) => {
-    const user = users.find(u => u.username === req.session.user.username);
+    if (!req.session.user) return res.redirect('/');
+    
+    const user = users.find(u => u.id === req.session.user.id);
     const montant = parseInt(req.body.montant);
 
-    if (user.bonus >= montant) {
-        user.bonus -= montant;
-        withdrawalRequests.push({ 
-            user: user.username, 
-            montant: montant, 
-            phone: user.phone,
-            status: "En attente" 
-        });
-        res.redirect('/dashboard?msg=SUCCESS');
-    } else {
-        res.redirect('/dashboard?err=FONDS');
+    // 1. Vérification du solde bonus
+    if (user.bonus < montant) {
+        return res.redirect('/dashboard?err=SOLDE_INSUFFISANT');
     }
+
+    // 2. Vérification de la restriction temporelle (Standard vs Certifié)
+    if (!canUserWithdraw(user)) {
+        return res.redirect('/dashboard?err=DELAI_NON_ATTEINT');
+    }
+
+    // 3. Traitement de la demande
+    user.bonus -= montant;
+    user.lastWithdrawal = new Date();
+    
+    withdrawalRequests.push({
+        id: Date.now(),
+        username: user.username,
+        phone: user.phone,
+        montant: montant,
+        certified: user.certified,
+        statut: "En attente",
+        date: new Date().toLocaleString()
+    });
+
+    res.redirect('/dashboard?msg=SUCCESS');
 });
 
-/* ============================================================
-   INTERFACE ADMIN (VALIDATION ET CONTRÔLE)
-   ============================================================ */
+/* ==========================================================================
+   ROUTES ADMIN (CONTROLE ET VALIDATION)
+   ==========================================================================
+*/
 
-app.get('/admin', (req, res) => {
-    if (!req.session.user || req.session.user.role !== "ADMIN") return res.redirect('/');
-    
-    res.render('admin', { 
-        payments: pendingPayments, 
-        withdrawals: withdrawalRequests,
-        usersCount: users.length 
+// Middleware de sécurité Admin
+const isAdmin = (req, res, next) => {
+    if (req.session.user && req.session.user.role === "ADMIN") return next();
+    res.redirect('/');
+};
+
+app.get('/admin', isAdmin, (req, res) => {
+    const stats = {
+        totalUsers: users.filter(u => u.role === "USER").length,
+        enAttente: pendingTransactions.length,
+        soldeTotalUsers: users.reduce((acc, u) => acc + (u.solde || 0), 0)
+    };
+
+    res.render('admin', {
+        stats: stats,
+        transactions: pendingTransactions,
+        retraits: withdrawalRequests,
+        users: users.filter(u => u.role === "USER"),
+        site: siteContent
     });
 });
 
-// Valider un paiement (Créditer le pack et le bonus)
-app.post('/admin/approve-payment', (req, res) => {
-    const { tid, username, pack, montant } = req.body;
-    const user = users.find(u => u.username === username);
+/**
+ * Approbation d'un dépôt (TID)
+ */
+app.post('/admin/approve-tx', isAdmin, (req, res) => {
+    const { txId } = req.body;
+    const tx = pendingTransactions.find(t => t.id == txId);
     
-    if (user) {
-        user.pack = pack;
-        user.investDate = new Date();
-        // Attribution du bonus de bienvenue selon le pack
-        const bonusMap = { "BRONZE": 5000, "SILVER": 9000, "GOLD": 40000, "DIAMOND": 120000 };
-        user.bonus += bonusMap[pack] || 0;
+    if (tx) {
+        const user = users.find(u => u.username === tx.username);
         
-        // Supprimer des paiements en attente
-        pendingPayments = pendingPayments.filter(p => p.tid !== tid);
+        if (tx.type === "CERTIFICATION") {
+            user.certified = true;
+            console.log(`[ADMIN] Certification activée pour ${user.username}`);
+        } else {
+            // Activation de pack de minage
+            user.pack = tx.type;
+            user.investDate = new Date(); // Démarre le cycle de minage
+            user.solde += tx.montant;
+            
+            // On ajoute aussi le bonus de bienvenue selon le pack
+            const bonuses = { "BRONZE": 5000, "SILVER": 9000, "GOLD": 40000, "DIAMOND": 120000 };
+            user.bonus += bonuses[tx.type] || 0;
+            
+            console.log(`[ADMIN] Pack ${tx.type} activé pour ${user.username}`);
+        }
+
+        // Supprimer de la file
+        pendingTransactions = pendingTransactions.filter(t => t.id != txId);
     }
-    res.redirect('/admin');
+    res.redirect('/admin?msg=TX_APPROVED');
 });
+
+/**
+ * Confirmation de paiement d'un retrait
+ */
+app.post('/admin/confirm-pay', isAdmin, (req, res) => {
+    const { reqId } = req.body;
+    withdrawalRequests = withdrawalRequests.filter(r => r.id != reqId);
+    res.redirect('/admin?msg=WITHDRAWAL_PAID');
+});
+
+/**
+ * Mise à jour du contenu du Dashboard
+ */
+app.post('/admin/update-content', isAdmin, (req, res) => {
+    siteContent = { ...siteContent, ...req.body };
+    console.log(`[ADMIN] Configuration du Dashboard mise à jour.`);
+    res.redirect('/admin?msg=CONTENT_UPDATED');
+});
+
+/* ==========================================================================
+   CRON SIMULÉ (MOTEUR DE GAINS AUTOMATIQUES)
+   ==========================================================================
+*/
+
+/**
+ * Vérifie toutes les 30 minutes si des cycles de 24h sont terminés
+ */
+setInterval(() => {
+    console.log("[SYSTEM] Vérification des cycles de gain...");
+    const now = new Date();
+    
+    users.forEach(user => {
+        if (user.pack !== "Aucun" && user.investDate) {
+            const lastInvest = new Date(user.investDate);
+            const diffHours = (now - lastInvest) / (1000 * 60 * 60);
+
+            if (diffHours >= 24) {
+                // Attribution des gains journaliers
+                const dailyIncomes = { "BRONZE": 5000, "SILVER": 15000, "GOLD": 40000, "DIAMOND": 100000 };
+                const gain = dailyIncomes[user.pack] || 0;
+                
+                user.bonus += gain;
+                user.investDate = new Date(); // Reset pour le cycle suivant
+                
+                console.log(`[GAIN] +${gain} FC ajouté à ${user.username} (Pack ${user.pack})`);
+            }
+        }
+    });
+}, 1000 * 60 * 30); // 30 minutes
 
 // Déconnexion
 app.get('/logout', (req, res) => {
@@ -194,35 +333,14 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
-/* ============================================================
-   CRON JOB SIMULÉ : DISTRIBUTION DES GAINS JOURNALIERS
-   ============================================================ */
-setInterval(() => {
-    users.forEach(user => {
-        if (user.pack !== "Aucun" && user.investDate) {
-            const now = new Date();
-            const lastUpdate = new Date(user.investDate);
-            const diffHours = (now - lastUpdate) / (1000 * 60 * 60);
-
-            // Si 24h sont passées, on ajoute le gain quotidien
-            if (diffHours >= 24) {
-                const incomeMap = { "BRONZE": 5000, "SILVER": 15000, "GOLD": 40000, "DIAMOND": 100000 };
-                user.bonus += incomeMap[user.pack];
-                user.investDate = new Date(); // Reset du cycle
-                console.log(`Gains distribués pour ${user.username}`);
-            }
-        }
-    });
-}, 60000); // Vérification chaque minute
-
-// --- LANCEMENT DU SERVEUR ---
+// --- DÉMARRAGE DU TERMINAL ---
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`
-    ===========================================
-    CASHLINK TERMINAL v4.0 DÉMARRÉ
+    ============================================================
+    CASH LINK TERMINAL v5.0 DÉMARRÉ
     PORT: ${PORT}
-    STATUT: OPÉRATIONNEL (RDC)
-    ===========================================
+    MODE: PRODUCTION RDC
+    ============================================================
     `);
 });
