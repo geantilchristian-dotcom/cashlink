@@ -1,8 +1,8 @@
 /**
  * ==============================================================================
- * CASHLINK ELITE v27.5 - RÉSOLUTIONS DES ERREURS DE SAUVEGARDE (RDC 2026)
+ * CASHLINK ELITE v27.6 - FORCE RELOAD DATABASE (RDC 2026)
  * ------------------------------------------------------------------------------
- * CORRECTIF : Suppression des contraintes d'ID pour permettre l'écriture libre.
+ * CORRECTIF : Force le rechargement des données après chaque modification Admin.
  * ==============================================================================
  */
 
@@ -107,26 +107,24 @@ app.get('/', (req, res) => {
     });
 });
 
-// --- 6. SAUVEGARDE ADMIN (VERSION RÉPARÉE) ---
+// --- 6. SAUVEGARDE ADMIN (CORRECTION DÉFINITIVE) ---
 app.post('/admin/update-content', (req, res) => {
     const updateData = req.body;
-    
-    // On retire l'ID s'il est présent dans le body pour éviter les conflits NeDB
-    delete updateData._id;
+    delete updateData._id; // Éviter l'erreur de modification d'ID
 
-    // On force la mise à jour de l'unique document de config
+    // On force NeDB à mettre à jour et on attend la fin de l'opération
     db.config.update({ _id: "UI_CONTENT" }, { $set: updateData }, { upsert: true }, (err) => {
-        if (err) {
-            console.log("Erreur NeDB:", err);
-            return res.redirect('/admin?err=SAVE_FAILED');
-        }
-        
-        // On force NeDB à écrire sur le disque immédiatement
-        db.config.persistence.compactDatafile();
-        
-        addSystemLog("CMS", "Informations du site mises à jour.");
-        
-        setTimeout(() => { res.redirect('/admin'); }, 500);
+        if (err) return res.redirect('/admin?status=error');
+
+        // ACTION CRITIQUE : Recharger la base de données pour vider le cache
+        db.config.loadDatabase((err) => {
+            addSystemLog("CMS", "Données synchronisées avec succès.");
+            
+            // On laisse 1 seconde pour que Render stabilise le fichier /tmp
+            setTimeout(() => {
+                res.redirect('/admin?status=success');
+            }, 1000);
+        });
     });
 });
 
@@ -153,7 +151,7 @@ app.get('/admin', (req, res) => {
     });
 });
 
-// --- 8. VALIDATIONS ---
+// --- 8. VALIDATIONS & ACTIONS ---
 app.post('/valider-depot', (req, res) => {
     db.tx.findOne({ _id: req.body.txId }, (err, tx) => {
         if (!tx) return res.redirect('/admin');
@@ -202,5 +200,5 @@ app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
 
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-    console.log("💎 CASHLINK v27.5 INDUSTRIEL ACTIF");
+    console.log("💎 CASHLINK v27.6 INDUSTRIEL ACTIF");
 });
