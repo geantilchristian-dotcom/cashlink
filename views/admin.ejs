@@ -64,12 +64,7 @@
         .section-panel { display: none; }
         .section-panel.active { display: block; animation: fadeInUp 0.5s ease-out; }
         
-        /* Notification Alert */
-        #admin-alert {
-            position: fixed; top: 20px; right: 20px; z-index: 9999;
-            display: none;
-        }
-
+        #admin-alert { position: fixed; top: 20px; right: 20px; z-index: 9999; display: none; }
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
@@ -89,7 +84,7 @@
 
     <div class="admin-sidebar">
         <div class="text-center mb-5">
-            <div class="p-3 mb-3 animate__animated animate__pulse animate__infinite" style="background: var(--neon-blue); border-radius: 22px; display: inline-block;">
+            <div class="p-3 mb-3" style="background: var(--neon-blue); border-radius: 22px; display: inline-block;">
                 <i class="bi bi-cpu-fill text-dark fs-3"></i>
             </div>
             <h5 class="fw-900">ELITE COMMAND</h5>
@@ -103,10 +98,6 @@
             <div class="nav-item-custom" onclick="openTab('interface', this)"><i class="bi bi-pencil-square"></i> Modifier Dashboard</div>
             <div class="nav-item-custom" onclick="openTab('legal', this)"><i class="bi bi-file-earmark-text"></i> Contenu Légal</div>
             <div class="nav-item-custom" onclick="openTab('members', this)"><i class="bi bi-people"></i> Investisseurs</div>
-        </div>
-
-        <div style="margin-top: auto;">
-            <a href="/" class="nav-item-custom text-info"><i class="bi bi-arrow-left"></i> VOIR LE SITE</a>
         </div>
     </div>
 
@@ -130,8 +121,8 @@
                         <tbody>
                             <% transactions.filter(t => t.statut === 'En attente').forEach(tx => { %>
                             <tr>
-                                <td><span class="badge bg-primary"><%= tx.type %></span></td>
-                                <td><code class="text-white"><%= tx.reference %></code></td>
+                                <td><span class="badge bg-primary text-uppercase"><%= tx.type %></span></td>
+                                <td><code><%= tx.reference %></code></td>
                                 <td><%= tx.montant.toLocaleString() %> FC</td>
                                 <td>
                                     <form action="/valider-depot" method="POST">
@@ -152,13 +143,12 @@
                 <h4 class="fw-900 text-warning mb-4">Demandes de Retraits</h4>
                 <div class="table-responsive">
                     <table class="premium-table">
-                        <thead><tr><th>Client</th><th>Montant</th><th>Date</th><th>Action</th></tr></thead>
+                        <thead><tr><th>Client</th><th>Montant</th><th>Action</th></tr></thead>
                         <tbody>
                             <% retraits.filter(r => r.statut === 'En attente').forEach(req => { %>
                             <tr>
                                 <td><%= req.username %></td>
                                 <td class="text-warning"><%= req.montant.toLocaleString() %> FC</td>
-                                <td class="small opacity-50"><%= req.date %></td>
                                 <td>
                                     <form action="/admin/payer-retrait" method="POST">
                                         <input type="hidden" name="requestId" value="<%= req._id %>">
@@ -173,10 +163,11 @@
             </div>
         </div>
 
-        <div id="interface" class="section-panel">
-            <div class="glass-card">
-                <h4 class="fw-900 text-info mb-4">Pilotage du Dashboard & Offres</h4>
-                <form action="/admin/update-content" method="POST">
+        <form action="/admin/update-content" method="POST">
+            
+            <div id="interface" class="section-panel">
+                <div class="glass-card">
+                    <h4 class="fw-900 text-info mb-4">Pilotage du Dashboard</h4>
                     <div class="row">
                         <div class="col-md-6 border-end border-secondary">
                             <h6 class="text-info mb-3">NUMÉROS DE PAIEMENT</h6>
@@ -195,17 +186,22 @@
                             <input type="text" name="tag_tech" class="admin-input" value="<%= site.tag_tech %>">
                             <label class="admin-label">Titre Principal</label>
                             <input type="text" name="titre_principal" class="admin-input" value="<%= site.titre_principal %>">
+                            <label class="admin-label">Description</label>
+                            <input type="text" name="description" class="admin-input" value="<%= site.description %>">
                         </div>
                     </div>
-                    <button type="submit" class="btn-update mt-4">SAUVEGARDER LES INFOS</button>
-                </form>
+                    <input type="hidden" name="about_text" value="<%= site.about_text %>">
+                    <input type="hidden" name="rules_text" value="<%= site.rules_text %>">
+                    <input type="hidden" name="contact_address" value="<%= site.contact_address %>">
+                    <input type="hidden" name="contact_email" value="<%= site.contact_email %>">
+                    <input type="hidden" name="contact_phone" value="<%= site.contact_phone %>">
+                    <button type="submit" class="btn-update mt-4">SAUVEGARDER TOUT LE SITE</button>
+                </div>
             </div>
-        </div>
 
-        <div id="legal" class="section-panel">
-            <div class="glass-card">
-                <h4 class="fw-900 text-info mb-4">Pages Légales & Contact</h4>
-                <form action="/admin/update-content" method="POST">
+            <div id="legal" class="section-panel">
+                <div class="glass-card">
+                    <h4 class="fw-900 text-info mb-4">Contenu Légal & Contact</h4>
                     <label class="admin-label">À Propos de nous</label>
                     <textarea name="about_text" class="admin-input" rows="4"><%= site.about_text %></textarea>
                     
@@ -226,17 +222,24 @@
                             <input type="text" name="contact_phone" class="admin-input" value="<%= site.contact_phone %>">
                         </div>
                     </div>
-                    <button type="submit" class="btn-update mt-4">METTRE À JOUR LE CONTENU LÉGAL</button>
-                </form>
+                    <input type="hidden" name="admin_voda" value="<%= site.admin_voda %>">
+                    <input type="hidden" name="admin_airtel" value="<%= site.admin_airtel %>">
+                    <input type="hidden" name="admin_orange" value="<%= site.admin_orange %>">
+                    <input type="hidden" name="brand_name" value="<%= site.brand_name %>">
+                    <input type="hidden" name="tag_tech" value="<%= site.tag_tech %>">
+                    <input type="hidden" name="titre_principal" value="<%= site.titre_principal %>">
+                    <input type="hidden" name="description" value="<%= site.description %>">
+                    <button type="submit" class="btn-update mt-4">METTRE À JOUR LES TEXTES</button>
+                </div>
             </div>
-        </div>
+        </form>
 
         <div id="members" class="section-panel">
             <div class="glass-card">
                 <h4 class="fw-900 mb-4">Journal des Investisseurs</h4>
                 <div class="table-responsive">
                     <table class="premium-table">
-                        <thead><tr><th>Nom</th><th>Machine Active</th><th>Solde</th><th>Bonus Cumulés</th></tr></thead>
+                        <thead><tr><th>Nom</th><th>Machine</th><th>Solde</th><th>Bonus</th></tr></thead>
                         <tbody>
                             <% users.forEach(u => { %>
                             <tr>
@@ -262,18 +265,13 @@
             btn.classList.add('active');
         }
 
-        // Système de Notification Sonore Auto-Refresh
         let currentEnAttente = <%= stats.enAttente %>;
-        
         function checkActivity() {
-            // Ici, on pourrait faire un fetch('/admin/api/stats') pour du temps réel
-            // Pour l'instant, on simule une vérification de la valeur passée par EJS
             if (currentEnAttente > 0) {
                 document.getElementById('admin-alert').style.display = 'block';
-                document.getElementById('notif-sound').play().catch(e => console.log("Audio bloqué par navigateur"));
+                document.getElementById('notif-sound').play().catch(e => {});
             }
         }
-
         window.onload = checkActivity;
     </script>
 </body>
