@@ -11,23 +11,27 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
-        /* --- DESIGN SYSTEM 800 --- */
+        /* ============================================================
+           MOTEUR CSS "TITAN 800" - DESIGN SYSTEM RDC 2026
+           ============================================================ */
         :root {
             --primary: #003399;
             --accent: #00d9ff;
             --success: #10b981;
             --warning: #fbbf24;
             --danger: #f43f5e;
-            --dark: #000c26;
+            --dark-bg: #000c26;
             --white: #ffffff;
-            --glass-bg: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
+            --glass-card: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --transition-hq: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
+        /* RESET ET OPTIMISATION MOBILE */
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
+        
         body {
-            background-color: var(--dark);
+            background-color: var(--dark-bg);
             background-image: 
                 radial-gradient(circle at top left, #001f5c, transparent 40%),
                 radial-gradient(circle at bottom right, #00061a, transparent 40%),
@@ -36,265 +40,277 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             color: var(--white);
             margin: 0; padding: 0; min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* --- NAVIGATION PROFESSIONNELLE --- */
+        /* --- NAVIGATION MASTER (STICKY) --- */
         .master-nav {
             background: var(--warning);
-            height: 70px;
+            height: 75px;
             padding: 0 20px;
             position: sticky; top: 0; z-index: 3000;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            border-bottom: 4px solid rgba(0,0,0,0.1);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            border-bottom: 5px solid rgba(0,0,0,0.15);
         }
 
-        .btn-home-back {
-            background: var(--primary); color: white; border-radius: 14px;
-            width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
+        .btn-home-cube {
+            background: var(--primary); color: white; border-radius: 16px;
+            width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
             text-decoration: none; border: 2px solid rgba(255,255,255,0.2);
+            transition: var(--transition-hq);
+        }
+        .btn-home-cube:hover { transform: rotate(-10deg) scale(1.1); background: #000; }
+
+        .balance-master {
+            background: var(--white);
+            padding: 8px 18px;
+            border-radius: 50px;
+            display: flex; align-items: center; gap: 20px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .balance-col { display: flex; flex-direction: column; line-height: 1; }
+        .bal-label { font-size: 0.5rem; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 3px; }
+        .bal-val { font-size: 0.95rem; font-weight: 900; color: var(--primary); }
+        .bal-val.bonus { color: var(--success); }
+
+        .btn-exit-terminal {
+            background: #1e293b; color: white; padding: 10px 22px;
+            border-radius: 50px; font-weight: 800; text-decoration: none;
+            font-size: 0.75rem; display: flex; align-items: center; gap: 10px;
             transition: 0.3s;
         }
+        .btn-exit-terminal:hover { background: var(--danger); transform: translateX(5px); }
 
-        .balance-container {
-            background: var(--white);
-            padding: 6px 15px;
-            border-radius: 50px;
-            display: flex; align-items: center; gap: 15px;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        .balance-item { display: flex; flex-direction: column; line-height: 1.1; }
-        .balance-label { font-size: 0.55rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
-        .balance-val { font-size: 0.9rem; font-weight: 900; color: var(--primary); }
-        .balance-val.bonus { color: var(--success); }
-
-        .btn-exit {
-            background: #1e293b; color: white; padding: 8px 18px;
-            border-radius: 50px; font-weight: 800; text-decoration: none;
-            font-size: 0.8rem; display: flex; align-items: center; gap: 8px;
-        }
-
-        /* --- BANNIÈRE MARKETING (WHITE CASE) --- */
-        .marketing-banner {
+        /* --- CASE MARKETING (PURE WHITE) --- */
+        .marketing-white-case {
             background: var(--white);
             margin: 0;
             display: flex;
             flex-direction: column;
             border-radius: 0 0 50px 50px;
             overflow: hidden;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            border-bottom: 1px solid #ddd;
         }
-        @media (min-width: 992px) { .marketing-banner { height: 350px; flex-direction: row; } }
+        @media (min-width: 992px) { .marketing-white-case { height: 380px; flex-direction: row; border-radius: 0 0 80px 80px; } }
 
-        .mkt-content {
+        .mkt-text-zone {
             padding: 40px;
             display: flex; flex-direction: column; justify-content: center;
             color: #000; flex: 1;
         }
-        .mkt-tag { 
-            background: var(--primary); color: white; padding: 5px 15px; 
-            border-radius: 50px; font-size: 0.65rem; font-weight: 800; width: fit-content;
+        .mkt-badge { 
+            background: var(--primary); color: white; padding: 6px 16px; 
+            border-radius: 50px; font-size: 0.65rem; font-weight: 900; width: fit-content;
+            margin-bottom: 20px;
         }
-        .mkt-title { font-size: 2.2rem; font-weight: 900; margin: 15px 0; letter-spacing: -2px; }
-        .mkt-desc { font-size: 1rem; font-weight: 600; opacity: 0.7; margin-bottom: 25px; }
+        .mkt-h1 { font-size: 2.5rem; font-weight: 900; margin-bottom: 15px; letter-spacing: -2px; line-height: 1; }
+        .mkt-p { font-size: 1.1rem; font-weight: 600; opacity: 0.6; margin-bottom: 30px; line-height: 1.4; }
 
-        .mkt-diffusion-zone {
-            flex: 1.2;
+        .mkt-diffusion-screen {
+            flex: 1.3;
             background: #f8fafc;
             border-left: 1px solid #eee;
             display: flex; align-items: center; justify-content: center;
             position: relative;
         }
-        /* Espace prêt pour tes visuels marketing */
-        .mkt-diffusion-zone::after {
-            content: "DIFFUSION MARKETING ACTIVE";
-            font-weight: 900; color: #ddd; font-size: 1.5rem; letter-spacing: 5px;
+        .mkt-diffusion-screen::after {
+            content: "DIFFUSION MARKETING ELITE ACTIVE";
+            font-weight: 900; color: #e2e8f0; font-size: 1.2rem; letter-spacing: 8px; text-align: center;
+            animation: pulse-text 2s infinite;
+        }
+        @keyframes pulse-text { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.7; } }
+
+        /* --- DASHBOARD DE MINAGE (RE-DIMENSIONNÉ) --- */
+        .mining-container { padding: 40px 15px; }
+        @media (min-width: 992px) { .mining-container { padding: 60px 80px; } }
+
+        .glass-mining-card {
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
         }
 
-        /* --- MINING DASHBOARD (AJUSTÉ) --- */
-        .mining-section {
-            padding: 30px 15px;
-        }
-        @media (min-width: 992px) { .mining-section { padding: 50px 60px; } }
-
-        .mining-card {
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 35px;
-            padding: 30px;
+        .elite-progress-wrapper {
+            height: 18px; background: rgba(255,255,255,0.05);
+            border-radius: 50px; overflow: hidden; margin: 30px 0;
+            border: 1px solid rgba(255,255,255,0.1);
             position: relative;
         }
+        .elite-bar {
+            background: linear-gradient(90deg, var(--accent), var(--success), var(--accent));
+            background-size: 200% 100%;
+            height: 100%; width: 0; transition: width 2.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative; box-shadow: 0 0 30px rgba(0, 217, 255, 0.5);
+            animation: move-gradient 4s linear infinite;
+        }
+        @keyframes move-gradient { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        .prog-container {
-            height: 14px; background: rgba(255,255,255,0.05);
-            border-radius: 50px; overflow: hidden; margin: 25px 0;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .prog-bar {
-            background: linear-gradient(90deg, var(--accent), var(--success));
-            height: 100%; width: 0; transition: width 2s ease;
-            position: relative; box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
-        }
-        .prog-bar::after {
-            content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            animation: sweep 2.5s infinite;
-        }
-        @keyframes sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
-
-        .btn-withdraw {
+        .btn-withdraw-master {
             background: var(--danger); color: white; border: none;
-            width: 100%; padding: 18px; border-radius: 20px;
-            font-weight: 900; font-size: 1rem; text-transform: uppercase;
-            box-shadow: 0 10px 30px rgba(244, 63, 94, 0.3);
-            transition: 0.3s;
+            width: 100%; padding: 22px; border-radius: 25px;
+            font-weight: 900; font-size: 1.1rem; text-transform: uppercase;
+            box-shadow: 0 15px 40px rgba(244, 63, 94, 0.4);
+            transition: var(--transition-hq);
+            letter-spacing: 1px;
         }
-        .btn-withdraw:active { transform: scale(0.95); }
+        .btn-withdraw-master:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(244, 63, 94, 0.6); }
 
-        /* --- GRILLE DES PACKS (CHIRURGICALE) --- */
-        .grid-header { padding: 0 20px; margin-bottom: 25px; border-left: 5px solid var(--warning); }
+        /* --- GRILLE DES PACKS (DOUBLE COLONNE MOBILE) --- */
+        .section-title { padding: 0 25px; margin-bottom: 30px; border-left: 6px solid var(--warning); }
         
-        .pack-grid {
+        .elite-pack-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2 colonnes sur mobile */
-            gap: 12px; padding: 0 15px 50px;
+            grid-template-columns: repeat(2, 1fr); /* FORCÉ 2 COLONNES SUR MOBILE */
+            gap: 15px; padding: 0 15px 60px;
         }
-        @media (min-width: 992px) { .pack-grid { grid-template-columns: repeat(4, 1fr); gap: 30px; padding: 0 60px 100px; } }
+        @media (min-width: 992px) { .elite-pack-grid { grid-template-columns: repeat(4, 1fr); gap: 35px; padding: 0 80px 120px; } }
 
-        .pack-card {
+        .pack-premium-card {
             background: var(--white);
-            border-radius: 25px;
+            border-radius: 35px;
             overflow: hidden;
             display: flex; flex-direction: column;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            transition: var(--transition-hq);
+            box-shadow: 0 20px 45px rgba(0,0,0,0.4);
             border: none;
+            height: 100%;
         }
-        .pack-card:hover { transform: translateY(-10px); }
+        .pack-premium-card:hover { transform: translateY(-15px) rotate(1deg); }
 
-        .pack-header { padding: 12px; text-align: center; color: white; font-weight: 800; font-size: 0.7rem; text-transform: uppercase; }
-        .pack-body { padding: 20px; text-align: center; color: var(--dark); flex-grow: 1; display: flex; flex-direction: column; }
+        .p-head { padding: 15px; text-align: center; color: white; font-weight: 900; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
+        .p-body { padding: 25px; text-align: center; color: var(--dark-bg); flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
         
-        .pack-price { font-size: 1.3rem; font-weight: 900; margin: 10px 0; letter-spacing: -1px; }
-        .pack-income { font-size: 0.8rem; font-weight: 700; color: var(--primary); margin-bottom: 15px; }
+        .p-price { font-size: 1.4rem; font-weight: 900; margin: 12px 0; letter-spacing: -1.5px; color: #1e293b; }
+        .p-daily { font-size: 0.85rem; font-weight: 800; color: var(--primary); margin-bottom: 20px; }
 
-        .btn-buy {
+        .btn-pack-buy {
             background: var(--primary); color: white; border: none;
-            width: 100%; padding: 12px; border-radius: 15px;
-            font-weight: 800; font-size: 0.75rem; text-transform: uppercase;
-            margin-top: auto;
+            width: 100%; padding: 14px; border-radius: 20px;
+            font-weight: 800; font-size: 0.8rem; text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0, 51, 153, 0.3);
         }
 
-        .pack-locked { opacity: 0.5; filter: grayscale(1); cursor: not-allowed; }
+        .future-locked { opacity: 0.6; filter: grayscale(1); position: relative; }
+        .future-lock-icon { position: absolute; top: 15px; right: 15px; color: var(--danger); font-size: 1.2rem; }
 
-        /* --- NOTIFICATIONS DYNAMIQUES --- */
-        #live-notif {
-            position: fixed; bottom: 20px; left: 20px;
+        /* --- SYSTÈME DE LOGS ET PREUVES SOCIALES --- */
+        #live-withdraw-toast {
+            position: fixed; bottom: 30px; left: 30px;
             background: var(--white); color: #000;
-            padding: 12px 20px; border-radius: 20px;
-            display: none; align-items: center; gap: 15px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6); z-index: 5000;
-            border-left: 5px solid var(--success);
+            padding: 15px 25px; border-radius: 25px;
+            display: none; align-items: center; gap: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7); z-index: 5000;
+            border-left: 8px solid var(--success);
         }
 
-        /* --- FOOTER --- */
-        .elite-footer {
-            background: rgba(0,0,0,0.4); padding: 60px 20px;
-            border-top: 1px solid var(--border); text-align: center;
+        /* --- FOOTER INDUSTRIEL --- */
+        .master-footer {
+            background: rgba(0,0,0,0.6); padding: 80px 20px;
+            border-top: 1px solid var(--glass-border); text-align: center;
         }
+
+        /* --- MODALES --- */
+        .modal-elite-style { border-radius: 50px !important; border: none; overflow: hidden; }
     </style>
 </head>
 <body>
 
-    <div id="live-notif" class="animate__animated">
-        <div class="bg-success rounded-circle p-2 text-white"><i class="bi bi-check-lg"></i></div>
+    <div id="live-withdraw-toast" class="animate__animated">
+        <div class="bg-success rounded-circle p-3 text-white shadow-sm"><i class="bi bi-bank2 fs-5"></i></div>
         <div>
-            <div class="fw-900 small" id="notif-name">System</div>
-            <div class="small opacity-75">Retrait de <b id="notif-amt">0</b> FC réussi</div>
+            <div class="fw-900 fs-6" id="toast-name">Anonyme</div>
+            <div class="small opacity-75 fw-bold">Retrait de <span class="text-success" id="toast-amount">0</span> FC validé</div>
         </div>
     </div>
 
     <nav class="master-nav">
         <div class="d-flex align-items-center gap-3">
-            <a href="/" class="btn-home-back"><i class="bi bi-house-door-fill fs-5"></i></a>
-            <div class="balance-container animate__animated animate__fadeInDown">
-                <div class="balance-item" style="border-right: 1px solid #eee; padding-right: 12px;">
-                    <span class="balance-label">Mon Solde</span>
-                    <span class="balance-val"><%= user.solde.toLocaleString() %> FC</span>
+            <a href="/" class="btn-home-cube"><i class="bi bi-house-door-fill fs-4"></i></a>
+            <div class="balance-master animate__animated animate__fadeInDown">
+                <div class="balance-col" style="border-right: 2px solid #f1f5f9; padding-right: 15px;">
+                    <span class="bal-label">Portefeuille</span>
+                    <span class="bal-val"><%= user.solde.toLocaleString() %> FC</span>
                 </div>
-                <div class="balance-item">
-                    <span class="balance-label">Bonus Actif</span>
-                    <span class="balance-val bonus">+<%= user.bonus.toLocaleString() %> FC</span>
+                <div class="balance-col">
+                    <span class="bal-label text-success">Bonus Minage</span>
+                    <span class="bal-val bonus">+<%= user.bonus.toLocaleString() %> FC</span>
                 </div>
             </div>
         </div>
         <div class="d-flex align-items-center gap-3">
             <div class="d-none d-md-block text-end" style="line-height: 1;">
-                <b class="text-dark d-block" style="font-size: 0.9rem;"><%= user.username %></b>
-                <small class="text-muted fw-bold" style="font-size: 0.6rem;">ELITE V3</small>
+                <b class="text-dark d-block" style="font-size: 1rem;"><%= user.username %></b>
+                <small class="text-muted fw-bold" style="font-size: 0.65rem;">ACCÈS ELITE NIVEAU 3</small>
             </div>
-            <a href="/logout" class="btn-exit shadow-sm"><i class="bi bi-power"></i> <span>SORTIE</span></a>
+            <a href="/logout" class="btn-exit-terminal shadow-sm"><i class="bi bi-power"></i> <span>DÉCONNEXION</span></a>
         </div>
     </nav>
 
-    <header class="marketing-banner">
-        <div class="mkt-content animate__animated animate__fadeInLeft">
-            <span class="mkt-tag"><%= content.tag_tech %></span>
-            <h1 class="mkt-title"><%= content.titre_principal %></h1>
-            <p class="mkt-desc"><%= content.description %></p>
-            <button onclick="document.getElementById('packs').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-3 fw-900 shadow">COMMENCER LE MINAGE</button>
+    <header class="marketing-white-case">
+        <div class="mkt-text-zone animate__animated animate__fadeInLeft">
+            <span class="mkt-badge"><%= content.tag_tech %></span>
+            <h1 class="mkt-h1"><%= content.titre_principal %></h1>
+            <p class="mkt-p"><%= content.description %></p>
+            <div class="d-flex gap-3">
+                <button onclick="document.getElementById('packs').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-3 fw-900 shadow-lg">INVESTIR MAINTENANT</button>
+            </div>
         </div>
-        <div class="mkt-diffusion-zone animate__animated animate__fadeIn">
+        <div class="mkt-diffusion-screen animate__animated animate__fadeIn">
             </div>
     </header>
 
-    <div class="mining-section">
-        <div class="mining-card animate__animated animate__fadeInUp">
-            <div class="d-flex justify-content-between align-items-end mb-1">
+    <div class="mining-container">
+        <div class="glass-mining-card animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between align-items-end mb-2">
                 <div>
-                    <h6 class="fw-900 text-uppercase mb-0"><i class="bi bi-activity text-accent me-2"></i>Status du Flux Automatique</h6>
-                    <small class="opacity-50">Liaison satellite établie...</small>
+                    <h5 class="fw-900 text-uppercase mb-0"><i class="bi bi-cpu-fill text-accent me-2"></i>Status du Flux Cryptographique</h5>
+                    <small class="opacity-50">Synchronisation avec les serveurs de Kinshasa...</small>
                 </div>
-                <div class="text-accent fw-900 fs-2"><%= p || 0 %>%</div>
+                <div class="text-accent fw-900 fs-1"><%= p || 0 %>%</div>
             </div>
 
-            <div class="prog-container">
-                <div class="prog-bar" style="width: <%= p || 0 %>%"></div>
+            <div class="elite-progress-wrapper">
+                <div class="elite-bar" style="width: <%= p || 0 %>%"></div>
             </div>
 
-            <div class="row g-3 mb-4">
+            <div class="row g-4 mb-4">
                 <div class="col-6 col-md-3">
-                    <small class="balance-label opacity-50">Performance</small>
-                    <div class="fw-800 text-accent"><%= content.puissance_hash %></div>
+                    <span class="bal-label opacity-50">Capacité</span>
+                    <div class="fw-900 text-accent fs-5"><%= content.puissance_hash %></div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <small class="balance-label opacity-50">Réseau</small>
-                    <div class="fw-800 text-success"><%= content.reseau_status %></div>
+                    <span class="bal-label opacity-50">Réseau Status</span>
+                    <div class="fw-900 text-success fs-5"><%= content.reseau_status %></div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <small class="balance-label opacity-50">Machine</small>
-                    <div class="fw-800"><%= user.pack %></div>
+                    <span class="bal-label opacity-50">Unité Active</span>
+                    <div class="fw-900 fs-5 text-white"><%= user.pack %></div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <small class="balance-label opacity-50">Cycle</small>
-                    <div id="timer" class="fw-800 text-warning">00:00:00</div>
+                    <span class="bal-label opacity-50">Prochain Gain</span>
+                    <div id="cycle-timer" class="fw-900 text-warning fs-5">00:00:00</div>
                 </div>
             </div>
 
-            <button onclick="withdraw()" class="btn-withdraw animate__animated animate__pulse animate__infinite">
-                <i class="bi bi-wallet2 me-2"></i> Retirer mes Gains
+            <button onclick="handleWithdrawal()" class="btn-withdraw-master animate__animated animate__pulse animate__infinite">
+                <i class="bi bi-wallet2 me-3 fs-4"></i> Retirer mes Profits
             </button>
         </div>
     </div>
 
-    <div class="grid-header mx-3" id="packs">
-        <h4 class="fw-900 mb-0">CATALOGUE DE MINAGE 2026</h4>
-        <small class="opacity-50 fw-bold">Unités haute performance certifiées</small>
+    <div class="section-title mx-3" id="packs">
+        <h3 class="fw-900 mb-0 text-uppercase">Génération Industrielle 2026</h3>
+        <p class="opacity-50 fw-bold small">Packs de minage haute performance certifiés RDC</p>
     </div>
 
-    <div class="pack-grid">
+    <div class="elite-pack-grid">
         <% 
         const packs = [
             { id: 'BRONZE', price: 50000, daily: 5000, bonus: 5000, color: '#10b981' },
@@ -303,36 +319,39 @@
             { id: 'DIAMOND', price: 1000000, daily: 100000, bonus: 120000, color: '#ef4444' }
         ];
         packs.forEach(u => {
-            const active = (user.pack === u.id);
+            const isActive = (user.pack === u.id);
         %>
-        <div class="pack-card animate__animated animate__fadeInUp">
-            <div class="pack-header" style="background: <%= u.color %>;"><%= u.id %> UNIT</div>
-            <div class="pack-body">
-                <span class="balance-label">Investissement</span>
-                <div class="pack-price"><%= u.price.toLocaleString() %> FC</div>
-                <div class="pack-income">+<%= u.daily.toLocaleString() %> FC / J</div>
-                
-                <div class="small fw-bold text-start mb-3 opacity-75" style="font-size: 0.6rem;">
-                    <div><i class="bi bi-check-circle-fill text-success me-1"></i> Bonus: +<%= u.bonus.toLocaleString() %> FC</div>
-                    <div><i class="bi bi-check-circle-fill text-success me-1"></i> Contrat: 30 Jours</div>
+        <div class="pack-premium-card animate__animated animate__fadeInUp">
+            <div class="p-head" style="background: <%= u.color %>;"><%= u.id %> UNIT</div>
+            <div class="p-body">
+                <div>
+                    <span class="bal-label">Investissement</span>
+                    <div class="p-price"><%= u.price.toLocaleString() %> FC</div>
+                    <div class="p-daily">+<%= u.daily.toLocaleString() %> FC / JOUR</div>
+                    
+                    <div class="text-start border-top border-bottom py-3 mb-4">
+                        <div class="small fw-800 mb-2"><i class="bi bi-shield-fill-check text-success me-2"></i>Bonus: +<%= u.bonus.toLocaleString() %></div>
+                        <div class="small fw-800 mb-2"><i class="bi bi-clock-history text-primary me-2"></i>Contrat: 30 Jours</div>
+                        <div class="small fw-800"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Retraits Illimités</div>
+                    </div>
                 </div>
 
-                <% if(active) { %>
-                    <button class="btn btn-success btn-sm w-100 rounded-pill fw-900" disabled>ACTIVE</button>
+                <% if(isActive) { %>
+                    <button class="btn btn-success w-100 rounded-pill py-3 fw-900" disabled>ACTIVE</button>
                 <% } else { %>
-                    <button onclick="openPay('<%= u.id %>', <%= u.price %>)" class="btn-buy shadow-sm">ACHETER</button>
+                    <button onclick="processPayment('<%= u.id %>', <%= u.price %>)" class="btn-pack-buy shadow-sm">ACHETER L'UNITÉ</button>
                 <% } %>
             </div>
         </div>
         <% }) %>
     </div>
 
-    <div class="grid-header mx-3">
-        <h4 class="fw-900 mb-0 opacity-50">SÉRIE SPÉCIALE 2028</h4>
-        <small class="opacity-25 fw-bold">Déploiement futur - RDC</small>
+    <div class="section-title mx-3">
+        <h3 class="fw-900 mb-0 text-uppercase opacity-40">Extensions Elite 2028</h3>
+        <p class="opacity-30 fw-bold small">Déploiement réseau prévu en 2028</p>
     </div>
 
-    <div class="pack-grid">
+    <div class="elite-pack-grid">
         <% 
         const future = [
             { id: 'AMÉTHYSTE', price: 2500000, color: '#9333ea' },
@@ -342,56 +361,92 @@
         ];
         future.forEach(f => {
         %>
-        <div class="pack-card pack-locked">
-            <div class="pack-header" style="background: <%= f.color %>;"><%= f.id %></div>
-            <div class="pack-body">
-                <div class="pack-price"><%= f.price.toLocaleString() %> FC</div>
-                <button class="btn btn-secondary btn-sm w-100 rounded-pill" disabled>VERROUILLÉ</button>
+        <div class="pack-premium-card future-locked">
+            <i class="bi bi-lock-fill future-lock-icon"></i>
+            <div class="p-head" style="background: <%= f.color %>;"><%= f.id %></div>
+            <div class="p-body">
+                <div class="p-price opacity-30"><%= f.price.toLocaleString() %> FC</div>
+                <button class="btn btn-secondary btn-sm w-100 rounded-pill fw-800" disabled>BIENTÔT</button>
             </div>
         </div>
         <% }) %>
     </div>
 
     <div class="container-fluid mb-5">
-        <div class="mining-card p-4">
-            <h5 class="fw-900 text-warning mb-3">À PROPOS & RÈGLES</h5>
-            <p class="small opacity-75 mb-4"><%= content.about_text %></p>
-            <div class="small fw-bold opacity-50" style="white-space: pre-line;"><%= content.rules_text %></div>
+        <div class="glass-mining-card p-5">
+            <div class="row g-5">
+                <div class="col-lg-6">
+                    <h4 class="fw-900 text-warning mb-4">À PROPOS DE <%= content.brand_name %></h4>
+                    <p class="small fw-600 opacity-75 mb-0"><%= content.about_text %></p>
+                </div>
+                <div class="col-lg-6">
+                    <h4 class="fw-900 text-accent mb-4">RÈGLES DU SYSTÈME</h4>
+                    <div class="small fw-600 opacity-75" style="white-space: pre-line;"><%= content.rules_text %></div>
+                </div>
+            </div>
+            
+            <hr class="my-5 opacity-10">
+
+            <div class="row g-4 text-center text-md-start">
+                <div class="col-md-4">
+                    <h6 class="label-xs text-rose mb-3">Siège Social</h6>
+                    <div class="small fw-bold"><i class="bi bi-geo-alt-fill me-2"></i><%= content.contact_address %></div>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="label-xs text-rose mb-3">Support Email</h6>
+                    <div class="small fw-bold"><i class="bi bi-envelope-at-fill me-2"></i><%= content.contact_email %></div>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="label-xs text-rose mb-3">Hotline 24/7</h6>
+                    <div class="small fw-bold"><i class="bi bi-headset me-2"></i><%= content.contact_phone %></div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <footer class="elite-footer">
+    <footer class="master-footer">
         <div class="container">
-            <div class="fw-900 text-warning fs-4 mb-2"><%= content.brand_name %></div>
-            <p class="small opacity-50 mb-4"><%= content.footer_text %></p>
-            <div class="d-flex justify-content-center gap-4 fs-4 opacity-50">
-                <i class="bi bi-shield-lock-fill"></i>
+            <div class="fw-900 text-warning fs-3 mb-2"><%= content.brand_name %> ELITE</div>
+            <p class="small opacity-50 mb-5 text-uppercase letter-spacing-2"><%= content.footer_text %></p>
+            <div class="d-flex justify-content-center gap-5 fs-3 opacity-30">
+                <i class="bi bi-shield-shaded"></i>
                 <i class="bi bi-cpu-fill"></i>
-                <i class="bi bi-wallet2"></i>
+                <i class="bi bi-safe2-fill"></i>
             </div>
-            <hr class="my-4 opacity-10">
-            <small class="opacity-25"><%= content.contact_address %> | <%= content.contact_phone %></small>
+            <hr class="my-5 opacity-10">
+            <small class="opacity-20 fw-bold"><%= content.footer_sub %></small>
         </div>
     </footer>
 
-    <div class="modal fade" id="payModal" tabindex="-1">
+    <div class="modal fade" id="paymentEliteModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered mx-3">
-            <div class="modal-content modal-elite text-dark">
-                <div class="modal-body p-4 text-center">
-                    <div class="bg-primary text-white p-3 rounded-circle d-inline-block mb-3"><i class="bi bi-lightning-fill fs-2"></i></div>
-                    <h3 class="fw-900 mb-1">RECHARGE SÉCURISÉE</h3>
-                    <p class="text-muted small fw-bold mb-4">Effectuez le transfert vers nos comptes</p>
+            <div class="modal-content modal-elite-style text-dark">
+                <div class="modal-body p-4 p-md-5 text-center">
+                    <div class="bg-primary text-white p-4 rounded-circle d-inline-block mb-4 shadow-lg"><i class="bi bi-shield-lock-fill fs-1"></i></div>
+                    <h2 class="fw-900 mb-1">RECHARGE SÉCURISÉE</h2>
+                    <p class="text-muted small fw-bold mb-5">Transférez les fonds vers nos terminaux de paiement</p>
                     
-                    <div class="p-3 bg-light rounded-4 mb-2 text-start border">
-                        <span class="balance-label text-primary">VODACOM (M-PESA)</span>
-                        <div class="fs-5 fw-900"><%= content.admin_voda %></div>
-                    </div>
-                    <div class="p-3 bg-light rounded-4 mb-4 text-start border">
-                        <span class="balance-label text-danger">AIRTEL MONEY</span>
-                        <div class="fs-5 fw-900"><%= content.admin_airtel %></div>
+                    <div class="p-3 bg-light rounded-4 mb-3 border text-start animate__animated animate__fadeInLeft">
+                        <span class="bal-label text-primary">VODACOM (M-PESA RDC)</span>
+                        <div class="fs-4 fw-900 d-flex justify-content-between align-items-center">
+                            <span><%= content.admin_voda %></span>
+                            <i class="bi bi-clipboard-plus text-primary" style="cursor:pointer;" onclick="copyPhone('<%= content.admin_voda %>')"></i>
+                        </div>
                     </div>
 
-                    <button onclick="sendTID()" class="btn btn-primary w-100 py-3 rounded-pill fw-900 shadow">J'AI ENVOYÉ LE PAIEMENT</button>
+                    <div class="p-3 bg-light rounded-4 mb-5 border text-start animate__animated animate__fadeInRight">
+                        <span class="bal-label text-danger">AIRTEL MONEY (RDC)</span>
+                        <div class="fs-4 fw-900 d-flex justify-content-between align-items-center">
+                            <span><%= content.admin_airtel %></span>
+                            <i class="bi bi-clipboard-plus text-danger" style="cursor:pointer;" onclick="copyPhone('<%= content.admin_airtel %>')"></i>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning small rounded-4 py-3 border-0 shadow-sm mb-4">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i> Une fois l'envoi effectué, saisissez impérativement votre référence TID.
+                    </div>
+
+                    <button onclick="submitTransactionData()" class="btn btn-primary w-100 py-3 rounded-pill fw-900 shadow-lg">J'AI ENVOYÉ LES FONDS</button>
                 </div>
             </div>
         </div>
@@ -399,56 +454,79 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let selectedId = "", selectedPrice = 0;
-        const pModal = new bootstrap.Modal(document.getElementById('payModal'));
+        let tempPackId = "", tempPrice = 0;
+        const pEliteModal = new bootstrap.Modal(document.getElementById('paymentEliteModal'));
 
-        function openPay(id, price) { selectedId = id; selectedPrice = price; pModal.show(); }
+        // GESTION DES NOTIFICATIONS (PREUVE SOCIALE)
+        function showLiveToast(name, amount) {
+            const toast = document.getElementById('live-withdraw-toast');
+            document.getElementById('toast-name').innerText = name + " K.";
+            document.getElementById('toast-amount').innerText = amount.toLocaleString();
+            toast.style.display = "flex";
+            toast.classList.add('animate__fadeInLeft');
+            setTimeout(() => {
+                toast.classList.replace('animate__fadeInLeft', 'animate__fadeOutLeft');
+                setTimeout(() => { toast.style.display="none"; toast.classList.remove('animate__fadeOutLeft'); }, 500);
+            }, 5500);
+        }
 
-        function sendTID() {
-            pModal.hide();
-            const tid = prompt("Entrez la référence TID du message reçu :");
+        // ACTIONS
+        function processPayment(id, price) { tempPackId = id; tempPrice = price; pEliteModal.show(); }
+
+        function submitTransactionData() {
+            pEliteModal.hide();
+            const tid = prompt("Référence TID de la transaction :");
             if(tid && tid.length > 5) {
-                postData('/souscrire-pack', { packName: selectedId, prix: selectedPrice, reference: tid });
+                sendPostRequest('/souscrire-pack', { packName: tempPackId, prix: tempPrice, reference: tid });
+            } else if(tid !== null) {
+                alert("Erreur: Référence invalide.");
             }
         }
 
-        function withdraw() {
-            const amt = prompt("Montant à retirer (Min 1.000 FC) :");
-            if(amt >= 1000) postData('/retrait', { montant: amt });
+        function handleWithdrawal() {
+            const amt = prompt("Montant du retrait (Minimum 1.000 FC) :");
+            if(amt && amt >= 1000) {
+                sendPostRequest('/retrait', { montant: amt });
+            } else if(amt !== null) {
+                alert("Erreur: Le montant minimum est de 1.000 FC.");
+            }
         }
 
-        function postData(path, data) {
-            const f = document.createElement('form'); f.method = 'POST'; f.action = path;
+        function sendPostRequest(path, data) {
+            const form = document.createElement('form'); form.method = 'POST'; form.action = path;
             for(let key in data) {
-                const i = document.createElement('input'); i.type='hidden'; i.name=key; i.value=data[key]; f.appendChild(i);
+                const i = document.createElement('input'); i.type='hidden'; i.name=key; i.value=data[key];
+                form.appendChild(i);
             }
-            document.body.appendChild(f); f.submit();
+            document.body.appendChild(form); form.submit();
         }
 
-        // TIMER GAIN
+        function copyPhone(num) {
+            navigator.clipboard.writeText(num);
+            alert("Numéro copié : " + num);
+        }
+
+        // TIMER CYCLE
         setInterval(() => {
             const now = new Date(), target = new Date();
-            target.setHours(24,0,0,0);
+            target.setHours(24, 0, 0, 0);
             const diff = target - now;
             const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
-            document.getElementById('timer').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+            document.getElementById('cycle-timer').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
         }, 1000);
 
-        // LIVE NOTIFS (PREUVE SOCIALE)
-        const users = ["Anicet", "Béatrice", "Clément", "Dieudonné", "Espoir", "Fiston", "Grace", "Héritier"];
+        // SIMULATION RETRAITS LIVE (RDC)
+        const fakeUsers = ["Jean-Paul", "Modeste", "Sarah", "Elvis", "Clémentine", "Justin", "Guelord", "Mado"];
         setInterval(() => {
-            const user = users[Math.floor(Math.random()*users.length)];
-            const amt = (Math.floor(Math.random()*20)*5000 + 10000).toLocaleString();
-            const notif = document.getElementById('live-notif');
-            document.getElementById('notif-name').innerText = user + " K.";
-            document.getElementById('notif-amt').innerText = amt;
-            notif.style.display = "flex";
-            notif.classList.add('animate__fadeInLeft');
-            setTimeout(() => {
-                notif.classList.replace('animate__fadeInLeft', 'animate__fadeOutLeft');
-                setTimeout(() => { notif.style.display="none"; notif.classList.remove('animate__fadeOutLeft'); }, 500);
-            }, 5000);
-        }, 25000);
+            const user = fakeUsers[Math.floor(Math.random()*fakeUsers.length)];
+            const sum = (Math.floor(Math.random()*25)*5000 + 10000);
+            showLiveToast(user, sum);
+        }, 28000);
+
+        // NOTIFICATIONS URL
+        const params = new URLSearchParams(window.location.search);
+        if(params.get('msg') === 'TID_SEND') showLiveToast("SYSTÈME", "TID transmis avec succès.");
+        if(params.get('msg') === 'SUCCESS') showLiveToast("INFO", "Retrait en cours de traitement.");
     </script>
 </body>
 </html>
