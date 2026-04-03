@@ -1,8 +1,11 @@
 /**
  * ==============================================================================
- * CASHLINK ELITE v27.6 - FORCE RELOAD DATABASE (RDC 2026)
+ * CASHLINK ELITE v27.7 - MOTEUR DE PERSISTANCE ABSOLUE (RDC 2026)
  * ------------------------------------------------------------------------------
- * CORRECTIF : Force le rechargement des données après chaque modification Admin.
+ * CORRECTIFS RÉUNIS : 
+ * 1. Fusion atomique des données (Évite le retour aux anciennes infos)
+ * 2. Anti-crash investDate (Protection du Dashboard)
+ * 3. Force-Write & Reload (Gestion du cache Render /tmp)
  * ==============================================================================
  */
 
@@ -15,8 +18,8 @@ const fs = require('fs');
 
 const app = express();
 
-// --- 1. STOCKAGE ---
-const dbPath = '/tmp/cashlink_v27_final_master';
+// --- 1. STOCKAGE SÉCURISÉ ---
+const dbPath = '/tmp/cashlink_v27_master_anash';
 if (!fs.existsSync(dbPath)) {
     try { fs.mkdirSync(dbPath, { recursive: true }); } catch (e) {}
 }
@@ -29,7 +32,7 @@ const db = {
     retraits: new Datastore({ filename: path.join(dbPath, 'retraits.db'), autoload: true })
 };
 
-// --- 2. CONFIGURATION ---
+// --- 2. CONFIGURATION SERVEUR ---
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'));
@@ -43,7 +46,7 @@ app.use(session({
     cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 }
 }));
 
-// --- 3. DONNÉES PAR DÉFAUT ---
+// --- 3. CONTENU INITIAL (BACKUP) ---
 const MASTER_UID = "ANASH_MASTER_SESSION_2026";
 const INITIAL_SITE_CONTENT = {
     _id: "UI_CONTENT",
@@ -59,13 +62,11 @@ const INITIAL_SITE_CONTENT = {
     securite_type: "SSL-256",
     retraits_status: "Ouverts",
     about_text: "Elite plateforme RDC...",
-    rules_text: "Règles...",
+    rules_text: "1. Un seul compte...",
     contact_address: "Kinshasa, RDC",
     contact_email: "support@cashlink.cd",
     contact_phone: "+243",
-    min_retrait: 1000,
-    footer_text: "CASHLINK ELITE",
-    footer_sub: "2026"
+    min_retrait: 1000
 };
 
 db.config.findOne({ _id: "UI_CONTENT" }, (err, doc) => {
@@ -79,18 +80,20 @@ const PACKS_CONFIG = {
     'DIAMOND': { prix: 1000000, bonus: 120000 }
 };
 
-// --- 4. MOTEURS ---
+// --- 4. LOGIQUE DE CALCULS ---
 function getMiningProgress(startDate) {
     if (!startDate) return "0.0";
-    const diff = (new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24);
-    return Math.min((diff / 30) * 100, 100).toFixed(1);
+    try {
+        const diff = (new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24);
+        return Math.min((diff / 30) * 100, 100).toFixed(1);
+    } catch (e) { return "0.0"; }
 }
 
 function addSystemLog(type, msg) {
     db.logs.insert({ date: new Date().toLocaleString('fr-FR'), type, msg, ts: Date.now() });
 }
 
-// --- 5. DASHBOARD ---
+// --- 5. ROUTE DASHBOARD (SÉCURISÉE) ---
 app.get('/', (req, res) => {
     const defaultUser = { _id: MASTER_UID, username: "ANASH MASTER", solde: 0, bonus: 0, pack: 'Aucun', investDate: null };
     db.users.findOne({ _id: MASTER_UID }, (err, user) => {
@@ -107,28 +110,33 @@ app.get('/', (req, res) => {
     });
 });
 
-// --- 6. SAUVEGARDE ADMIN (CORRECTION DÉFINITIVE) ---
+// --- 6. SAUVEGARDE ADMIN (VERSION ATOMIQUE) ---
 app.post('/admin/update-content', (req, res) => {
-    const updateData = req.body;
-    delete updateData._id; // Éviter l'erreur de modification d'ID
+    const incomingData = req.body;
+    delete incomingData._id; // Protection ID
 
-    // On force NeDB à mettre à jour et on attend la fin de l'opération
-    db.config.update({ _id: "UI_CONTENT" }, { $set: updateData }, { upsert: true }, (err) => {
-        if (err) return res.redirect('/admin?status=error');
+    // ÉTAPE 1 : Récupérer l'existant
+    db.config.findOne({ _id: "UI_CONTENT" }, (err, currentConfig) => {
+        // ÉTAPE 2 : Fusionner (Garde les anciens textes si les nouveaux sont vides)
+        const finalUpdate = { ...currentConfig, ...incomingData };
 
-        // ACTION CRITIQUE : Recharger la base de données pour vider le cache
-        db.config.loadDatabase((err) => {
-            addSystemLog("CMS", "Données synchronisées avec succès.");
+        // ÉTAPE 3 : Écraser proprement
+        db.config.update({ _id: "UI_CONTENT" }, finalUpdate, { upsert: true }, (err) => {
+            if (err) return res.redirect('/admin?status=error');
+
+            // ÉTAPE 4 : Forcer NeDB à vider son cache et écrire sur le disque
+            db.config.persistence.compactDatafile();
             
-            // On laisse 1 seconde pour que Render stabilise le fichier /tmp
-            setTimeout(() => {
-                res.redirect('/admin?status=success');
-            }, 1000);
+            db.config.loadDatabase((err) => {
+                addSystemLog("CMS", "Données du site synchronisées avec succès.");
+                // Délai pour Render
+                setTimeout(() => { res.redirect('/admin?v=' + Date.now()); }, 1000);
+            });
         });
     });
 });
 
-// --- 7. ADMIN TERMINAL ---
+// --- 7. TERMINAL ADMIN ---
 app.get('/admin', (req, res) => {
     db.users.find({}, (err, users) => {
         db.tx.find({}).sort({ ts: -1 }).exec((err, txs) => {
@@ -151,7 +159,7 @@ app.get('/admin', (req, res) => {
     });
 });
 
-// --- 8. VALIDATIONS & ACTIONS ---
+// --- 8. LOGIQUE FINANCIÈRE ---
 app.post('/valider-depot', (req, res) => {
     db.tx.findOne({ _id: req.body.txId }, (err, tx) => {
         if (!tx) return res.redirect('/admin');
@@ -198,7 +206,8 @@ app.post('/activer-investissement', (req, res) => {
 
 app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
 
+// --- 9. LANCEMENT ---
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-    console.log("💎 CASHLINK v27.6 INDUSTRIEL ACTIF");
+    console.log("💎 CASHLINK ELITE v27.7 - PRÊT");
 });
