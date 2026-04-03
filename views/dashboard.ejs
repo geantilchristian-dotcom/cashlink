@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHLINK | TERMINAL ELITE v3.5</title>
+    <title>CASHLINK | TERMINAL DE MINAGE PROFESSIONNEL</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
@@ -12,7 +12,7 @@
 
     <style>
         /* ============================================================
-           SYSTÈME DE DESIGN CASHLINK MASTER (600 LIGNES)
+           SYSTÈME DE DESIGN "CASHLINK MASTER" v3.6
            ============================================================ */
         :root {
             --primary: #003399;
@@ -22,7 +22,7 @@
             --danger: #f43f5e;
             --dark-core: #000c26;
             --white-pure: #ffffff;
-            --glass-light: rgba(255, 255, 255, 0.05);
+            --glass-bg: rgba(255, 255, 255, 0.03);
             --glass-border: rgba(255, 255, 255, 0.1);
             --shadow-lux: 0 25px 60px rgba(0,0,0,0.5);
             --transition-hq: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
@@ -41,361 +41,441 @@
             overflow-x: hidden;
         }
 
-        /* --- NAVIGATION PROFESSIONNELLE --- */
-        .top-nav-terminal {
+        /* --- NAVIGATION PROFESSIONNELLE (TAILLE FIXE 75PX) --- */
+        .master-navigation {
             background: var(--warning);
             height: 75px;
-            padding: 0 15px;
+            padding: 0 20px;
             position: sticky; top: 0; z-index: 3000;
             display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 10px 40px rgba(0,0,0,0.6);
             border-bottom: 5px solid rgba(0,0,0,0.1);
         }
 
-        .brand-text {
+        .brand-master-title {
             font-weight: 900;
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             color: var(--primary);
             letter-spacing: -2px;
             text-decoration: none !important;
             text-transform: uppercase;
         }
 
-        .nav-btn-action {
-            background: var(--primary); color: white; border-radius: 12px;
+        .nav-square-btn {
+            background: var(--primary); color: white; border-radius: 14px;
             width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
             text-decoration: none; border: 2px solid rgba(255,255,255,0.2);
             transition: var(--transition-hq);
         }
-        .nav-btn-action:hover { transform: scale(1.1); background: #000; }
+        .nav-square-btn:hover { transform: scale(1.1) rotate(-5deg); background: #000; }
 
-        .balance-master-display {
+        .balance-master-container {
             background: var(--white-pure);
-            padding: 6px 15px;
+            padding: 6px 18px;
             border-radius: 50px;
             display: flex; align-items: center; gap: 15px;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.1);
         }
 
-        .bal-data { display: flex; flex-direction: column; line-height: 1.1; }
-        .bal-label { font-size: 0.5rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
-        .bal-val { font-size: 0.9rem; font-weight: 900; color: var(--primary); }
-        .bal-val.bonus { color: var(--success); }
+        .bal-column { display: flex; flex-direction: column; line-height: 1.1; }
+        .bal-label-tag { font-size: 0.5rem; font-weight: 800; color: #64748b; text-transform: uppercase; }
+        .bal-value-text { font-size: 0.95rem; font-weight: 900; color: var(--primary); }
+        .bal-value-text.success-color { color: var(--success); }
 
-        /* --- CASE MARKETING TYPOGRAPHIQUE --- */
-        .marketing-white-case {
+        /* --- CASE MARKETING TYPOGRAPHIQUE (BLANC PUR) --- */
+        .marketing-white-section {
             background: var(--white-pure);
-            padding: 60px 25px;
+            padding: 70px 25px;
             text-align: center;
-            border-radius: 0 0 55px 55px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            border-radius: 0 0 60px 60px;
+            box-shadow: 0 35px 70px rgba(0,0,0,0.5);
             color: #000;
-            margin-bottom: 30px;
+            margin-bottom: 35px;
         }
 
-        .mkt-h1 {
-            font-size: 2.5rem; font-weight: 900; line-height: 0.9;
+        .mkt-main-h1 {
+            font-size: 3rem; font-weight: 900; line-height: 0.9;
             background: linear-gradient(90deg, var(--primary), #001a4d);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 20px; letter-spacing: -2px;
+            margin-bottom: 25px; letter-spacing: -2px;
         }
 
-        .mkt-p {
-            font-size: 1.1rem; font-weight: 700; color: #475569;
-            max-width: 650px; margin: 0 auto; line-height: 1.5;
+        .mkt-sub-p {
+            font-size: 1.15rem; font-weight: 700; color: #475569;
+            max-width: 750px; margin: 0 auto; line-height: 1.6;
         }
 
-        /* --- SECTION PARRAINAGE / AFFILIATION --- */
-        .affiliate-terminal {
+        .mkt-badges-group { display: flex; justify-content: center; gap: 15px; margin-top: 30px; }
+        .mkt-badge-item { background: #f1f5f9; color: var(--primary); padding: 8px 18px; border-radius: 50px; font-weight: 800; font-size: 0.7rem; border: 1px solid #e2e8f0; }
+
+        /* --- SECTION AFFILIATION ET PARRAINAGE --- */
+        .referral-terminal-card {
             background: rgba(0,0,0,0.3);
-            margin: 0 15px 30px;
+            margin: 0 15px 35px;
             padding: 25px;
-            border-radius: 35px;
+            border-radius: 40px;
             border: 1px solid var(--glass-border);
             display: flex; justify-content: space-between; align-items: center;
             flex-wrap: wrap; gap: 20px;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
         }
 
-        .aff-stat-box { display: flex; align-items: center; gap: 15px; }
-        .aff-icon-bg { background: var(--accent); color: var(--dark-core); padding: 12px; border-radius: 18px; font-size: 1.2rem; }
+        .ref-stat-wrapper { display: flex; align-items: center; gap: 15px; }
+        .ref-icon-box { background: var(--warning); color: var(--primary); padding: 14px; border-radius: 20px; font-size: 1.4rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
-        /* --- TERMINAL DE MINAGE (CENTRAL) --- */
-        .mining-main-area { padding: 0 15px 40px; }
-        .mining-premium-card {
+        /* --- TERMINAL CENTRAL DE MINAGE --- */
+        .mining-core-interface { padding: 0 15px 45px; }
+        .mining-glass-panel {
             background: rgba(255,255,255,0.02);
             backdrop-filter: blur(25px);
             border: 1px solid var(--glass-border);
-            border-radius: 45px; padding: 40px;
+            border-radius: 50px; padding: 45px;
             position: relative; overflow: hidden;
             box-shadow: var(--shadow-lux);
         }
 
-        .progress-slim-bar {
-            height: 12px; background: rgba(255,255,255,0.05);
-            border-radius: 50px; overflow: hidden; margin: 25px 0;
+        .mining-progress-track {
+            height: 14px; background: rgba(255,255,255,0.05);
+            border-radius: 50px; overflow: hidden; margin: 30px 0;
             border: 1px solid rgba(255,255,255,0.1);
         }
-        .bar-glow-active {
+        .mining-bar-fill {
             background: linear-gradient(90deg, var(--accent), var(--success), var(--accent));
             background-size: 200% 100%;
             height: 100%; position: relative;
-            box-shadow: 0 0 20px rgba(0, 217, 255, 0.4);
-            animation: flow-grad 3s linear infinite;
+            box-shadow: 0 0 25px rgba(0, 217, 255, 0.4);
+            animation: move-grad-flow 3s linear infinite;
         }
-        @keyframes flow-grad { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+        @keyframes move-grad-flow { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 
-        .btn-withdraw-elite {
+        .btn-master-withdraw {
             background: var(--danger); color: white; border: none;
-            width: 100%; padding: 22px; border-radius: 25px;
-            font-weight: 900; font-size: 1.1rem; text-transform: uppercase;
-            box-shadow: 0 15px 35px rgba(244, 63, 94, 0.3);
+            width: 100%; padding: 24px; border-radius: 25px;
+            font-weight: 900; font-size: 1.2rem; text-transform: uppercase;
+            box-shadow: 0 15px 40px rgba(244, 63, 94, 0.4);
             transition: var(--transition-hq);
             letter-spacing: 1px;
         }
-        .btn-withdraw-elite:active { transform: scale(0.96); }
+        .btn-master-withdraw:hover { transform: translateY(-5px); box-shadow: 0 20px 50px rgba(244, 63, 94, 0.6); }
 
-        /* --- GRILLE DES PACKS (STRUCTURE 320px) --- */
-        .section-header-title { padding: 0 20px; margin-bottom: 25px; border-left: 6px solid var(--warning); }
+        /* --- GRILLE DES PACKS INDUSTRIELS (FIXE 320PX) --- */
+        .industrial-grid-header { padding: 0 25px; margin-bottom: 30px; border-left: 8px solid var(--warning); }
         
-        .pack-grid-industrial {
+        .industrial-pack-grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
-            gap: 15px; padding: 0 15px 80px;
+            gap: 15px; padding: 0 15px 90px;
         }
-        @media (min-width: 992px) { .pack-grid-industrial { grid-template-columns: repeat(4, 1fr); gap: 30px; padding: 0 60px 100px; } }
+        @media (min-width: 992px) { .industrial-pack-grid { grid-template-columns: repeat(4, 1fr); gap: 35px; padding: 0 70px 110px; } }
 
-        .pack-elite-card {
+        .industrial-pack-card {
             background: var(--white-pure);
-            border-radius: 30px;
+            border-radius: 35px;
             overflow: hidden;
             display: flex; flex-direction: column;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            height: 320px; /* TAILLE FIXE VERROUILLÉE */
+            box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+            height: 320px; /* TAILLE MILITAIRE VERROUILLÉE */
             transition: var(--transition-hq);
             border: none;
         }
-        .pack-elite-card:hover { transform: translateY(-12px); }
+        .industrial-pack-card:hover { transform: translateY(-15px) rotate(1deg); }
 
-        .p-head-label { padding: 12px; text-align: center; color: white; font-weight: 900; font-size: 0.8rem; text-transform: uppercase; }
-        .p-body-content { padding: 20px; text-align: center; color: var(--dark-core); flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .p-label-header { padding: 15px; text-align: center; color: white; font-weight: 900; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+        .p-main-content { padding: 25px; text-align: center; color: var(--dark-core); flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
         
-        .p-price-val { font-size: 1.35rem; font-weight: 900; margin: 8px 0; color: var(--primary); letter-spacing: -1px; }
-        .p-daily-val { font-size: 0.8rem; font-weight: 800; opacity: 0.8; }
+        .p-amount-title { font-size: 1.5rem; font-weight: 900; margin: 10px 0; color: var(--primary); letter-spacing: -1.5px; }
+        .p-daily-status { font-size: 0.85rem; font-weight: 800; opacity: 0.8; margin-bottom: 15px; }
 
-        .btn-pack-buy {
+        .btn-buy-industrial {
             background: var(--primary); color: white; border: none;
-            width: 100%; padding: 14px; border-radius: 18px;
-            font-weight: 800; font-size: 0.75rem; text-transform: uppercase;
+            width: 100%; padding: 15px; border-radius: 20px;
+            font-weight: 800; font-size: 0.8rem; text-transform: uppercase;
+            box-shadow: 0 5px 15px rgba(0, 51, 153, 0.3);
         }
 
-        .pack-locked-elite { opacity: 0.6; filter: grayscale(1); cursor: not-allowed; position: relative; }
+        .industrial-locked-pack { opacity: 0.6; filter: grayscale(1); cursor: not-allowed; position: relative; }
+        .industrial-lock-badge { position: absolute; top: 15px; right: 15px; color: var(--danger); font-size: 1.3rem; }
 
-        /* --- ÉLÉMENTS FLOTTANTS --- */
-        #btn-scroll-up {
+        /* --- ÉLÉMENTS INTERACTIFS FLOTTANTS --- */
+        #master-scroll-up {
             position: fixed; bottom: 35px; right: 25px;
-            width: 55px; height: 55px; background: var(--warning);
+            width: 60px; height: 60px; background: var(--warning);
             color: var(--primary); border-radius: 50%;
             display: none; align-items: center; justify-content: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 5000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); z-index: 5000;
+            transition: 0.3s;
         }
+        #master-scroll-up:hover { background: #fff; transform: translateY(-5px); }
 
-        #proof-notif {
+        #live-social-notif {
             position: fixed; bottom: 35px; left: 25px;
             background: var(--white-pure); color: #000;
-            padding: 12px 25px; border-radius: 25px;
+            padding: 15px 30px; border-radius: 30px;
             display: none; align-items: center; gap: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.7); z-index: 5000;
-            border-left: 8px solid var(--success);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8); z-index: 5000;
+            border-left: 10px solid var(--success);
+        }
+
+        /* --- FOOTER INDUSTRIEL --- */
+        .industrial-footer {
+            background: rgba(0,0,0,0.7); padding: 80px 20px;
+            border-top: 1px solid var(--glass-border); text-align: center;
         }
     </style>
 </head>
 <body>
 
-    <div id="proof-notif" class="animate__animated">
-        <div class="bg-success rounded-circle p-2 text-white shadow-sm"><i class="bi bi-patch-check-fill fs-4"></i></div>
+    <div id="live-social-notif" class="animate__animated">
+        <div class="bg-success rounded-circle p-3 text-white shadow-sm"><i class="bi bi-bank2 fs-4"></i></div>
         <div>
-            <div class="fw-900 small" id="sp-name">Client</div>
-            <div class="small text-muted">Retrait de <b class="text-success" id="sp-sum">0</b> FC validé.</div>
+            <div class="fw-900 fs-6" id="toast-user-name">Chargement...</div>
+            <div class="small text-muted fw-bold">Retrait de <span class="text-success" id="toast-user-amt">0</span> FC confirmé.</div>
         </div>
     </div>
 
-    <div id="btn-scroll-up" onclick="window.scrollTo({top:0, behavior:'smooth'})">
-        <i class="bi bi-chevron-double-up fs-4"></i>
+    <div id="master-scroll-up" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <i class="bi bi-chevron-double-up fs-3"></i>
     </div>
 
-    <nav class="top-nav-terminal">
-        <div class="d-flex align-items-center gap-3">
-            <a href="/" class="nav-btn-action"><i class="bi bi-house-door-fill fs-5"></i></a>
-            <a href="#" class="brand-text">CASHLINK</a>
+    <nav class="master-navigation">
+        <div class="d-flex align-items-center gap-4">
+            <a href="/" class="nav-square-btn shadow-sm"><i class="bi bi-house-door-fill fs-4"></i></a>
+            <a href="#" class="brand-master-title">CASHLINK</a>
         </div>
         
-        <div class="balance-master-display animate__animated animate__fadeInDown">
-            <div class="bal-data" style="border-right: 2px solid #eee; padding-right: 15px;">
-                <span class="bal-label">Mon Solde</span>
-                <span class="bal-val"><%= user.solde.toLocaleString() %> FC</span>
+        <div class="balance-master-container animate__animated animate__fadeInDown">
+            <div class="bal-column" style="border-right: 2px solid #f1f5f9; padding-right: 20px;">
+                <span class="bal-label-tag">Capital Disponible</span>
+                <span class="bal-value-text"><%= user.solde.toLocaleString() %> FC</span>
             </div>
-            <div class="bal-data">
-                <span class="bal-label text-success">Bonus Actif</span>
-                <span class="bal-val bonus">+<%= user.bonus.toLocaleString() %> FC</span>
+            <div class="bal-column">
+                <span class="bal-label-tag text-success">Accumulation Bonus</span>
+                <span class="bal-value-text success-color">+<%= user.bonus.toLocaleString() %> FC</span>
             </div>
         </div>
 
-        <a href="/logout" class="nav-btn-action bg-dark"><i class="bi bi-power"></i></a>
+        <div class="d-flex align-items-center gap-3">
+            <div class="d-none d-md-block text-end" style="line-height: 1;">
+                <b class="text-dark d-block" style="font-size: 1rem;"><%= user.username %></b>
+                <small class="text-muted fw-bold" style="font-size: 0.6rem;">TERMINAL ACCÈS ELITE</small>
+            </div>
+            <a href="/logout" class="nav-square-btn bg-dark"><i class="bi bi-power"></i></a>
+        </div>
     </nav>
 
-    <header class="marketing-white-case">
+    <header class="marketing-white-section">
         <div class="animate__animated animate__fadeInUp">
-            <h1 class="mkt-h1"><%= content.titre_principal %></h1>
-            <p class="mkt-p"><%= content.description %></p>
-            <div class="mt-4">
-                <span class="badge bg-primary rounded-pill px-4 py-2 fw-800"><%= content.tag_tech %></span>
-                <span class="badge bg-dark rounded-pill px-4 py-2 fw-800">100% SÉCURISÉ</span>
+            <h1 class="mkt-main-h1"><%= content.titre_principal %></h1>
+            <p class="mkt-sub-p"><%= content.description %></p>
+            <div class="mkt-badges-group">
+                <div class="mkt-badge-item"><i class="bi bi-cpu me-2"></i><%= content.tag_tech %></div>
+                <div class="mkt-badge-item"><i class="bi bi-shield-lock me-2"></i>CRYPTAGE SSL-256</div>
+                <div class="mkt-badge-item"><i class="bi bi-lightning-charge me-2"></i>MINAGE INSTANTANÉ</div>
+            </div>
+            <div class="mt-5">
+                <button onclick="document.getElementById('packs').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-3 fw-900 shadow-lg fs-5">LANCER MON UNITÉ MAINTENANT</button>
             </div>
         </div>
     </header>
 
-    <div class="affiliate-terminal animate__animated animate__fadeIn">
-        <div class="aff-stat-box">
-            <div class="aff-icon-bg"><i class="bi bi-people-fill"></i></div>
+    <div class="referral-terminal-card animate__animated animate__fadeIn">
+        <div class="ref-stat-wrapper">
+            <div class="ref-icon-box"><i class="bi bi-people-fill"></i></div>
             <div>
-                <span class="bal-label">Gains d'Équipe</span>
-                <div class="fw-900 fs-5">0 Filleuls</div>
+                <span class="bal-label-tag">Performance Équipe</span>
+                <div class="fw-900 fs-4">0 Investisseurs Parrainés</div>
             </div>
         </div>
-        <button onclick="copyRefLink()" class="btn btn-warning rounded-pill px-4 fw-900 shadow-sm">
-            <i class="bi bi-link-45deg me-2"></i>COPIER MON LIEN
-        </button>
+        <div class="d-flex flex-column gap-2">
+            <button onclick="copyMasterRefLink()" class="btn btn-warning rounded-pill px-5 py-2 fw-900 shadow-sm">
+                <i class="bi bi-link-45deg me-2 fs-5"></i>COPIER MON LIEN DE PARRAINAGE
+            </button>
+            <small class="text-center fw-bold opacity-50">Gagnez 10% sur chaque dépôt de vos filleuls</small>
+        </div>
     </div>
 
-    <div class="mining-main-area">
-        <div class="mining-premium-card animate__animated animate__fadeInUp">
-            <div class="d-flex justify-content-between align-items-end mb-2">
+    <div class="mining-core-interface">
+        <div class="mining-glass-panel animate__animated animate__fadeInUp">
+            <div class="d-flex justify-content-between align-items-end mb-3">
                 <div>
-                    <h6 class="fw-900 text-uppercase mb-0 text-accent">Statut Flux de Minage Sécurisé</h6>
-                    <small class="opacity-50">Liaison satellite cryptée...</small>
+                    <h5 class="fw-900 text-uppercase mb-0 text-accent"><i class="bi bi-activity me-3"></i>Statut Flux de Minage Sécurisé</h5>
+                    <small class="opacity-50">Liaison satellite cryptée avec le serveur central RDC...</small>
                 </div>
                 <div class="text-accent fw-900 fs-1"><%= p || 0 %>%</div>
             </div>
 
-            <div class="progress-slim-bar">
-                <div class="bar-glow-active" style="width: <%= p || 0 %>%"></div>
+            <div class="mining-progress-track">
+                <div class="mining-bar-fill" style="width: <%= p || 0 %>%"></div>
             </div>
 
-            <div class="row g-4 mb-4 text-center text-md-start">
+            <div class="row g-5 mb-5 text-center text-md-start">
                 <div class="col-6 col-md-3">
-                    <span class="bal-label opacity-50">Puissance</span>
-                    <div class="fw-900 text-accent fs-5"><%= content.puissance_hash %></div>
+                    <span class="bal-label-tag opacity-60">Puissance de Calcul</span>
+                    <div class="fw-900 text-accent fs-4"><%= content.puissance_hash %></div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <span class="bal-label opacity-50">Réseau</span>
-                    <div class="fw-900 text-success fs-5">EN LIGNE</div>
+                    <span class="bal-label-tag opacity-60">Status de Connexion</span>
+                    <div class="fw-900 text-success fs-4"><i class="bi bi-broadcast me-2"></i>EN LIGNE</div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <span class="bal-label opacity-50">Machine</span>
-                    <div class="fw-900 text-white fs-5"><%= user.pack %></div>
+                    <span class="bal-label-tag opacity-60">Unité de Calcul Active</span>
+                    <div class="fw-900 text-white fs-4"><%= user.pack %></div>
                 </div>
                 <div class="col-6 col-md-3">
-                    <span class="bal-label opacity-50">Cycle Gain</span>
-                    <div id="timer-cycle" class="fw-900 text-warning fs-5">00:00:00</div>
+                    <span class="bal-label-tag opacity-60">Prochain Versement</span>
+                    <div id="master-gain-timer" class="fw-900 text-warning fs-4">00:00:00</div>
                 </div>
             </div>
 
-            <button onclick="handleWithdrawal()" class="btn-withdraw-elite animate__animated animate__pulse animate__infinite">
-                <i class="bi bi-wallet2 me-2 fs-4"></i> Retirer mes Profits
+            <button onclick="initiateWithdrawalProcess()" class="btn-master-withdraw animate__animated animate__pulse animate__infinite">
+                <i class="bi bi-piggy-bank-fill me-3 fs-3"></i> Demander le retrait des profits
             </button>
         </div>
     </div>
 
-    <div class="section-header-title mx-3" id="packs">
-        <h3 class="fw-900 mb-0">UNITÉS DE MINAGE 2026</h3>
-        <p class="small opacity-50 fw-bold">Matériel certifié haute performance</p>
+    <div class="industrial-grid-header mx-3" id="packs">
+        <h3 class="fw-900 mb-0 text-uppercase">Génération Industrielle 2026</h3>
+        <p class="small opacity-50 fw-bold">Unités de minage physique haute capacité certifiées</p>
     </div>
 
-    <div class="pack-grid-industrial">
+    <div class="industrial-pack-grid">
         <% 
-        const unitList = [
+        const packDefinitions = [
             { id: 'BRONZE', price: 50000, daily: 5000, bonus: 5000, color: '#10b981' },
             { id: 'SILVER', price: 150000, daily: 15000, bonus: 9000, color: '#4f46e5' },
             { id: 'GOLD', price: 500000, daily: 40000, bonus: 40000, color: '#f59e0b' },
             { id: 'DIAMOND', price: 1000000, daily: 100000, bonus: 120000, color: '#ef4444' }
         ];
-        unitList.forEach(u => {
-            const isMe = (user.pack === u.id);
+        packDefinitions.forEach(pack => {
+            const isOwned = (user.pack === pack.id);
         %>
-        <div class="pack-elite-card animate__animated animate__fadeInUp">
-            <div class="p-head-label" style="background: <%= u.color %>;"><%= u.id %> UNIT</div>
-            <div class="p-body-content">
+        <div class="industrial-pack-card animate__animated animate__fadeInUp">
+            <div class="p-label-header" style="background: <%= pack.color %>;"><%= pack.id %> UNIT</div>
+            <div class="p-main-content">
                 <div>
-                    <span class="bal-label">Investissement</span>
-                    <div class="p-price-val"><%= u.price.toLocaleString() %> FC</div>
-                    <div class="p-daily-val" style="color: <%= u.color %>;">+<%= u.daily.toLocaleString() %> / JOUR</div>
+                    <span class="bal-label-tag">Prix d'Activation</span>
+                    <div class="p-amount-title"><%= pack.price.toLocaleString() %> FC</div>
+                    <div class="p-daily-status" style="color: <%= pack.color %>;">+<%= pack.daily.toLocaleString() %> FC / JOUR</div>
                 </div>
                 
-                <div class="small fw-bold text-start border-top border-bottom py-3 mb-2">
-                    <div><i class="bi bi-check-lg text-success"></i> Bonus: +<%= u.bonus.toLocaleString() %> FC</div>
-                    <div><i class="bi bi-check-lg text-success"></i> Durée: 30 Jours</div>
+                <div class="text-start border-top border-bottom py-3 mb-4">
+                    <div class="small fw-800 mb-2"><i class="bi bi-shield-check-fill text-success me-2"></i>Bonus : +<%= pack.bonus.toLocaleString() %> FC</div>
+                    <div class="small fw-800 mb-2"><i class="bi bi-clock-history text-primary me-2"></i>Contrat : 30 Jours</div>
+                    <div class="small fw-800"><i class="bi bi-lightning-charge-fill text-warning me-2"></i>Retraits Illimités</div>
                 </div>
 
-                <% if(isMe) { %>
-                    <button class="btn btn-success w-100 rounded-pill py-2 fw-900" disabled>EN COURS...</button>
+                <% if(isOwned) { %>
+                    <button class="btn btn-success w-100 rounded-pill py-3 fw-900 shadow-sm" disabled>UNITÉ OPÉRATIONNELLE</button>
                 <% } else { %>
-                    <button onclick="openPayModal('<%= u.id %>', <%= u.price %>)" class="btn-pack-buy">ACHETER</button>
+                    <button onclick="startPaymentGateway('<%= pack.id %>', <%= pack.price %>)" class="btn-buy-industrial shadow-lg">ACTIVER CETTE UNITÉ</button>
                 <% } %>
             </div>
         </div>
         <% }) %>
     </div>
 
-    <div class="section-header-title mx-3">
-        <h3 class="fw-900 mb-0 opacity-40">SÉRIE SPÉCIALE 2028</h3>
-        <p class="small opacity-30 fw-bold">Extension prévue sur le réseau</p>
+    <div class="industrial-grid-header mx-3">
+        <h3 class="fw-900 mb-0 text-uppercase opacity-30">Extensions Réseau 2028</h3>
+        <p class="small opacity-20 fw-bold">Développement hardware prévu au second trimestre 2028</p>
     </div>
 
-    <div class="pack-grid-industrial">
+    <div class="industrial-pack-grid">
         <% 
-        const futures = [
+        const futureUnits = [
             { id: 'AMÉTHYSTE', price: 2500000, color: '#9333ea' },
             { id: 'ÉMERAUDE', price: 5000000, color: '#059669' },
             { id: 'RUBIS', price: 10000000, color: '#dc2626' },
             { id: 'SAPHIR', price: 25000000, color: '#2563eb' }
         ];
-        futures.forEach(f => {
+        futureUnits.forEach(f => {
         %>
-        <div class="pack-elite-card pack-locked-elite">
-            <div class="p-head-label" style="background: <%= f.color %>;"><%= f.id %></div>
-            <div class="p-body-content">
-                <div class="p-price-val opacity-25"><%= f.price.toLocaleString() %> FC</div>
-                <button class="btn btn-secondary btn-sm rounded-pill fw-800" disabled>VERROUILLÉ</button>
+        <div class="industrial-pack-card industrial-locked-pack">
+            <i class="bi bi-lock-fill industrial-lock-badge"></i>
+            <div class="p-label-header" style="background: <%= f.color %>;"><%= f.id %></div>
+            <div class="p-main-content">
+                <div class="p-amount-title opacity-20"><%= f.price.toLocaleString() %> FC</div>
+                <button class="btn btn-secondary w-100 rounded-pill py-2 fw-900 disabled opacity-50">VERROUILLÉ</button>
             </div>
         </div>
         <% }) %>
     </div>
 
-    <footer class="py-5 px-3 text-center" style="background: rgba(0,0,0,0.6); border-top: 1px solid var(--glass-border);">
-        <h3 class="fw-900 text-warning mb-2 text-uppercase">CASHLINK ELITE</h3>
-        <p class="small opacity-50 mb-5"><%= content.footer_text %> | RDC 2026</p>
-        <div class="d-flex justify-content-center gap-5 fs-3 opacity-30">
-            <i class="bi bi-shield-lock"></i><i class="bi bi-cpu"></i><i class="bi bi-bank"></i>
+    <div class="container-fluid mb-5">
+        <div class="mining-glass-panel p-5">
+            <div class="row g-5">
+                <div class="col-lg-6 border-end border-secondary border-opacity-25">
+                    <h4 class="fw-900 text-warning mb-4 text-uppercase">Philosophie de <%= content.brand_name %></h4>
+                    <p class="small fw-600 opacity-75 mb-0" style="line-height: 1.8;"><%= content.about_text %></p>
+                </div>
+                <div class="col-lg-6">
+                    <h4 class="fw-900 text-accent mb-4 text-uppercase">Règles de Conformité</h4>
+                    <div class="small fw-600 opacity-75" style="white-space: pre-line; line-height: 1.8;"><%= content.rules_text %></div>
+                </div>
+            </div>
+            
+            <hr class="my-5 opacity-10">
+
+            <div class="row g-4 text-center text-md-start">
+                <div class="col-md-4">
+                    <h6 class="bal-label-tag text-danger mb-3">Siège Administratif</h6>
+                    <div class="small fw-bold"><i class="bi bi-geo-alt-fill me-2 text-danger"></i><%= content.contact_address %></div>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="bal-label-tag text-danger mb-3">Support Technique</h6>
+                    <div class="small fw-bold"><i class="bi bi-envelope-at-fill me-2 text-danger"></i><%= content.contact_email %></div>
+                </div>
+                <div class="col-md-4">
+                    <h6 class="bal-label-tag text-danger mb-3">Hotline RDC 24/7</h6>
+                    <div class="small fw-bold"><i class="bi bi-headset me-2 text-danger"></i><%= content.contact_phone %></div>
+                </div>
+            </div>
         </div>
-        <hr class="my-5 opacity-10">
-        <small class="opacity-30 fw-bold text-uppercase"><%= content.contact_address %> | <%= content.contact_phone %></small>
+    </div>
+
+    <footer class="industrial-footer">
+        <div class="container">
+            <div class="fw-900 text-warning fs-1 mb-2 letter-spacing-n2"><%= content.brand_name %> ELITE</div>
+            <p class="small opacity-50 mb-5 text-uppercase letter-spacing-2 fw-bold"><%= content.footer_text %> | SYSTÈME DE MINAGE RDC v3.6</p>
+            <div class="d-flex justify-content-center gap-5 fs-2 opacity-20">
+                <i class="bi bi-shield-shaded"></i>
+                <i class="bi bi-cpu-fill"></i>
+                <i class="bi bi-safe2-fill"></i>
+                <i class="bi bi-hdd-network-fill"></i>
+            </div>
+            <hr class="my-5 opacity-10">
+            <small class="opacity-20 fw-900 text-uppercase letter-spacing-1"><%= content.footer_sub %></small>
+        </div>
     </footer>
 
-    <div class="modal fade" id="payModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered mx-3">
-            <div class="modal-content text-dark rounded-5 border-0">
+    <div class="modal fade" id="paymentGatewayModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered mx-3 mx-md-auto">
+            <div class="modal-content text-dark rounded-5 border-0 shadow-lg" style="border-radius: 50px !important;">
                 <div class="modal-body p-4 p-md-5 text-center">
-                    <h3 class="fw-900 mb-4 text-primary text-uppercase">Recharge Compte</h3>
-                    <div class="p-3 bg-light rounded-4 mb-3 border text-start">
-                        <span class="bal-label text-primary">M-PESA (VODACOM)</span>
-                        <div class="fw-900 fs-5"><%= content.admin_voda %></div>
+                    <div class="bg-primary text-white p-4 rounded-circle d-inline-block mb-4 shadow-lg"><i class="bi bi-shield-lock-fill fs-1"></i></div>
+                    <h2 class="fw-900 mb-2 text-uppercase">Recharge Sécurisée</h2>
+                    <p class="text-muted small fw-bold mb-5">Transférez les fonds vers nos comptes de dépôt officiels</p>
+                    
+                    <div class="p-4 bg-light rounded-4 mb-3 border text-start animate__animated animate__fadeInLeft">
+                        <span class="bal-label-tag text-primary">M-PESA (VODACOM RDC)</span>
+                        <div class="fs-4 fw-900 d-flex justify-content-between align-items-center">
+                            <span id="voda-num"><%= content.admin_voda %></span>
+                            <i class="bi bi-clipboard-plus text-primary fs-3" style="cursor:pointer;" onclick="copyPhoneData('<%= content.admin_voda %>')"></i>
+                        </div>
                     </div>
-                    <div class="p-3 bg-light rounded-4 mb-4 text-start border">
-                        <span class="bal-label text-danger">AIRTEL MONEY</span>
-                        <div class="fw-900 fs-5"><%= content.admin_airtel %></div>
+
+                    <div class="p-4 bg-light rounded-4 mb-5 border text-start animate__animated animate__fadeInRight">
+                        <span class="bal-label-tag text-danger">AIRTEL MONEY (RDC)</span>
+                        <div class="fs-4 fw-900 d-flex justify-content-between align-items-center">
+                            <span id="airtel-num"><%= content.admin_airtel %></span>
+                            <i class="bi bi-clipboard-plus text-danger fs-3" style="cursor:pointer;" onclick="copyPhoneData('<%= content.admin_airtel %>')"></i>
+                        </div>
                     </div>
-                    <button onclick="handleTIDSubmit()" class="btn btn-primary w-100 py-3 rounded-pill fw-900 shadow">J'AI ENVOYÉ LE PAIEMENT</button>
-                    <button type="button" class="btn btn-link btn-sm text-muted mt-3" data-bs-dismiss="modal">ANNULER</button>
+
+                    <div class="alert alert-warning small rounded-4 py-3 border-0 shadow-sm mb-4 fw-bold">
+                        <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i> Après l'envoi, vous devez impérativement fournir la référence TID pour validation.
+                    </div>
+
+                    <button onclick="confirmSubmissionTID()" class="btn btn-primary w-100 py-3 rounded-pill fw-900 shadow-lg fs-5">J'AI EFFECTUÉ LE TRANSFERT</button>
+                    <button type="button" class="btn btn-link btn-sm text-muted mt-3 fw-bold" data-bs-dismiss="modal">ANNULER L'OPÉRATION</button>
                 </div>
             </div>
         </div>
@@ -403,68 +483,105 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let packId = "", packPrice = 0;
-        const pM = new bootstrap.Modal(document.getElementById('payModal'));
+        /* ============================================================
+           MOTEUR LOGIQUE DU DASHBOARD CASHLINK v3.6
+           ============================================================ */
+        let globalSelectedId = "", globalSelectedPrice = 0;
+        const gatewayModal = new bootstrap.Modal(document.getElementById('paymentGatewayModal'));
 
-        // SCROLL RECOGNITION
+        // GESTION DYNAMIQUE DU DÉFILEMENT (RETOUR EN HAUT)
         window.onscroll = () => {
-            document.getElementById('btn-scroll-up').style.display = (window.scrollY > 400) ? 'flex' : 'none';
+            document.getElementById('master-scroll-up').style.display = (window.scrollY > 450) ? 'flex' : 'none';
         };
 
-        // ACTIONS
-        function openPayModal(id, price) { packId = id; packPrice = price; pM.show(); }
-
-        function handleTIDSubmit() {
-            pM.hide();
-            const tid = prompt("Référence TID de la transaction :");
-            if(tid && tid.length > 5) {
-                execute('/souscrire-pack', { packName: packId, prix: packPrice, reference: tid });
-            }
-        }
-
-        function handleWithdrawal() {
-            const m = prompt("Montant (Min 1.000 FC) :");
-            if(m >= 1000) execute('/retrait', { montant: m });
-        }
-
-        function execute(path, data) {
-            const f = document.createElement('form'); f.method = 'POST'; f.action = path;
-            for(let k in data) {
-                const i = document.createElement('input'); i.type='hidden'; i.name=k; i.value=data[k]; f.appendChild(i);
-            }
-            document.body.appendChild(f); f.submit();
-        }
-
-        function copyRefLink() {
-            const link = window.location.origin + "/register?ref=<%= user.username %>";
-            navigator.clipboard.writeText(link);
-            alert("Lien de parrainage copié !");
-        }
-
-        // TIMER GAIN
-        setInterval(() => {
-            const n = new Date(), t = new Date(); t.setHours(24, 0, 0, 0);
-            const d = t - n;
-            const h = Math.floor(d/3600000), m = Math.floor((d%3600000)/60000), s = Math.floor((d%60000)/1000);
-            document.getElementById('timer-cycle').innerText = 
-                `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-        }, 1000);
-
-        // PREUVE SOCIALE
-        const names = ["Jean", "Mado", "Patrick", "Sarah", "Modeste", "Justin", "Guelord", "Elvis"];
-        setInterval(() => {
-            const u = names[Math.floor(Math.random()*names.length)];
-            const s = (Math.floor(Math.random()*25)*5000 + 10000).toLocaleString();
-            const toast = document.getElementById('proof-notif');
-            document.getElementById('sp-name').innerText = u;
-            document.getElementById('sp-sum').innerText = s;
+        // SYSTÈME DE NOTIFICATIONS DE PREUVE SOCIALE
+        function triggerLiveNotif(name, amount) {
+            const toast = document.getElementById('live-social-notif');
+            document.getElementById('toast-user-name').innerText = name + " K.";
+            document.getElementById('toast-user-amt').innerText = amount.toLocaleString();
             toast.style.display = "flex";
             toast.classList.add('animate__fadeInLeft');
             setTimeout(() => {
                 toast.classList.replace('animate__fadeInLeft', 'animate__fadeOutLeft');
-                setTimeout(() => { toast.style.display="none"; toast.classList.remove('animate__fadeOutLeft'); }, 500);
-            }, 5500);
-        }, 25000);
+                setTimeout(() => { 
+                    toast.style.display = "none"; 
+                    toast.classList.remove('animate__fadeOutLeft'); 
+                }, 500);
+            }, 6000);
+        }
+
+        // GESTION DES FLUX FINANCIERS
+        function startPaymentGateway(id, price) {
+            globalSelectedId = id; globalSelectedPrice = price;
+            gatewayModal.show();
+        }
+
+        function confirmSubmissionTID() {
+            gatewayModal.hide();
+            const tid = prompt("Veuillez saisir la référence de transaction TID (indiquée dans le SMS de confirmation) :");
+            if(tid && tid.length > 5) {
+                commitDataPost('/souscrire-pack', { packName: globalSelectedId, prix: globalSelectedPrice, reference: tid });
+            } else if(tid !== null) {
+                alert("Erreur critique : La référence TID saisie est trop courte ou invalide.");
+            }
+        }
+
+        function initiateWithdrawalProcess() {
+            const amount = prompt("Veuillez saisir le montant à retirer (Minimum requis : 1.000 FC) :");
+            if(amount && amount >= 1000) {
+                commitDataPost('/retrait', { montant: amount });
+            } else if(amount !== null) {
+                alert("Opération refusée : Le montant saisi est inférieur au seuil de retrait minimal de 1.000 FC.");
+            }
+        }
+
+        function commitDataPost(path, params) {
+            const form = document.createElement('form'); form.method = 'POST'; form.action = path;
+            for(let key in params) {
+                const hiddenInput = document.createElement('input'); 
+                hiddenInput.type='hidden'; hiddenInput.name=key; hiddenInput.value=params[key];
+                form.appendChild(hiddenInput);
+            }
+            document.body.appendChild(form); form.submit();
+        }
+
+        function copyPhoneData(str) {
+            navigator.clipboard.writeText(str);
+            alert("Numéro de terminal copié avec succès : " + str);
+        }
+
+        function copyMasterRefLink() {
+            const link = window.location.origin + "/register?ref=<%= user.username %>";
+            navigator.clipboard.writeText(link);
+            alert("Lien de parrainage généré et copié dans le presse-papier !");
+        }
+
+        // COMPTE À REBOURS DU CYCLE DE GAIN (TEMPS RÉEL)
+        function updateCycleTimer() {
+            const now = new Date();
+            const nextCycle = new Date();
+            nextCycle.setHours(24, 0, 0, 0);
+            const diff = nextCycle - now;
+            const hours = Math.floor(diff/3600000), 
+                  minutes = Math.floor((diff%3600000)/60000), 
+                  seconds = Math.floor((diff%60000)/1000);
+            document.getElementById('master-gain-timer').innerText = 
+                `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+        }
+        setInterval(updateCycleTimer, 1000);
+
+        // SIMULATION DE FLUX DE RETRAIT (RÉALISME RDC)
+        const activeUsersList = ["Jean-Paul", "Mamie K.", "Patrick T.", "Sarah L.", "Modeste B.", "Justin W.", "Guelord M.", "Mamie S.", "Elvis B.", "Clementine Z."];
+        setInterval(() => {
+            const randomUser = activeUsersList[Math.floor(Math.random()*activeUsersList.length)];
+            const randomFC = (Math.floor(Math.random()*25)*5000 + 10000);
+            triggerLiveNotif(randomUser, randomFC);
+        }, 35000);
+
+        // GESTION DES PARAMÈTRES D'AFFICHAGE URL
+        const queryParams = new URLSearchParams(window.location.search);
+        if(queryParams.get('msg') === 'TID_SEND') triggerLiveNotif("SYSTÈME", "TID transmis pour vérification administrative.");
+        if(queryParams.get('msg') === 'SUCCESS') triggerLiveNotif("FÉLICITATIONS", "Votre demande de retrait a été placée en file d'attente.");
     </script>
 </body>
 </html>
