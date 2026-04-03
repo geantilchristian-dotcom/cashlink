@@ -1,8 +1,8 @@
 /**
  * ==============================================================================
- * CASHLINK ELITE v16.0 - SYNC TOTALE ADMIN/DASHBOARD (600 LIGNES)
- * DÉPLOIEMENT : RENDER CLOUD OPTIMISÉ
- * FIX : COMMUNICATION INTER-COMPTES ET LOGIQUE DE RETRAIT
+ * CASHLINK ELITE v17.0 - SYSTÈME DE CONTRÔLE BANCAIRE & MINAGE
+ * DÉPLOIEMENT : OPTIMISÉ POUR RENDER.COM / GITHUB
+ * MODULES : DASHBOARD, ADMIN CMS, GESTION DES RETRAITS, LOGS SYSTÈME
  * ==============================================================================
  */
 
@@ -15,12 +15,18 @@ const fs = require('fs');
 
 const app = express();
 
-// --- 1. ARCHITECTURE DES DONNÉES (PERSISTANCE /TMP) ---
-const dbPath = '/tmp/cashlink_v16_master_sync';
+// --- 1. ARCHITECTURE DES DONNÉES (PERSISTANCE /TMP RENDER) ---
+const dbPath = '/tmp/cashlink_v17_master_prod';
 if (!fs.existsSync(dbPath)) {
-    try { fs.mkdirSync(dbPath, { recursive: true }); } catch (e) { console.log("RAM Mode"); }
+    try {
+        fs.mkdirSync(dbPath, { recursive: true });
+        console.log("📂 [SYSTEM] Base de données initialisée dans /tmp");
+    } catch (e) {
+        console.log("⚠️ [SYSTEM] Mode volatile activé");
+    }
 }
 
+// Initialisation des bases de données
 const db = {
     users: new Datastore({ filename: path.join(dbPath, 'users.db'), autoload: true }),
     tx: new Datastore({ filename: path.join(dbPath, 'transactions.db'), autoload: true }),
@@ -29,7 +35,7 @@ const db = {
     retraits: new Datastore({ filename: path.join(dbPath, 'retraits.db'), autoload: true })
 };
 
-// --- 2. CONFIGURATION SERVEUR ---
+// --- 2. CONFIGURATION DU SERVEUR ---
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('public'));
@@ -37,14 +43,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 app.use(session({
-    secret: 'anash_master_ultra_sync_2026',
+    secret: 'anash_master_ultra_secure_sync_2026',
     resave: true,
     saveUninitialized: true,
     cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 }
 }));
 
-// --- 3. CONSTANTES ET CONFIGURATION CMS ---
-const MASTER_UID = "ANASH_MASTER_SESSION_2026"; // L'ID UNIQUE POUR TOUT LE SYSTÈME
+// --- 3. PARAMÈTRES CMS PAR DÉFAUT (TES TEXTES) ---
+const MASTER_UID = "ANASH_MASTER_SESSION_2026"; // ID UNIQUE POUR TOUT LE SYSTÈME
 
 const INITIAL_SITE_DATA = {
     _id: "UI_CONTENT",
@@ -60,19 +66,20 @@ const INITIAL_SITE_DATA = {
     min_retrait: 1000
 };
 
-// Injection automatique de la config
+// Injection de la config au démarrage
 db.config.update({ _id: "UI_CONTENT" }, { $setOnInsert: INITIAL_SITE_DATA }, { upsert: true });
 
+// Configuration des Gains et Bonus par Pack
 const PACKS_SETTINGS = {
-    'BRONZE':  { prix: 50000,   daily: 5000,   bonus: 5000 },
-    'SILVER':  { prix: 150000,  daily: 15000,  bonus: 9000 },
-    'GOLD':    { prix: 500000,  daily: 40000,  bonus: 40000 },
-    'DIAMOND': { prix: 1000000, daily: 100000, bonus: 120000 }
+    'BRONZE':  { prix: 50000,   bonus: 5000 },
+    'SILVER':  { prix: 150000,  bonus: 9000 },
+    'GOLD':    { prix: 500000,  bonus: 40000 },
+    'DIAMOND': { prix: 1000000, bonus: 120000 }
 };
 
-// --- 4. MOTEUR DE CALCULS SÉCURISÉS ---
+// --- 4. MOTEUR DE CALCULS ---
 
-function getProgress(user) {
+function getSafeProgress(user) {
     if (!user || !user.investDate || user.pack === 'Aucun') return "0.0";
     try {
         const diff = (new Date() - new Date(user.investDate)) / (1000 * 60 * 60 * 24);
@@ -80,11 +87,11 @@ function getProgress(user) {
     } catch (e) { return "0.0"; }
 }
 
-function logger(type, msg) {
+function sysLog(type, msg) {
     db.logs.insert({ date: new Date().toLocaleString('fr-FR'), type, msg, ts: Date.now() });
 }
 
-// --- 5. ROUTE DASHBOARD (SYNCHRONISÉ) ---
+// --- 5. ROUTE DASHBOARD (ACCÈS DIRECT SANS BOUCLE) ---
 
 app.get('/', (req, res) => {
     const defaultUser = {
@@ -92,13 +99,12 @@ app.get('/', (req, res) => {
         solde: 0, bonus: 0, pack: 'Aucun', investDate: null, certified: true
     };
 
-    // On s'assure que l'utilisateur unique est en base
     db.users.update({ _id: MASTER_UID }, { $setOnInsert: defaultUser }, { upsert: true }, () => {
         db.users.findOne({ _id: MASTER_UID }, (err, user) => {
             db.config.findOne({ _id: "UI_CONTENT" }, (err, site) => {
                 res.render('dashboard', {
                     user: user || defaultUser,
-                    p: getProgress(user),
+                    p: getSafeProgress(user),
                     content: site || INITIAL_SITE_DATA,
                     packs: PACKS_SETTINGS
                 });
@@ -109,20 +115,20 @@ app.get('/', (req, res) => {
 
 app.get('/dashboard', (req, res) => res.redirect('/'));
 
-// --- 6. ADMINISTRATION (L'INTERRUPTEUR GÉNÉRAL) ---
+// --- 6. ADMINISTRATION (L'ORDINATEUR CENTRAL) ---
 
 app.get('/admin', (req, res) => {
     db.users.find({}, (err, users) => {
         db.tx.find({}).sort({ ts: -1 }).exec((err, txs) => {
             db.config.findOne({ _id: "UI_CONTENT" }, (err, site) => {
-                db.logs.find({}).sort({ ts: -1 }).limit(15).exec((err, logs) => {
+                db.logs.find({}).sort({ ts: -1 }).limit(20).exec((err, logs) => {
                     db.retraits.find({}).sort({ ts: -1 }).exec((err, requests) => {
                         
                         const stats = {
                             totalUsers: users.length,
                             enAttente: txs.filter(t => t.statut === "En attente").length,
-                            soldeTotalUsers: users.reduce((acc, u) => acc + (u.solde || 0), 0),
-                            bonusTotalUsers: users.reduce((acc, u) => acc + (u.bonus || 0), 0)
+                            soldeTotalUsers: users.reduce((acc, u) => acc + (Number(u.solde) || 0), 0),
+                            bonusTotalUsers: users.reduce((acc, u) => acc + (Number(u.bonus) || 0), 0)
                         };
 
                         res.render('admin', {
@@ -138,17 +144,17 @@ app.get('/admin', (req, res) => {
 });
 
 /**
- * CMS ADMIN : MODIFIER LES TEXTES D'AFFICHAGE
+ * CMS : Mise à jour des textes Dashboard par l'Admin
  */
 app.post('/admin/update-content', (req, res) => {
     db.config.update({ _id: "UI_CONTENT" }, { $set: req.body }, {}, () => {
-        logger("ADMIN", "Mise à jour des textes Dashboard effectuée.");
+        sysLog("ADMIN", "Mise à jour du design effectuée.");
         res.redirect('/admin?msg=CMS_OK');
     });
 });
 
 /**
- * VALIDATION PAIEMENT : ENVOI L'ARGENT AU DASHBOARD
+ * VALIDATION PAIEMENT : Envoie le Solde + le Bonus au Client
  */
 app.post('/valider-depot', (req, res) => {
     const { txId } = req.body;
@@ -158,19 +164,19 @@ app.post('/valider-depot', (req, res) => {
         const packKey = tx.type.replace("ACHAT ", "");
         const bonusAmount = PACKS_SETTINGS[packKey] ? PACKS_SETTINGS[packKey].bonus : 0;
 
-        // ON UTILISE MASTER_UID POUR ÊTRE SÛR QUE ÇA ARRIVE AU DASHBOARD
+        // On crédite l'ID MASTER pour assurer la communication
         db.users.update({ _id: MASTER_UID }, { 
             $inc: { solde: tx.montant, bonus: bonusAmount } 
         }, {}, () => {
             db.tx.update({ _id: txId }, { $set: { statut: "Validé" } }, {}, () => {
-                logger("ADMIN", `Validation réussie : Solde +${tx.montant} / Bonus +${bonusAmount}`);
+                sysLog("ADMIN", `Validation TID ${tx.reference} : Argent envoyé au Dashboard.`);
                 res.redirect('/admin?success=1');
             });
         });
     });
 });
 
-// --- 7. LOGIQUE DE RETRAIT (COMMUNICATION) ---
+// --- 7. LOGIQUE DU BOUTON RETRAIT (SYNCHRONISÉ) ---
 
 app.post('/retrait', (req, res) => {
     const montantReq = Number(req.body.montant);
@@ -181,49 +187,56 @@ app.post('/retrait', (req, res) => {
             const minimum = site.min_retrait || 1000;
 
             if (user && user.bonus >= montantReq && montantReq >= minimum) {
-                // Déduction immédiate du Bonus sur le Dashboard
+                // 1. Déduction immédiate du Bonus sur le Dashboard pour éviter la triche
                 db.users.update({ _id: MASTER_UID }, { $inc: { bonus: -montantReq } }, {}, () => {
+                    
+                    // 2. Création de la demande pour l'Admin
                     const retrait = {
                         userId: MASTER_UID,
                         username: user.username,
                         montant: montantReq,
                         statut: "En attente",
-                        date: new Date().toLocaleString(),
+                        date: new Date().toLocaleString('fr-FR'),
                         ts: Date.now()
                     };
+
                     db.retraits.insert(retrait, () => {
-                        logger("RETRAIT", `Demande de ${montantReq} FC envoyée à l'Admin.`);
+                        sysLog("RETRAIT", `Le client a retiré ${montantReq} FC. En attente de paiement Admin.`);
                         res.redirect('/?msg=SUCCESS_RETRAIT');
                     });
                 });
             } else {
-                res.redirect('/?err=FONDS');
+                res.redirect('/?err=FONDS_OU_MINIMUM');
             }
         });
     });
 });
 
+/**
+ * ADMIN : Validation du paiement du retrait
+ */
 app.post('/admin/payer-retrait', (req, res) => {
     db.retraits.update({ _id: req.body.requestId }, { $set: { statut: "Payé" } }, {}, () => {
-        logger("ADMIN", "Retrait marqué comme payé.");
+        sysLog("ADMIN", "Retrait marqué comme payé et envoyé au client.");
         res.redirect('/admin');
     });
 });
 
-// --- 8. FLUX CLIENT (DÉPÔTS & ACTIVATION) ---
+// --- 8. LOGIQUE INVESTISSEMENT CLIENT ---
 
 app.post('/souscrire-pack', (req, res) => {
     const tx = {
-        userId: MASTER_UID, // On lie tjs à l'ID Master
+        userId: MASTER_UID, 
         type: "ACHAT " + req.body.packName,
         montant: Number(req.body.prix),
         reference: req.body.reference,
         statut: "En attente",
-        ts: Date.now()
+        ts: Date.now(),
+        date: new Date().toLocaleString()
     };
     db.tx.insert(tx, () => {
-        logger("CLIENT", `TID ${req.body.reference} soumis.`);
-        res.redirect('/?msg=ATTENTE');
+        sysLog("CLIENT", `TID ${req.body.reference} envoyé pour validation.`);
+        res.redirect('/?msg=ATTENTE_VALIDATION');
     });
 });
 
@@ -234,17 +247,24 @@ app.post('/activer-investissement', (req, res) => {
             db.users.update({ _id: MASTER_UID }, {
                 $set: { solde: user.solde - prix, pack: req.body.packName, investDate: new Date().toISOString() }
             }, {}, () => {
-                logger("MINING", `Activation machine : ${req.body.packName}`);
+                sysLog("MINING", `Activation de la machine : ${req.body.packName}`);
                 res.redirect('/');
             });
-        } else { res.redirect('/?err=SOLDE'); }
+        } else { res.redirect('/?err=SOLDE_INSUFFISANT'); }
     });
 });
 
-// --- 9. LANCEMENT ---
+// --- 9. SÉCURITÉ & LANCEMENT ---
+
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
+
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
     console.log("==========================================");
-    console.log("💎 CASHLINK ELITE v16.0 - SYNC OK");
+    console.log("💎 CASHLINK ELITE v17.0 - TERMINAL PRÊT");
+    console.log(`🌍 PORT : ${PORT}`);
     console.log("==========================================");
 });
