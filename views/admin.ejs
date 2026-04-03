@@ -16,10 +16,6 @@
             --card-glass: rgba(255, 255, 255, 0.03);
             --border-glass: rgba(255, 255, 255, 0.08);
             --neon-blue: #00d9ff;
-            --neon-purple: #bc13fe;
-            --emerald: #10b981;
-            --rose: #f43f5e;
-            --gold: #ffb400;
             --sidebar-width: 290px;
         }
 
@@ -30,7 +26,6 @@
             color: #ffffff; margin: 0; overflow-x: hidden;
         }
 
-        /* --- SIDEBAR --- */
         .admin-sidebar {
             width: var(--sidebar-width); height: 100vh;
             background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(30px);
@@ -44,43 +39,31 @@
             margin-bottom: 10px; font-weight: 700; cursor: pointer; transition: 0.3s;
         }
 
-        .nav-item-custom:hover { background: rgba(255,255,255,0.05); color: #fff; }
         .nav-item-custom.active { background: var(--neon-blue); color: #000; box-shadow: 0 0 25px rgba(0, 217, 255, 0.3); }
 
-        /* --- CONTENU --- */
         .admin-main-content { margin-left: var(--sidebar-width); padding: 50px; }
 
         .glass-card {
             background: var(--card-glass); border: 1px solid var(--border-glass);
             border-radius: 40px; padding: 40px; margin-bottom: 40px;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
         }
 
-        .stat-val { font-size: 2.2rem; font-weight: 800; color: var(--neon-blue); letter-spacing: -1px; }
-        .stat-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 800; opacity: 0.5; letter-spacing: 1px; }
+        .stat-val { font-size: 2.2rem; font-weight: 800; color: var(--neon-blue); }
+        .stat-label { font-size: 0.75rem; text-transform: uppercase; font-weight: 800; opacity: 0.5; }
 
-        /* --- FORMULAIRES --- */
+        .premium-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
+        .premium-table td { background: rgba(255,255,255,0.02); padding: 20px; border: none; font-size: 0.95rem; font-weight: 600; border-radius: 20px; }
+
         .admin-label { font-size: 0.7rem; font-weight: 800; color: var(--neon-blue); text-transform: uppercase; margin-bottom: 8px; display: block; }
         .admin-input {
             background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border-glass);
             border-radius: 18px; padding: 15px 20px; color: white; width: 100%; margin-bottom: 20px;
-            font-weight: 600; transition: 0.3s;
         }
-        .admin-input:focus { border-color: var(--neon-blue); outline: none; box-shadow: 0 0 15px rgba(0, 217, 255, 0.15); }
 
-        .btn-update { background: var(--neon-blue); color: #000; border: none; padding: 18px; border-radius: 20px; font-weight: 800; width: 100%; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; cursor: pointer; }
-        .btn-update:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0, 217, 255, 0.4); }
-
+        .btn-update { background: var(--neon-blue); color: #000; border: none; padding: 18px; border-radius: 20px; font-weight: 800; width: 100%; text-transform: uppercase; cursor: pointer; }
         .section-panel { display: none; }
         .section-panel.active { display: block; animation: fadeInUp 0.5s ease-out; }
-
         @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- TABLES --- */
-        .premium-table { width: 100%; border-collapse: separate; border-spacing: 0 12px; }
-        .premium-table td { background: rgba(255,255,255,0.02); padding: 20px; border: none; font-size: 0.95rem; font-weight: 600; }
-        .premium-table tr td:first-child { border-radius: 20px 0 0 20px; }
-        .premium-table tr td:last-child { border-radius: 0 20px 20px 0; }
     </style>
 </head>
 <body>
@@ -90,16 +73,16 @@
             <div class="p-3 mb-3 animate__animated animate__pulse animate__infinite" style="background: var(--neon-blue); border-radius: 22px; display: inline-block;">
                 <i class="bi bi-cpu-fill text-dark fs-3"></i>
             </div>
-            <h5 class="fw-900 tracking-tighter">ELITE COMMAND</h5>
-            <span class="badge bg-danger rounded-pill" style="font-size: 0.6rem;">TERMINAL RDC 2026</span>
+            <h5 class="fw-900">ELITE COMMAND</h5>
+            <span class="badge bg-danger rounded-pill">MASTER RDC 2026</span>
         </div>
 
         <div class="nav-menu">
             <div class="nav-item-custom active" onclick="openTab('stats', this)"><i class="bi bi-graph-up"></i> Performances</div>
-            <div class="nav-item-custom" onclick="openTab('validations', this)"><i class="bi bi-check2-circle"></i> Validations TID <% if(stats.enAttente > 0){ %><span class="badge bg-danger ms-auto"><%= stats.enAttente %></span><% } %></div>
+            <div class="nav-item-custom" onclick="openTab('validations', this)"><i class="bi bi-check2-circle"></i> Dépôts <% if(stats.enAttente > 0){ %><span class="badge bg-danger ms-auto"><%= stats.enAttente %></span><% } %></div>
+            <div class="nav-item-custom" onclick="openTab('retraits_tab', this)"><i class="bi bi-cash-stack"></i> Retraits</div>
             <div class="nav-item-custom" onclick="openTab('interface', this)"><i class="bi bi-pencil-square"></i> Modifier Dashboard</div>
             <div class="nav-item-custom" onclick="openTab('members', this)"><i class="bi bi-people"></i> Investisseurs</div>
-            <div class="nav-item-custom" onclick="openTab('logs', this)"><i class="bi bi-list-columns"></i> Historique</div>
         </div>
 
         <div style="margin-top: auto;">
@@ -110,48 +93,26 @@
     <div class="admin-main-content">
 
         <div id="stats" class="section-panel active">
-            <h3 class="fw-800 mb-5 text-uppercase">Statistiques Système</h3>
+            <h3 class="fw-800 mb-5">STATISTIQUES SYSTÈME</h3>
             <div class="row g-4 mb-4">
-                <div class="col-md-4">
-                    <div class="glass-card text-center">
-                        <span class="stat-label">Total Membres</span>
-                        <div class="stat-val"><%= stats.totalUsers %></div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="glass-card text-center">
-                        <span class="stat-label">Transactions en Attente</span>
-                        <div class="stat-val text-warning"><%= stats.enAttente %></div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="glass-card text-center">
-                        <span class="stat-label">Dette Globale</span>
-                        <div class="stat-val text-info"><%= stats.soldeTotalUsers.toLocaleString() %> FC</div>
-                    </div>
-                </div>
+                <div class="col-md-4"><div class="glass-card text-center"><span class="stat-label">Membres</span><div class="stat-val"><%= stats.totalUsers %></div></div></div>
+                <div class="col-md-4"><div class="glass-card text-center"><span class="stat-label">En Attente</span><div class="stat-val text-warning"><%= stats.enAttente %></div></div></div>
+                <div class="col-md-4"><div class="glass-card text-center"><span class="stat-label">Capital Total</span><div class="stat-val text-info"><%= stats.soldeTotalUsers.toLocaleString() %> FC</div></div></div>
             </div>
         </div>
 
         <div id="validations" class="section-panel">
             <div class="glass-card">
-                <h4 class="fw-900 text-info mb-4">Flux de Paiements</h4>
+                <h4 class="fw-900 text-info mb-4">Flux de Dépôts (TID)</h4>
                 <div class="table-responsive">
                     <table class="premium-table">
-                        <thead>
-                            <tr>
-                                <th class="admin-label">Opération</th>
-                                <th class="admin-label">Référence</th>
-                                <th class="admin-label">Montant</th>
-                                <th class="admin-label">Action</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Opération</th><th>Référence</th><th>Montant</th><th>Action</th></tr></thead>
                         <tbody>
                             <% transactions.filter(t => t.statut === 'En attente').forEach(tx => { %>
                             <tr>
                                 <td><span class="badge bg-primary"><%= tx.type %></span></td>
                                 <td><code class="text-white"><%= tx.reference %></code></td>
-                                <td class="fw-bold"><%= tx.montant.toLocaleString() %> FC</td>
+                                <td><%= tx.montant.toLocaleString() %> FC</td>
                                 <td>
                                     <form action="/valider-depot" method="POST">
                                         <input type="hidden" name="txId" value="<%= tx._id %>">
@@ -166,35 +127,55 @@
             </div>
         </div>
 
+        <div id="retraits_tab" class="section-panel">
+            <div class="glass-card">
+                <h4 class="fw-900 text-warning mb-4">Demandes de Retraits</h4>
+                <div class="table-responsive">
+                    <table class="premium-table">
+                        <thead><tr><th>Client</th><th>Montant</th><th>Date</th><th>Action</th></tr></thead>
+                        <tbody>
+                            <% retraits.filter(r => r.statut === 'En attente').forEach(req => { %>
+                            <tr>
+                                <td><%= req.username %></td>
+                                <td class="text-warning"><%= req.montant.toLocaleString() %> FC</td>
+                                <td class="small opacity-50"><%= req.date %></td>
+                                <td>
+                                    <form action="/admin/payer-retrait" method="POST">
+                                        <input type="hidden" name="requestId" value="<%= req._id %>">
+                                        <button class="btn btn-warning btn-sm rounded-pill px-3 fw-bold">MARQUER PAYÉ</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
         <div id="interface" class="section-panel">
             <div class="glass-card">
-                <h4 class="fw-900 text-info mb-4">Configuration du Dashboard</h4>
+                <h4 class="fw-900 text-info mb-4">Pilotage du Dashboard Client</h4>
                 <form action="/admin/update-content" method="POST">
                     <div class="row">
                         <div class="col-md-6">
                             <label class="admin-label">Étiquette Tech (Haut)</label>
                             <input type="text" name="tag_tech" class="admin-input" value="<%= site.tag_tech %>">
-
                             <label class="admin-label">Titre Principal</label>
                             <input type="text" name="titre_principal" class="admin-input" value="<%= site.titre_principal %>">
-
-                            <label class="admin-label">Puissance de Minage (Hash)</label>
+                            <label class="admin-label">Puissance de Minage</label>
                             <input type="text" name="puissance_hash" class="admin-input" value="<%= site.puissance_hash %>">
-                            
-                            <label class="admin-label">Réseau Status</label>
+                            <label class="admin-label">Status Réseau</label>
                             <input type="text" name="reseau_status" class="admin-input" value="<%= site.reseau_status %>">
                         </div>
                         <div class="col-md-6">
                             <label class="admin-label">Description / Slogan</label>
                             <textarea name="description" class="admin-input" rows="3"><%= site.description %></textarea>
-
                             <label class="admin-label">Sécurité / Protocole</label>
                             <input type="text" name="securite_type" class="admin-input" value="<%= site.securite_type %>">
-
                             <label class="admin-label">Status Retraits</label>
                             <input type="text" name="retraits_status" class="admin-input" value="<%= site.retraits_status %>">
-
-                            <label class="admin-label">Footer Principal</label>
+                            <label class="admin-label">Footer Texte</label>
                             <input type="text" name="footer_text" class="admin-input" value="<%= site.footer_text %>">
                         </div>
                     </div>
@@ -205,17 +186,10 @@
 
         <div id="members" class="section-panel">
             <div class="glass-card">
-                <h4 class="fw-900 mb-4">Base des Investisseurs</h4>
+                <h4 class="fw-900 mb-4">Investisseurs</h4>
                 <div class="table-responsive">
                     <table class="premium-table">
-                        <thead>
-                            <tr>
-                                <th class="admin-label">Nom</th>
-                                <th class="admin-label">Pack</th>
-                                <th class="admin-label">Solde</th>
-                                <th class="admin-label">Gains</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Nom</th><th>Pack</th><th>Solde</th><th>Gains</th></tr></thead>
                         <tbody>
                             <% users.forEach(u => { %>
                             <tr>
@@ -223,24 +197,6 @@
                                 <td><span class="badge bg-dark"><%= u.pack %></span></td>
                                 <td class="text-info"><%= u.solde.toLocaleString() %> FC</td>
                                 <td class="text-success"><%= u.bonus.toLocaleString() %> FC</td>
-                            </tr>
-                            <% }) %>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div id="logs" class="section-panel">
-            <div class="glass-card">
-                <h4 class="fw-900 mb-4">Derniers Événements</h4>
-                <div class="table-responsive">
-                    <table class="premium-table">
-                        <tbody>
-                            <% messages.forEach(log => { %>
-                            <tr>
-                                <td class="small opacity-50" style="width: 200px;"><%= log.date %></td>
-                                <td class="fw-bold"><%= log.text %></td>
                             </tr>
                             <% }) %>
                         </tbody>
