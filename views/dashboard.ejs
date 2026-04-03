@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= content.brand_name %> | Dashboard Elite</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <style>
+        :root {
+            --bleu-bic: #003399;
+            --neon-blue: #00d9ff;
+            --emerald: #10b981;
+            --rose: #f43f5e;
+            --gold: #fbbf24;
+            --dark-deep: #000c26;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--bleu-bic);
+            background-image: radial-gradient(at 0% 0%, #0044cc 0, transparent 50%), 
+                              radial-gradient(at 100% 100%, var(--dark-deep) 0, transparent 50%);
+            background-attachment: fixed;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #ffffff;
+            margin: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* --- NAVIGATION --- */
+        .premium-nav {
+            background: var(--gold);
+            padding: 12px 40px;
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-bottom: 3px solid rgba(0,0,0,0.1);
+        }
+
+        .logo-brand { font-weight: 900; color: var(--bleu-bic); font-size: 1.8rem; text-decoration: none; letter-spacing: -2px; }
+        
+        .nav-info-box {
+            background: #ffffff;
+            padding: 8px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            color: #0f172a;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .solde-badge { border-right: 1px solid #e2e8f0; padding-right: 15px; }
+        .label-xs { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; display: block; }
+        .val-md { font-weight: 800; font-size: 1.1rem; color: var(--bleu-bic); }
+
+        .btn-invest-nav { 
+            background: var(--emerald); color: white; border: none; padding: 6px 18px; 
+            border-radius: 50px; font-weight: 800; font-size: 0.75rem; 
+            text-transform: uppercase; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-invest-nav:hover { transform: scale(1.05); box-shadow: 0 0 15px var(--emerald); }
+
+        /* --- PUB --- */
+        .hero-pub-trading {
+            width: 100%; height: 260px; background: #fff; display: flex; overflow: hidden;
+            border-radius: 0 0 40px 40px; box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+        .pub-left-white {
+            width: 45%; background: #ffffff; color: #000; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 40px; z-index: 10;
+        }
+        .pub-right-slider { width: 55%; background: #fff; }
+        .carousel-item img { height: 260px; object-fit: contain; width: 100%; }
+        .pub-content-txt { font-size: 2rem; font-weight: 900; text-transform: uppercase; line-height: 1; text-align: left; color: #000; }
+
+        /* --- STATS SECTION --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; padding: 30px 60px; }
+        .stat-card { background: var(--glass); backdrop-filter: blur(10px); padding: 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); }
+        .stat-icon { font-size: 1.5rem; color: var(--neon-blue); margin-bottom: 10px; }
+
+        /* --- MINING --- */
+        .mining-section {
+            background: rgba(0,0,0,0.2);
+            margin: 0 60px 40px;
+            padding: 40px;
+            border-radius: 40px;
+            border: 2px solid rgba(255,255,255,0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        .mining-section::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 217, 255, 0.05), transparent);
+            animation: rotate 10s linear infinite;
+        }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .btn-withdraw-action {
+            background: var(--rose); color: white; border: none; padding: 15px 35px; border-radius: 20px;
+            font-weight: 900; text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;
+            transition: 0.3s; box-shadow: 0 10px 20px rgba(244, 63, 94, 0.3);
+        }
+        .btn-withdraw-action:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(244, 63, 94, 0.5); }
+
+        /* --- PACKS --- */
+        .pack-grid { padding: 0 60px; margin-bottom: 100px; }
+        .pack-card {
+            background: #ffffff; border-radius: 50px; overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            color: #1e293b; height: 100%; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        .pack-card:hover { transform: translateY(-15px); }
+        .active-miner-card { outline: 6px solid var(--neon-blue); outline-offset: 4px; }
+        .pack-head { padding: 30px; text-align: center; color: white; font-weight: 900; font-size: 1.4rem; letter-spacing: 1px; }
+        .pack-price { font-size: 3rem; font-weight: 900; color: #0f172a; margin: 25px 0; letter-spacing: -2px; }
+        
+        .btn-pack-main {
+            background: var(--emerald); color: white; border: none;
+            width: 100%; padding: 25px; border-radius: 30px; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 2px; transition: 0.3s;
+        }
+
+        .bonus-tag { 
+            background: #fef3c7; color: #92400e; padding: 8px 15px; 
+            border-radius: 12px; font-weight: 800; font-size: 0.75rem;
+            display: inline-block; margin-bottom: 15px;
+        }
+
+        /* --- NOTIFS --- */
+        #notify-box { position: fixed; top: 110px; right: 30px; z-index: 9999; }
+        .custom-toast { 
+            background: white; color: #0f172a; padding: 25px; border-radius: 25px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4); margin-bottom: 15px; 
+            display: flex; align-items: center; gap: 20px; font-weight: 700; 
+            border-left: 10px solid var(--bleu-bic); min-width: 300px;
+        }
+
+        /* --- FOOTER --- */
+        .footer-elite { background: rgba(0,0,0,0.5); padding: 80px 60px; border-top: 1px solid rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body>
+
+    <div id="notify-box"></div>
+
+    <nav class="premium-nav">
+        <div class="nav-left d-flex align-items-center gap-4">
+            <a href="#" class="logo-brand">CASHLINK ELITE</a>
+            <div class="nav-info-box">
+                <div class="solde-badge">
+                    <span class="label-xs">Mon Solde Principal</span>
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="val-md" id="user-solde"><%= user.solde.toLocaleString() %> FC</span>
+                        <button onclick="scrollToBoutique()" class="btn-invest-nav">INVESTIR</button>
+                    </div>
+                </div>
+                <div>
+                    <span class="label-xs">Bonus Retirable</span>
+                    <span class="val-md text-success"><%= (user.bonus || 0).toLocaleString() %> FC</span>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex align-items-center gap-4">
+            <div class="text-end d-none d-md-block">
+                <div class="fw-bold text-dark fs-5"><%= user.username %> 
+                    <% if(user.certified) { %><i class="bi bi-patch-check-fill text-primary" title="Membre Certifié"></i><% } %>
+                </div>
+                <div class="fw-bold text-muted" style="font-size: 0.7rem;">ID: CL-2026-<%= user._id.toString().substring(19,24).toUpperCase() %></div>
+            </div>
+            <a href="/logout" class="btn btn-dark rounded-pill fw-bold px-4">SORTIR</a>
+        </div>
+    </nav>
+
+    <div class="hero-pub-trading">
+        <div class="pub-left-white animate__animated animate__fadeInLeft">
+            <div class="pub-content-txt">NOS ALGORITHMES<br><span class="text-primary">TRAVAILLENT</span><br>POUR VOUS</div>
+            <div class="mt-3 text-muted fw-bold small">Technologie de Cloud Mining Décentralisée</div>
+        </div>
+        <div class="pub-right-slider">
+            <div id="pubCarousel" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="https://img.freepik.com/vecteurs-libre/concept-commerce-actions-fond-blanc_23-2148590638.jpg" alt="Slide 1">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://img.freepik.com/vecteurs-premium/concept-trading-actions-analyse-graphique-fond-blanc_102902-140.jpg" alt="Slide 2">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card animate__animated animate__zoomIn" style="animation-delay: 0.1s;">
+            <i class="bi bi-cpu stat-icon"></i>
+            <span class="label-xs">Hashrate Actif</span>
+            <div class="fs-4 fw-900"><%= user.pack && user.pack !== 'Aucun' ? '98.5 TH/s' : '0.0 TH/s' %></div>
+        </div>
+        <div class="stat-card animate__animated animate__zoomIn" style="animation-delay: 0.2s;">
+            <i class="bi bi-clock-history stat-icon"></i>
+            <span class="label-xs">Cycle Restant</span>
+            <div class="fs-4 fw-900" id="cycle-timer">30 Jours</div>
+        </div>
+        <div class="stat-card animate__animated animate__zoomIn" style="animation-delay: 0.3s;">
+            <i class="bi bi-shield-check stat-icon"></i>
+            <span class="label-xs">Statut Compte</span>
+            <div class="fs-4 fw-900 <%= user.certified ? 'text-primary' : 'text-success' %>">
+                <%= user.certified ? 'CERTIFIÉ ELITE' : 'ELITE V3' %>
+            </div>
+        </div>
+    </div>
+
+    <div class="mining-section animate__animated animate__fadeInUp">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="small fw-800"><i class="bi bi-activity me-2"></i>PROGRESSION DU MINAGE (CYCLE 30J)</span>
+                    <span class="small fw-900 text-info" id="prog-percent">0%</span>
+                </div>
+                <div class="progress shadow-lg mb-3" style="height: 25px; border-radius: 50px; background: rgba(255,255,255,0.05);">
+                    <% 
+                        let p = 0;
+                        if(user.investDate) {
+                            let diff = (new Date() - new Date(user.investDate)) / (1000 * 60 * 60 * 24);
+                            p = Math.min((diff / 30) * 100, 100);
+                        }
+                    %>
+                    <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: <%= p %>%"></div>
+                </div>
+                <div class="d-flex gap-4">
+                    <div class="small fw-bold"><i class="bi bi-calendar3 me-2"></i>Début: <%= user.investDate ? new Date(user.investDate).toLocaleDateString() : 'N/A' %></div>
+                    <div class="small fw-bold text-warning"><i class="bi bi-alarm me-2"></i>Prochain Crédit: <span id="next-credit-timer">--:--:--</span></div>
+                </div>
+            </div>
+            <div class="col-lg-4 text-end">
+                <button onclick="openWithdraw()" class="btn-withdraw-action">RETIRER MES GAINS</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="pack-grid" id="boutique">
+        <h4 class="fw-900 mb-5 d-flex align-items-center gap-3">
+            <div style="width: 12px; height: 45px; background: var(--gold); border-radius: 10px;"></div>
+            NOTRE BOUTIQUE D'INVESTISSEMENT
+        </h4>
+        
+        <div class="alert alert-danger border-0 rounded-4 shadow-lg mb-5 p-4 animate__animated animate__shakeX">
+            <div class="d-flex align-items-center gap-3">
+                <i class="bi bi-exclamation-octagon-fill fs-2"></i>
+                <div>
+                    <h6 class="fw-900 mb-1">RÈGLE DE SÉCURITÉ CRITIQUE</h6>
+                    <p class="small mb-0 opacity-75">Un seul pack actif par compte. Si vous avez déjà un pack, vous ne pouvez pas en acheter un autre. Les membres certifiés peuvent retirer chaque jour.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-5">
+            <% 
+            const packs = [
+                { id: 'BRONZE', price: 50000, daily: 5000, bonus: 5000, color: '#10b981', lvl: 1 },
+                { id: 'SILVER', price: 150000, daily: 15000, bonus: 9000, color: '#6366f1', lvl: 2 },
+                { id: 'GOLD', price: 500000, daily: 40000, bonus: 40000, color: '#f59e0b', lvl: 3 },
+                { id: 'DIAMOND', price: 1000000, daily: 100000, bonus: 120000, color: '#f43f5e', lvl: 4 }
+            ];
+            
+            packs.forEach(pack => { 
+                const hasActivePack = (user.pack && user.pack !== 'Aucun');
+                const isThisPackActive = (user.pack === pack.id);
+                const hasEnoughSolde = (user.solde >= pack.price);
+            %>
+            <div class="col-xl-3 col-md-6">
+                <div class="pack-card shadow-lg <%= isThisPackActive ? 'active-miner-card' : '' %>">
+                    <div class="pack-head" style="background: <%= pack.color %>;"><%= pack.id %> MINER ELITE</div>
+                    <div class="p-5 text-center">
+                        <div class="bonus-tag">BONUS À L'INVESTISSEMENT : <%= pack.bonus.toLocaleString() %> FC</div>
+                        <div class="pack-price"><%= pack.price.toLocaleString() %> <small class="fs-6">FC</small></div>
+                        <div class="fw-900 fs-5 mb-4" style="color: <%= pack.color %>;">+<%= pack.daily.toLocaleString() %> FC / JOUR</div>
+                        
+                        <div class="text-start small mb-5 opacity-75 fw-bold">
+                            <p class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Crédit auto chaque 24h</p>
+                            <p class="mb-2"><i class="bi bi-check-circle-fill text-success me-2"></i>Contrat de 30 Jours</p>
+                            <p><i class="bi bi-check-circle-fill text-success me-2"></i>Retrait: <%= user.certified ? 'Chaque Jour' : 'Chaque 3 Jours' %></p>
+                        </div>
+
+                        <% if(isThisPackActive) { %>
+                            <button class="btn btn-secondary w-100 py-3 rounded-pill fw-bold" disabled>PACK ACTUELLEMENT ACTIF</button>
+                        <% } else if (hasActivePack) { %>
+                            <button class="btn btn-outline-secondary w-100 py-3 rounded-pill fw-bold" disabled>DÉJÀ UN PACK ACTIF</button>
+                        <% } else if (hasEnoughSolde) { %>
+                            <button onclick="confirmInvestment('<%= pack.id %>', <%= pack.price %>)" class="btn-pack-main shadow-lg" style="background: var(--neon-blue); color: #000;">INVESTIR LE SOLDE</button>
+                        <% } else { %>
+                            <button onclick="showPaymentModal('<%= pack.id %>', <%= pack.price %>)" class="btn-pack-main">ACHETER LE PACK</button>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+
+            <% const fp = [
+                { id: 'PLATINE', p: 2500000 }, { id: 'EMERAUDE', p: 5000000 },
+                { id: 'SAPHIR', p: 10000000 }, { id: 'RUBIS', p: 25000000 }
+            ]; fp.forEach(item => { %>
+            <div class="col-xl-3 col-md-6">
+                <div class="pack-card shadow-lg pack-locked">
+                    <div class="badge-2028">LANCEMENT EN 2028</div>
+                    <div class="pack-head" style="background: #334155;"><%= item.id %> SYSTEM</div>
+                    <div class="p-5 text-center">
+                        <div class="pack-price text-muted opacity-50"><%= item.p.toLocaleString() %> FC</div>
+                        <button class="btn btn-outline-secondary w-100 py-3 rounded-pill fw-bold" disabled>VERROUILLÉ</button>
+                    </div>
+                </div>
+            </div>
+            <% }) %>
+        </div>
+    </div>
+
+    <footer class="footer-elite">
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <h6 class="fw-900 text-info mb-4">CASHLINK ELITE PRO</h6>
+                <p class="small opacity-50">Leader de l'investissement Cloud en RDC. Sécurisé, rapide et transparent.</p>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h6 class="fw-900 text-info mb-4">CONDITIONS</h6>
+                <ul class="list-unstyled small opacity-50 fw-bold" style="line-height: 2;">
+                    <li>• Retrait Min: 1.000 FC</li>
+                    <li>• Retrait Certifié: Quotidien</li>
+                    <li>• Cycle: 30 Jours</li>
+                </ul>
+            </div>
+            <div class="col-md-4 mb-4">
+                <h6 class="fw-900 text-info mb-4">SUPPORT 24/7</h6>
+                <div class="nav-info-box bg-dark text-white border-0 py-3">
+                    <i class="bi bi-whatsapp fs-3 text-success"></i>
+                    <div>
+                        <div class="small fw-bold">Assistance Technique</div>
+                        <div class="fw-900">Elite Support Centre</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="text-center mt-5 pt-5 border-top border-secondary opacity-25 small fw-bold">© 2026 CASHLINK ELITE - TOUS DROITS RÉSERVÉS</div>
+    </footer>
+
+    <div class="modal fade" id="payModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content modal-elite shadow-lg animate__animated animate__zoomIn">
+                <div class="text-center mb-4 text-dark">
+                    <h3 class="fw-900">PAIEMENT DU PACK</h3>
+                    <p class="small fw-bold text-muted mb-4">Effectuez le transfert puis entrez le TID</p>
+                    <div class="pay-num-display" style="font-size: 1.5rem; color: #003399; background: #f8f9fa; padding: 10px; border-radius: 15px; margin-bottom: 15px;"><%= content.admin_phone %></div>
+                    <div class="d-flex flex-column gap-2 mb-4">
+                        <span class="badge bg-primary p-3 fs-6 rounded-4">M-PESA: <%= content.admin_voda %></span>
+                        <span class="badge bg-danger p-3 fs-6 rounded-4">AIRTEL: <%= content.admin_airtel %></span>
+                        <span class="badge bg-warning text-dark p-3 fs-6 rounded-4">ORANGE: <%= content.admin_orange %></span>
+                    </div>
+                </div>
+                <button onclick="proceedTID()" class="btn btn-primary w-100 py-3 rounded-pill fw-bold">J'AI ENVOYÉ LES FONDS (TID)</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let packTarget = ""; let priceTarget = 0;
+        const pModal = new bootstrap.Modal(document.getElementById('payModal'));
+
+        function showNotif(m) {
+            const b = document.getElementById('notify-box');
+            const t = document.createElement('div');
+            t.className = `custom-toast animate__animated animate__fadeInRight`;
+            t.innerHTML = `<i class="bi bi-info-circle-fill text-primary fs-3"></i><div>${m}</div>`;
+            b.appendChild(t);
+            setTimeout(() => { 
+                if(t) {
+                    t.classList.replace('animate__fadeInRight', 'animate__fadeOutRight'); 
+                    setTimeout(() => t.remove(), 500); 
+                }
+            }, 5000);
+        }
+
+        function scrollToBoutique() {
+            document.getElementById('boutique').scrollIntoView({ behavior: 'smooth' });
+            showNotif("Vérifiez si votre solde est suffisant pour INVESTIR ou achetez un pack.");
+        }
+
+        function showPaymentModal(name, price) { 
+            packTarget = name; priceTarget = price; pModal.show(); 
+            showNotif("Transfert vers le guichet pour le pack " + name);
+        }
+
+        function proceedTID() {
+            pModal.hide();
+            const tid = prompt(`Veuillez saisir le Code TID reçu par SMS :`);
+            if(tid) {
+                showNotif("TID envoyé pour analyse. Crédit sous peu.");
+                submitData('/souscrire-pack', { typeReq: 'ACHAT PACK', packName: packTarget, prix: priceTarget, reference: tid });
+            }
+        }
+
+        function confirmInvestment(name, price) {
+            const userSolde = <%= user.solde %>;
+            if(userSolde < price) {
+                alert("Erreur: Votre solde principal est insuffisant pour activer ce pack. Veuillez d'abord l'acheter.");
+                return;
+            }
+            if(confirm(`Souhaitez-vous utiliser votre solde de ${price} FC pour activer le pack ${name} ?`)) {
+                submitData('/activer-investissement', { packName: name, prix: price });
+            }
+        }
+
+        function openWithdraw() {
+            const isCertified = <%= user.certified %>;
+            const msg = isCertified ? "En tant que membre CERTIFIÉ, vous pouvez retirer chaque jour." : "En tant que membre standard, vous retirez tous les 3 jours.";
+            
+            const amount = prompt(msg + "\n\nEntrez le montant du retrait (Min 1.000 FC) :");
+            if(amount && amount >= 1000) {
+                showNotif("Demande de retrait transmise.");
+                submitData('/retrait', { montant: amount });
+            }
+        }
+
+        function copyMyLink() {
+            navigator.clipboard.writeText(document.getElementById('myRefLink').innerText);
+            showNotif("Lien de parrainage copié !");
+        }
+
+        function submitData(url, data) {
+            const form = document.createElement('form'); 
+            form.method = 'POST'; 
+            form.action = url;
+            for (const key in data) {
+                const input = document.createElement('input'); 
+                input.type = 'hidden'; 
+                input.name = key; 
+                input.value = data[key]; 
+                form.appendChild(input);
+            }
+            document.body.appendChild(form); 
+            form.submit();
+        }
+
+        function updateTimers() {
+            const now = new Date();
+            const next = new Date();
+            next.setHours(24, 0, 0, 0);
+            const diff = next - now;
+            
+            const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const m = Math.floor((diff / (1000 * 60)) % 60);
+            const s = Math.floor((diff / 1000) % 60);
+            
+            const timerEl = document.getElementById('next-credit-timer');
+            if(timerEl) {
+                timerEl.innerText = (h < 10 ? '0'+h : h) + ":" + (m < 10 ? '0'+m : m) + ":" + (s < 10 ? '0'+s : s);
+            }
+        }
+
+        window.onload = () => {
+            const prog = document.getElementById('prog-percent');
+            if(prog) prog.innerText = "<%= Math.floor(p) %>%";
+            setInterval(updateTimers, 1000);
+            <% if (typeof msg !== 'undefined' && msg) { %> showNotif("<%= msg %>"); <% } %>
+        };
+    </script>
+</body>
+</html>

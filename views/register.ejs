@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inscription - CashLink</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-900 text-white flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-md bg-gray-800 rounded-3xl shadow-2xl p-8 border border-gray-700 my-10">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-green-500 uppercase">CashLink</h1>
+            <p class="text-gray-400 mt-1">Rejoignez le réseau et gagnez</p>
+        </div>
+
+        <form action="/register" method="POST" class="space-y-5">
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Nom complet / Pseudo</label>
+                <input type="text" name="username" required placeholder="Ex: Jean DRC" 
+                    class="block w-full bg-gray-900 border border-gray-700 rounded-xl py-3 px-4 focus:ring-2 focus:ring-green-500 outline-none">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Numéro de téléphone</label>
+                <input type="text" name="phone" required placeholder="0821234567" 
+                    class="block w-full bg-gray-900 border border-gray-700 rounded-xl py-3 px-4 focus:ring-2 focus:ring-green-500 outline-none">
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-400 mb-1">Mot de passe</label>
+                <input type="password" name="password" required placeholder="Minimum 6 caractères" 
+                    class="block w-full bg-gray-900 border border-gray-700 rounded-xl py-3 px-4 focus:ring-2 focus:ring-green-500 outline-none">
+            </div>
+
+            <div class="pt-2 border-t border-gray-700">
+                <label class="block text-xs font-bold text-yellow-500 uppercase mb-1 italic">Code de parrainage (Optionnel)</label>
+                <input type="text" name="referral_code" placeholder="CL-XXXXXX" 
+                    class="block w-full bg-gray-700 border border-gray-600 rounded-xl py-2 px-4 text-sm focus:ring-1 focus:ring-yellow-500 outline-none">
+            </div>
+
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl shadow-lg transition active:scale-95">
+                S'inscrire maintenant
+            </button>
+        </form>
+
+        <div class="mt-6 text-center text-sm text-gray-400">
+            Déjà inscrit ? 
+            <a href="/login" class="text-green-500 font-bold hover:underline ml-1">Se connecter</a>
+        </div>
+    </div>
+
+</body>
+</html>
