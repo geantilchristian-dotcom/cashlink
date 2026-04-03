@@ -1,8 +1,7 @@
 /**
  * ============================================================
- * PROJET : CASHLINK ELITE v7.0 - FINAL CLOUD FIX
- * AUTEUR : ANASH MASTER
- * FIX : PERMISSIONS D'ÉCRITURE SUR RENDER.COM
+ * CASHLINK ELITE v8.0 - ADMIN DYNAMIQUE & PILOTAGE TOTAL
+ * FIX : GESTION DES TEXTES DU DASHBOARD VIA L'ADMIN
  * ============================================================
  */
 
@@ -15,207 +14,188 @@ const fs = require('fs');
 
 const app = express();
 
-// --- 1. GESTION CRITIQUE DU DOSSIER DE DONNÉES ---
-// Sur Render, /opt/render/project/src est souvent verrouillé.
-// On utilise /tmp qui est le dossier temporaire universel de Linux.
-const dbPath = '/tmp/cashlink_data_2026';
+// --- 1. CONFIGURATION DES BASES DE DONNÉES ---
+const dbPath = '/tmp/cashlink_v8_data';
+if (!fs.existsSync(dbPath)) fs.mkdirSync(dbPath, { recursive: true });
 
-if (!fs.existsSync(dbPath)) {
-    try {
-        fs.mkdirSync(dbPath, { recursive: true });
-        console.log("✅ Dossier /tmp créé avec succès pour la base de données.");
-    } catch (err) {
-        console.log("⚠️ Impossible de créer le dossier, NeDB utilisera la mémoire vive.");
-    }
-}
-
-// Initialisation des bases de données dans /tmp
 const db = {
     users: new Datastore({ filename: path.join(dbPath, 'users.db'), autoload: true }),
     tx: new Datastore({ filename: path.join(dbPath, 'transactions.db'), autoload: true }),
-    logs: new Datastore({ filename: path.join(dbPath, 'system.db'), autoload: true })
+    config: new Datastore({ filename: path.join(dbPath, 'config.db'), autoload: true })
 };
 
-// --- 2. CONFIGURATION DU SERVEUR ---
+// --- 2. CONFIGURATION SERVEUR ---
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
-
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-// Session stable pour le déploiement
 app.use(session({
-    secret: 'cashlink_elite_render_secret_key',
+    secret: 'anash_master_key_ultra_2026',
     resave: true,
     saveUninitialized: true,
     cookie: { maxAge: 24 * 60 * 60 * 1000 }
 }));
 
-// --- 3. PARAMÈTRES MÉTIER ET CALCULS ---
-const APP_CONFIG = {
-    brand_name: "CASHLINK ELITE",
-    admin_voda: "0810000000",
-    admin_airtel: "0990000000",
-    admin_orange: "0820000000"
+// --- 3. PARAMÈTRES PAR DÉFAUT (CMS) ---
+// Ces données seront modifiables via les boutons dans l'Admin
+const DEFAULT_SITE_CONTENT = {
+    _id: "UI_CONTENT",
+    tag_tech: "TECHNOLOGIE RDC 2026",
+    titre_principal: "MINAGE AUTO",
+    description: "Générez des profits passifs sécurisés grâce à nos fermes de minage décentralisées.",
+    puissance_hash: "0.00 TH/s",
+    reseau_status: "Actif",
+    securite_type: "SSL-256",
+    retraits_status: "Ouverts",
+    footer_text: "CASHLINK ELITE v3.0 - DÉPLOYÉ SUR TERMINAL RDC",
+    footer_sub: "Sécurisé par Protocole Blockchain 2026"
 };
 
-const PACKS_SYSTEM = {
-    'BRONZE':  { prix: 50000,   bonus: 5000,   color: '#10b981' },
-    'SILVER':  { prix: 150000,  bonus: 9000,   color: '#6366f1' },
-    'GOLD':    { prix: 500000,  bonus: 40000,  color: '#f59e0b' },
-    'DIAMOND': { prix: 1000000, bonus: 120000, color: '#f43f5e' }
+// Initialisation du contenu au démarrage
+db.config.update({ _id: "UI_CONTENT" }, { $setOnInsert: DEFAULT_SITE_CONTENT }, { upsert: true });
+
+const PACKS_LOGIC = {
+    'BRONZE': { prix: 50000, bonus: 5000 },
+    'SILVER': { prix: 150000, bonus: 9000 },
+    'GOLD': { prix: 500000, bonus: 40000 },
+    'DIAMOND': { prix: 1000000, bonus: 120000 }
 };
 
-const MASTER_UID = "ANASH_MASTER_PROD_2026";
+const MASTER_UID = "ANASH_MASTER_USER";
 
-/**
- * Calcule la progression (0 à 100%) sur 30 jours
- */
-function getMiningStatus(startDate) {
-    if (!startDate) return 0;
-    const diff = (new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24);
-    const progress = (diff / 30) * 100;
-    return Math.min(progress, 100).toFixed(1);
-}
+// --- 4. ROUTES DASHBOARD (CLIENT) ---
 
-// --- 4. ROUTES PRINCIPALES (ACCÈS DIRECT SANS BOUCLE) ---
-
-/**
- * Route / : On gère tout ici pour éviter les erreurs de redirection
- */
 app.get('/', (req, res) => {
-    const defaultUser = {
+    // Force l'utilisateur de test
+    const userObj = {
         _id: MASTER_UID,
         username: "ANASH MASTER",
         phone: "970000000",
-        solde: 0,
-        bonus: 0,
-        pack: 'Aucun',
-        investDate: null,
-        certified: true
+        solde: 0, bonus: 0, pack: 'Aucun', investDate: null, certified: true
     };
 
-    // Upsert sécurisé : si l'écriture échoue, on rend quand même la page avec l'objet mémoire
-    db.users.update({ _id: MASTER_UID }, { $set: defaultUser }, { upsert: true }, (err) => {
-        if (err) console.error("❌ Erreur d'écriture (non fatale) :", err);
+    db.users.update({ _id: MASTER_UID }, { $set: userObj }, { upsert: true }, () => {
+        req.session.userId = MASTER_UID;
+        res.redirect('/dashboard');
+    });
+});
 
-        db.users.findOne({ _id: MASTER_UID }, (err, user) => {
-            // Si la DB est bloquée, on utilise l'objet par défaut pour que l'utilisateur voie son dashboard
-            const activeUser = user || defaultUser;
-            req.session.userId = activeUser._id;
+app.get('/dashboard', (req, res) => {
+    if (!req.session.userId) return res.redirect('/');
+
+    // On récupère l'utilisateur ET le contenu dynamique du site
+    db.users.findOne({ _id: MASTER_UID }, (err, user) => {
+        db.config.findOne({ _id: "UI_CONTENT" }, (err, siteContent) => {
             
-            const progress = getMiningStatus(activeUser.investDate);
+            let progression = 0;
+            if (user.investDate && user.pack !== 'Aucun') {
+                const diff = (new Date() - new Date(user.investDate)) / (1000 * 60 * 60 * 24);
+                progression = Math.min((diff / 30) * 100, 100).toFixed(1);
+            }
 
             res.render('dashboard', {
-                user: activeUser,
-                p: progress,
-                content: APP_CONFIG,
-                packs: PACKS_SYSTEM
+                user: user,
+                p: progression,
+                content: siteContent || DEFAULT_SITE_CONTENT, // Utilise les textes de l'admin
+                admin_contacts: { voda: "0810000000", airtel: "0990000000", orange: "0820000000" }
             });
         });
     });
 });
 
-// Alias pour le dashboard
-app.get('/dashboard', (req, res) => {
-    res.redirect('/');
-});
-
-// --- 5. LOGIQUE DES FLUX (CLIENT) ---
-
-/**
- * Envoi du TID (Recharge)
- */
-app.post('/souscrire-pack', (req, res) => {
-    const { packName, prix, reference } = req.body;
-    const tx = {
-        userId: MASTER_UID,
-        type: "ACHAT " + packName,
-        montant: Number(prix),
-        reference: reference,
-        statut: "En attente",
-        date: new Date().toLocaleString('fr-FR'),
-        createdAt: new Date().toISOString()
-    };
-
-    db.tx.insert(tx, () => {
-        console.log(`📩 TID Reçu : ${reference}`);
-        res.redirect('/?msg=TID_ENVOYE');
-    });
-});
-
-/**
- * Lancement du Minage
- */
-app.post('/activer-investissement', (req, res) => {
-    const { packName, prix } = req.body;
-    db.users.findOne({ _id: MASTER_UID }, (err, user) => {
-        if (user && user.solde >= Number(prix)) {
-            db.users.update({ _id: MASTER_UID }, {
-                $set: { 
-                    solde: user.solde - Number(prix), 
-                    pack: packName, 
-                    investDate: new Date().toISOString() 
-                }
-            }, {}, () => res.redirect('/'));
-        } else {
-            res.redirect('/?err=SOLDE');
-        }
-    });
-});
-
-// --- 6. ADMINISTRATION ---
+// --- 5. ROUTES ADMINISTRATION (LE CENTRE DE COMMANDE) ---
 
 app.get('/admin', (req, res) => {
     db.users.find({}, (err, users) => {
-        db.tx.find({}).sort({ createdAt: -1 }).exec((err, txs) => {
-            const stats = {
-                totalUsers: (users || []).length,
-                enAttente: (txs || []).filter(t => t.statut === "En attente").length,
-                soldeTotal: 0
-            };
-            res.render('admin', { 
-                users: users || [], 
-                transactions: txs || [], 
-                stats: stats, 
-                messages: [], 
-                content: APP_CONFIG 
+        db.tx.find({}).sort({ date: -1 }).exec((err, txs) => {
+            db.config.findOne({ _id: "UI_CONTENT" }, (err, siteContent) => {
+                
+                const stats = {
+                    totalUsers: (users || []).length,
+                    enAttente: (txs || []).filter(t => t.statut === "En attente").length,
+                    tresorerie: 0
+                };
+
+                res.render('admin', {
+                    users: users || [],
+                    transactions: txs || [],
+                    stats: stats,
+                    site: siteContent || DEFAULT_SITE_CONTENT, // Pour afficher les valeurs actuelles dans les formulaires
+                    content: { brand_name: "CASHLINK ADMIN" }
+                });
             });
         });
     });
 });
 
 /**
- * Validation Admin (Crédit Solde + Bonus)
+ * NOUVEAU : Route pour modifier les textes du Dashboard depuis l'Admin
  */
+app.post('/admin/update-content', (req, res) => {
+    const updatedData = {
+        tag_tech: req.body.tag_tech,
+        titre_principal: req.body.titre_principal,
+        description: req.body.description,
+        puissance_hash: req.body.puissance_hash,
+        reseau_status: req.body.reseau_status,
+        securite_type: req.body.securite_type,
+        retraits_status: req.body.retraits_status,
+        footer_text: req.body.footer_text,
+        footer_sub: req.body.footer_sub
+    };
+
+    db.config.update({ _id: "UI_CONTENT" }, { $set: updatedData }, {}, () => {
+        console.log("📝 Dashboard mis à jour par l'Admin !");
+        res.redirect('/admin?msg=CONTENU_MIS_A_JOUR');
+    });
+});
+
+// --- 6. ACTIONS FINANCIÈRES ---
+
+// Validation de paiement
 app.post('/valider-depot', (req, res) => {
     const { txId } = req.body;
     db.tx.findOne({ _id: txId }, (err, tx) => {
         if (!tx) return res.redirect('/admin');
 
         const packKey = tx.type.replace("ACHAT ", "");
-        const bonusAmount = PACKS_SYSTEM[packKey] ? PACKS_SYSTEM[packKey].bonus : 0;
+        const bonus = PACKS_LOGIC[packKey] ? PACKS_LOGIC[packKey].bonus : 0;
 
-        // On crédite l'utilisateur
-        db.users.update({ _id: tx.userId }, { 
-            $inc: { solde: tx.montant, bonus: bonusAmount } 
-        }, {}, () => {
-            // On valide la transaction
+        db.users.update({ _id: tx.userId }, { $inc: { solde: tx.montant, bonus: bonus } }, {}, () => {
             db.tx.update({ _id: txId }, { $set: { statut: "Validé" } }, {}, () => {
-                console.log(`✅ Transaction ${tx.reference} Validée`);
-                res.redirect('/admin');
+                res.redirect('/admin?msg=VALIDE');
             });
         });
     });
 });
 
-// --- 7. DÉMARRAGE DU MOTEUR ---
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-    console.log("====================================================");
-    console.log(`🚀 CASHLINK ELITE v7.0 LIVE`);
-    console.log(`📂 STOCKAGE : ${dbPath}`);
-    console.log(`🌍 PORT : ${PORT}`);
-    console.log("====================================================");
+// Envoi TID
+app.post('/souscrire-pack', (req, res) => {
+    const tx = {
+        userId: MASTER_UID,
+        type: "ACHAT " + req.body.packName,
+        montant: Number(req.body.prix),
+        reference: req.body.reference,
+        statut: "En attente",
+        date: new Date().toLocaleString()
+    };
+    db.tx.insert(tx, () => res.redirect('/dashboard?msg=TID_OK'));
 });
+
+// Activation
+app.post('/activer-investissement', (req, res) => {
+    const prix = Number(req.body.prix);
+    db.users.findOne({ _id: MASTER_UID }, (err, user) => {
+        if (user && user.solde >= prix) {
+            db.users.update({ _id: MASTER_UID }, {
+                $set: { solde: user.solde - prix, pack: req.body.packName, investDate: new Date().toISOString() }
+            }, {}, () => res.redirect('/dashboard'));
+        } else {
+            res.redirect('/dashboard?err=SOLDE');
+        }
+    });
+});
+
+// --- 7. LANCEMENT ---
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => console.log(`🚀 MASTER ENGINE v8.0 ON PORT ${PORT}`));
