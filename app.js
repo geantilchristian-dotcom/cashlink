@@ -1,213 +1,228 @@
-/**
- * ==============================================================================
- * CASHLINK ELITE v27.7 - MOTEUR DE PERSISTANCE ABSOLUE (RDC 2026)
- * ------------------------------------------------------------------------------
- * CORRECTIFS RÉUNIS : 
- * 1. Fusion atomique des données (Évite le retour aux anciennes infos)
- * 2. Anti-crash investDate (Protection du Dashboard)
- * 3. Force-Write & Reload (Gestion du cache Render /tmp)
- * ==============================================================================
- */
+/* ============================================================
+   CASHLINK TERMINAL ENGINE v4.0 - BACKEND CORE
+   Congo RDC Edition - 2026
+   ============================================================ */
 
 const express = require('express');
-const bodyParser = require('body-parser');
-const Datastore = require('nedb');
-const path = require('path');
 const session = require('express-session');
-const fs = require('fs');
-
+const bodyParser = require('body-parser');
+const path = require('path');
 const app = express();
 
-// --- 1. STOCKAGE SÉCURISÉ ---
-const dbPath = '/tmp/cashlink_v27_master_anash';
-if (!fs.existsSync(dbPath)) {
-    try { fs.mkdirSync(dbPath, { recursive: true }); } catch (e) {}
-}
-
-const db = {
-    users: new Datastore({ filename: path.join(dbPath, 'users.db'), autoload: true }),
-    tx: new Datastore({ filename: path.join(dbPath, 'transactions.db'), autoload: true }),
-    config: new Datastore({ filename: path.join(dbPath, 'site_config.db'), autoload: true }),
-    logs: new Datastore({ filename: path.join(dbPath, 'activity_logs.db'), autoload: true }),
-    retraits: new Datastore({ filename: path.join(dbPath, 'retraits.db'), autoload: true })
-};
-
-// --- 2. CONFIGURATION SERVEUR ---
+// --- CONFIGURATION DU MOTEUR DE VUE ---
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static('public'));
-app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
-app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.urlencoded({ extended: true }));
 
+// --- SYSTÈME DE SESSION SÉCURISÉ ---
 app.use(session({
-    secret: 'anash_master_ultra_high_security_key_2026',
-    resave: true,
+    secret: 'cashlink_ultra_secret_2026_rdc',
+    resave: false,
     saveUninitialized: true,
-    cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 }
+    cookie: { maxAge: 24 * 60 * 60 * 1000 } // 24 heures
 }));
 
-// --- 3. CONTENU INITIAL (BACKUP) ---
-const MASTER_UID = "ANASH_MASTER_SESSION_2026";
-const INITIAL_SITE_CONTENT = {
-    _id: "UI_CONTENT",
-    brand_name: "CASHLINK ELITE",
-    tag_tech: "TECHNOLOGIE RDC 2026",
-    titre_principal: "MINAGE AUTO",
-    description: "Générez des profits passifs sécurisés.",
-    admin_voda: "0810000000",
-    admin_airtel: "0990000000",
-    admin_orange: "0820000000",
-    puissance_hash: "104.2 TH/s",
-    reseau_status: "Actif",
-    securite_type: "SSL-256",
-    retraits_status: "Ouverts",
-    about_text: "Elite plateforme RDC...",
-    rules_text: "1. Un seul compte...",
-    contact_address: "Kinshasa, RDC",
+/* ============================================================
+   BASE DE DONNÉES SIMULÉE (À RELIER À MONGODB PLUS TARD)
+   ============================================================ */
+let users = [
+    { 
+        username: "Anash", 
+        phone: "820000000", 
+        password: "123", 
+        solde: 25000, 
+        bonus: 0, 
+        pack: "Aucun", 
+        investDate: null,
+        referrals: 0,
+        role: "USER"
+    },
+    { username: "Admin", password: "999", role: "ADMIN" }
+];
+
+let pendingPayments = []; // Stocke les TID à valider par l'admin
+let withdrawalRequests = []; // Stocke les demandes de retraits
+
+// --- CONFIGURATION GLOBALE DU SITE (Variables EJS) ---
+const siteContent = {
+    brand_name: "CASHLINK",
+    tag_tech: "PROTOCOLE DE MINAGE CLOUD RDC",
+    titre_principal: "GÉNÉREZ DES PROFITS QUOTIDIENS",
+    description: "Le premier terminal de minage décentralisé en République Démocratique du Congo. Simple, Rapide et Sécurisé.",
+    puissance_hash: "85.4 TH/s",
+    reseau_status: "OPÉRATIONNEL",
+    admin_voda: "810000000",
+    admin_airtel: "970000000",
+    admin_orange: "890000000",
+    contact_phone: "820000000",
+    contact_address: "Gombe, Kinshasa, RDC",
     contact_email: "support@cashlink.cd",
-    contact_phone: "+243",
-    min_retrait: 1000
+    footer_text: "© 2026 CASHLINK ELITE - TOUS DROITS RÉSERVÉS",
+    footer_sub: "PLATEFORME AGRÉÉE POUR LE MINAGE NUMÉRIQUE"
 };
 
-db.config.findOne({ _id: "UI_CONTENT" }, (err, doc) => {
-    if (!doc) db.config.insert(INITIAL_SITE_CONTENT);
-});
-
-const PACKS_CONFIG = {
-    'BRONZE':  { prix: 50000,   bonus: 5000 },
-    'SILVER':  { prix: 150000,  bonus: 9000 },
-    'GOLD':    { prix: 500000,  bonus: 40000 },
-    'DIAMOND': { prix: 1000000, bonus: 120000 }
-};
-
-// --- 4. LOGIQUE DE CALCULS ---
-function getMiningProgress(startDate) {
-    if (!startDate) return "0.0";
-    try {
-        const diff = (new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24);
-        return Math.min((diff / 30) * 100, 100).toFixed(1);
-    } catch (e) { return "0.0"; }
+/* ============================================================
+   LOGIQUE DE CALCUL DES PROFITS (MOTEUR TEMPS RÉEL)
+   ============================================================ */
+function calculateMiningProgress(user) {
+    if (!user.investDate || user.pack === "Aucun") return 0;
+    
+    const now = new Date();
+    const start = new Date(user.investDate);
+    const diffMs = now - start;
+    const diffHours = diffMs / (1000 * 60 * 60);
+    
+    // On calcule le % basé sur un cycle de 24h
+    let progress = (diffHours / 24) * 100;
+    if (progress > 100) progress = 100;
+    
+    return Math.floor(progress);
 }
 
-function addSystemLog(type, msg) {
-    db.logs.insert({ date: new Date().toLocaleString('fr-FR'), type, msg, ts: Date.now() });
-}
+/* ============================================================
+   ROUTES DES UTILISATEURS (DASHBOARD)
+   ============================================================ */
 
-// --- 5. ROUTE DASHBOARD (SÉCURISÉE) ---
+// Page d'accueil / Connexion
 app.get('/', (req, res) => {
-    const defaultUser = { _id: MASTER_UID, username: "ANASH MASTER", solde: 0, bonus: 0, pack: 'Aucun', investDate: null };
-    db.users.findOne({ _id: MASTER_UID }, (err, user) => {
-        db.config.findOne({ _id: "UI_CONTENT" }, (err, site) => {
-            const activeUser = user || defaultUser;
-            const progress = (activeUser && activeUser.investDate) ? getMiningProgress(activeUser.investDate) : "0.0";
-            res.render('dashboard', {
-                user: activeUser,
-                p: progress,
-                content: site || INITIAL_SITE_CONTENT,
-                packs: PACKS_CONFIG
-            });
-        });
+    res.render('login'); // Crée un fichier login.ejs simple
+});
+
+// Traitement de la connexion
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    const user = users.find(u => u.username === username && u.password === password);
+    
+    if (user) {
+        req.session.user = user;
+        if (user.role === "ADMIN") return res.redirect('/admin');
+        res.redirect('/dashboard');
+    } else {
+        res.send("Identifiants incorrects.");
+    }
+});
+
+// Dashboard Principal
+app.get('/dashboard', (req, res) => {
+    if (!req.session.user) return res.redirect('/');
+    
+    const user = users.find(u => u.username === req.session.user.username);
+    const progress = calculateMiningProgress(user);
+    
+    res.render('dashboard', { 
+        user: user, 
+        content: siteContent, 
+        p: progress 
     });
 });
 
-// --- 6. SAUVEGARDE ADMIN (VERSION ATOMIQUE) ---
-app.post('/admin/update-content', (req, res) => {
-    const incomingData = req.body;
-    delete incomingData._id; // Protection ID
-
-    // ÉTAPE 1 : Récupérer l'existant
-    db.config.findOne({ _id: "UI_CONTENT" }, (err, currentConfig) => {
-        // ÉTAPE 2 : Fusionner (Garde les anciens textes si les nouveaux sont vides)
-        const finalUpdate = { ...currentConfig, ...incomingData };
-
-        // ÉTAPE 3 : Écraser proprement
-        db.config.update({ _id: "UI_CONTENT" }, finalUpdate, { upsert: true }, (err) => {
-            if (err) return res.redirect('/admin?status=error');
-
-            // ÉTAPE 4 : Forcer NeDB à vider son cache et écrire sur le disque
-            db.config.persistence.compactDatafile();
-            
-            db.config.loadDatabase((err) => {
-                addSystemLog("CMS", "Données du site synchronisées avec succès.");
-                // Délai pour Render
-                setTimeout(() => { res.redirect('/admin?v=' + Date.now()); }, 1000);
-            });
-        });
-    });
-});
-
-// --- 7. TERMINAL ADMIN ---
-app.get('/admin', (req, res) => {
-    db.users.find({}, (err, users) => {
-        db.tx.find({}).sort({ ts: -1 }).exec((err, txs) => {
-            db.config.findOne({ _id: "UI_CONTENT" }, (err, site) => {
-                db.logs.find({}).sort({ ts: -1 }).limit(25).exec((err, logs) => {
-                    db.retraits.find({}).sort({ ts: -1 }).exec((err, requests) => {
-                        res.render('admin', {
-                            users, transactions: txs, site: site || INITIAL_SITE_CONTENT,
-                            messages: logs, retraits: requests || [],
-                            stats: {
-                                totalUsers: users.length,
-                                enAttente: txs.filter(t => t.statut === "En attente").length,
-                                soldeTotalUsers: users.reduce((acc, u) => acc + (u.solde || 0), 0)
-                            }
-                        });
-                    });
-                });
-            });
-        });
-    });
-});
-
-// --- 8. LOGIQUE FINANCIÈRE ---
-app.post('/valider-depot', (req, res) => {
-    db.tx.findOne({ _id: req.body.txId }, (err, tx) => {
-        if (!tx) return res.redirect('/admin');
-        const packKey = tx.type.replace("ACHAT ", "");
-        const bonus = PACKS_CONFIG[packKey] ? PACKS_CONFIG[packKey].bonus : 0;
-        db.users.update({ _id: MASTER_UID }, { $inc: { solde: tx.montant, bonus: bonus } }, { upsert: true }, () => {
-            db.tx.update({ _id: tx._id }, { $set: { statut: "Validé" } }, {}, () => {
-                res.redirect('/admin');
-            });
-        });
-    });
-});
-
-app.post('/admin/payer-retrait', (req, res) => {
-    db.retraits.update({ _id: req.body.requestId }, { $set: { statut: "Payé" } }, {}, () => {
-        res.redirect('/admin');
-    });
-});
-
-app.post('/retrait', (req, res) => {
-    const amount = Number(req.body.montant);
-    db.users.update({ _id: MASTER_UID }, { $inc: { bonus: -amount } }, {}, () => {
-        db.retraits.insert({
-            userId: MASTER_UID, username: "ANASH", montant: amount,
-            statut: "En attente", date: new Date().toLocaleString(), ts: Date.now()
-        }, () => { res.redirect('/?msg=SUCCESS'); });
-    });
-});
-
+// --- GESTION DES PAIEMENTS (TID) ---
 app.post('/souscrire-pack', (req, res) => {
-    db.tx.insert({
-        userId: MASTER_UID, type: "ACHAT " + req.body.packName,
-        montant: Number(req.body.prix), reference: req.body.reference,
-        statut: "En attente", ts: Date.now(), date: new Date().toLocaleString()
-    }, () => { res.redirect('/?msg=TID_SEND'); });
+    if (!req.session.user) return res.redirect('/');
+    
+    const { packName, prix, reference } = req.body;
+    
+    // Validation du format TID RDC
+    const tidRegex = /^[A-Z0-9]{8}\.[0-9]{4}\.[A-Z0-9]{6}$/;
+    
+    pendingPayments.push({
+        user: req.session.user.username,
+        pack: packName,
+        montant: prix,
+        tid: reference,
+        date: new Date().toLocaleString()
+    });
+    
+    res.redirect('/dashboard?msg=TID_SEND');
 });
 
-app.post('/activer-investissement', (req, res) => {
-    const prix = Number(req.body.prix);
-    db.users.update({ _id: MASTER_UID }, {
-        $set: { solde: 0, pack: req.body.packName, investDate: new Date().toISOString() }
-    }, { upsert: true }, () => res.redirect('/'));
+// --- GESTION DES RETRAITS ---
+app.post('/retrait', (req, res) => {
+    const user = users.find(u => u.username === req.session.user.username);
+    const montant = parseInt(req.body.montant);
+
+    if (user.bonus >= montant) {
+        user.bonus -= montant;
+        withdrawalRequests.push({ 
+            user: user.username, 
+            montant: montant, 
+            phone: user.phone,
+            status: "En attente" 
+        });
+        res.redirect('/dashboard?msg=SUCCESS');
+    } else {
+        res.redirect('/dashboard?err=FONDS');
+    }
 });
 
-app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
+/* ============================================================
+   INTERFACE ADMIN (VALIDATION ET CONTRÔLE)
+   ============================================================ */
 
-// --- 9. LANCEMENT ---
-const PORT = process.env.PORT || 10000;
+app.get('/admin', (req, res) => {
+    if (!req.session.user || req.session.user.role !== "ADMIN") return res.redirect('/');
+    
+    res.render('admin', { 
+        payments: pendingPayments, 
+        withdrawals: withdrawalRequests,
+        usersCount: users.length 
+    });
+});
+
+// Valider un paiement (Créditer le pack et le bonus)
+app.post('/admin/approve-payment', (req, res) => {
+    const { tid, username, pack, montant } = req.body;
+    const user = users.find(u => u.username === username);
+    
+    if (user) {
+        user.pack = pack;
+        user.investDate = new Date();
+        // Attribution du bonus de bienvenue selon le pack
+        const bonusMap = { "BRONZE": 5000, "SILVER": 9000, "GOLD": 40000, "DIAMOND": 120000 };
+        user.bonus += bonusMap[pack] || 0;
+        
+        // Supprimer des paiements en attente
+        pendingPayments = pendingPayments.filter(p => p.tid !== tid);
+    }
+    res.redirect('/admin');
+});
+
+// Déconnexion
+app.get('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
+});
+
+/* ============================================================
+   CRON JOB SIMULÉ : DISTRIBUTION DES GAINS JOURNALIERS
+   ============================================================ */
+setInterval(() => {
+    users.forEach(user => {
+        if (user.pack !== "Aucun" && user.investDate) {
+            const now = new Date();
+            const lastUpdate = new Date(user.investDate);
+            const diffHours = (now - lastUpdate) / (1000 * 60 * 60);
+
+            // Si 24h sont passées, on ajoute le gain quotidien
+            if (diffHours >= 24) {
+                const incomeMap = { "BRONZE": 5000, "SILVER": 15000, "GOLD": 40000, "DIAMOND": 100000 };
+                user.bonus += incomeMap[user.pack];
+                user.investDate = new Date(); // Reset du cycle
+                console.log(`Gains distribués pour ${user.username}`);
+            }
+        }
+    });
+}, 60000); // Vérification chaque minute
+
+// --- LANCEMENT DU SERVEUR ---
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log("💎 CASHLINK ELITE v27.7 - PRÊT");
+    console.log(`
+    ===========================================
+    CASHLINK TERMINAL v4.0 DÉMARRÉ
+    PORT: ${PORT}
+    STATUT: OPÉRATIONNEL (RDC)
+    ===========================================
+    `);
 });
