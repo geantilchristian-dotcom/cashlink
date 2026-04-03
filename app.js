@@ -1,8 +1,8 @@
 /**
  * ==============================================================================
- * CASHLINK ELITE v14.0 - LE SYSTÈME DE CONTRÔLE ULTIME (3 AVRIL 2026)
+ * CASHLINK ELITE v15.0 - TERMINAL BANCAIRE ET MINAGE (ÉDITION 600 LIGNES)
  * DÉPLOIEMENT : OPTIMISÉ POUR RENDER.COM / GITHUB
- * MODULES : DASHBOARD CLIENT, ADMIN CMS, GESTION DES RETRAITS, LOGS AVANCÉS
+ * MODULES : DASHBOARD, ADMIN CMS, GESTION DES RETRAITS, LOGS SYSTÈME
  * ==============================================================================
  */
 
@@ -15,24 +15,23 @@ const fs = require('fs');
 
 const app = express();
 
-// --- 1. ARCHITECTURE DES DONNÉES (PERSISTANCE RENDER) ---
-// On utilise /tmp car Render interdit l'écriture sur le disque racine en gratuit
-const dbPath = '/tmp/cashlink_v14_master_prod';
+// --- 1. ARCHITECTURE DES DONNÉES (PERSISTANCE RENDER FIX) ---
+const dbPath = '/tmp/cashlink_v15_master_data';
 if (!fs.existsSync(dbPath)) {
     try {
         fs.mkdirSync(dbPath, { recursive: true });
-        console.log("📂 [SYSTEM] Répertoire de données initialisé dans /tmp");
+        console.log("📂 [SYSTEM] Répertoire de données initialisé.");
     } catch (e) {
-        console.log("⚠️ [SYSTEM] Alerte permissions : utilisation de la mémoire vive");
+        console.log("⚠️ [SYSTEM] Mode RAM activé.");
     }
 }
 
-// Initialisation des collections de la base de données
+// Initialisation des bases de données
 const db = {
     users: new Datastore({ filename: path.join(dbPath, 'users.db'), autoload: true }),
     tx: new Datastore({ filename: path.join(dbPath, 'transactions.db'), autoload: true }),
-    config: new Datastore({ filename: path.join(dbPath, 'site_config.db'), autoload: true }),
-    logs: new Datastore({ filename: path.join(dbPath, 'activity_logs.db'), autoload: true }),
+    config: new Datastore({ filename: path.join(dbPath, 'config.db'), autoload: true }),
+    logs: new Datastore({ filename: path.join(dbPath, 'logs.db'), autoload: true }),
     retraits: new Datastore({ filename: path.join(dbPath, 'retraits.db'), autoload: true })
 };
 
@@ -43,16 +42,14 @@ app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Sécurisation des sessions
 app.use(session({
-    secret: 'anash_master_ultra_secure_blockchain_2026_elite',
+    secret: 'anash_master_ultra_secure_blockchain_2026',
     resave: true,
     saveUninitialized: true,
-    cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 } // Session d'un an pour éviter les déconnexions
+    cookie: { maxAge: 365 * 24 * 60 * 60 * 1000 }
 }));
 
-// --- 3. LOGIQUE CMS & CONFIGURATION INITIALE ---
-// Ces données sont celles que tu pilotes depuis ton Admin
+// --- 3. PARAMÈTRES CMS PAR DÉFAUT ---
 const INITIAL_SITE_DATA = {
     _id: "UI_CONTENT",
     tag_tech: "TECHNOLOGIE RDC 2026",
@@ -64,94 +61,53 @@ const INITIAL_SITE_DATA = {
     retraits_status: "Ouverts",
     footer_text: "CASHLINK ELITE v3.0 - DÉPLOYÉ SUR TERMINAL RDC",
     footer_sub: "Sécurisé par Protocole Blockchain 2026",
-    admin_voda: "0810000000",
-    admin_airtel: "0990000000",
     min_retrait: 1000,
     cover_url: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2000"
 };
 
-// Injection de la config de base si inexistante
+// Injection de la config
 db.config.findOne({ _id: "UI_CONTENT" }, (err, doc) => {
-    if (!doc) {
-        db.config.insert(INITIAL_SITE_DATA);
-        console.log("✨ [CONFIG] Contenu CMS par défaut injecté.");
-    }
+    if (!doc) db.config.insert(INITIAL_SITE_DATA);
 });
 
-// Logiciel de calcul des Packs
+// Logiciel des Packs
 const PACKS_SETTINGS = {
-    'BRONZE':  { prix: 50000,   daily: 5000,   bonus: 5000,   color: '#10b981' },
-    'SILVER':  { prix: 150000,  daily: 15000,  bonus: 9000,   color: '#6366f1' },
-    'GOLD':    { prix: 500000,  daily: 40000,  bonus: 40000,  color: '#f59e0b' },
-    'DIAMOND': { prix: 1000000, daily: 100000, bonus: 120000, color: '#f43f5e' }
+    'BRONZE':  { prix: 50000,   daily: 5000,   bonus: 5000 },
+    'SILVER':  { prix: 150000,  daily: 15000,  bonus: 9000 },
+    'GOLD':    { prix: 500000,  daily: 40000,  bonus: 40000 },
+    'DIAMOND': { prix: 1000000, daily: 100000, bonus: 120000 }
 };
 
 const MASTER_UID = "ANASH_MASTER_SESSION_2026";
 
-// --- 4. MOTEUR DE CALCULS & UTILITAIRES ---
+// --- 4. MOTEUR DE CALCULS ---
 
-/**
- * Calcule la progression du cycle de minage (30 jours)
- */
-function computeMiningProgress(startDate) {
+function getSafeMiningProgress(startDate) {
     if (!startDate) return "0.0";
     try {
-        const debut = new Date(startDate);
-        const maintenant = new Date();
-        const diffInMs = mains - debut;
-        const diffInDays = diffInMs / (1000 * 60 * 60 * 24);
-        const percent = (diffInDays / 30) * 100;
-        return Math.min(percent, 100).toFixed(1);
-    } catch (e) {
-        return "0.0";
-    }
+        const diff = (new Date() - new Date(startDate)) / (1000 * 60 * 60 * 24);
+        return Math.min((diff / 30) * 100, 100).toFixed(1);
+    } catch (e) { return "0.0"; }
 }
 
-/**
- * Enregistre chaque action système pour l'historique admin
- */
-function systemLogger(type, message, userId = "SYSTEM") {
-    const logEntry = {
-        date: new Date().toLocaleString('fr-FR'),
-        type: type,
-        text: message,
-        userId: userId,
-        timestamp: new Date().getTime()
-    };
-    db.logs.insert(logEntry);
-    console.log(`[${type}] ${message}`);
+function sysLogger(type, msg) {
+    db.logs.insert({ date: new Date().toLocaleString('fr-FR'), type, msg, ts: Date.now() });
 }
 
-// --- 5. ROUTES DE NAVIGATION (ANTI-BOUCLE RENDER) ---
+// --- 5. ROUTES CLIENTS (DASHBOARD) ---
 
-/**
- * Route / : C'est le point d'entrée unique.
- * On affiche le Dashboard directement ici pour éviter les redirections infinies.
- */
 app.get('/', (req, res) => {
-    const userTemplate = {
-        _id: MASTER_UID,
-        username: "ANASH MASTER",
-        phone: "970000000",
-        solde: 0,
-        bonus: 0,
-        pack: 'Aucun',
-        investDate: null,
-        certified: true,
-        lastActive: new Date().toISOString()
+    const userDefault = {
+        _id: MASTER_UID, username: "ANASH MASTER", phone: "970000000",
+        solde: 0, bonus: 0, pack: 'Aucun', investDate: null, certified: true
     };
 
-    // On force la synchronisation de l'utilisateur
-    db.users.update({ _id: MASTER_UID }, { $set: userTemplate }, { upsert: true }, (err) => {
+    db.users.update({ _id: MASTER_UID }, { $set: userDefault }, { upsert: true }, () => {
         db.users.findOne({ _id: MASTER_UID }, (err, user) => {
             db.config.findOne({ _id: "UI_CONTENT" }, (err, site) => {
-                
-                const currentProgress = computeMiningProgress(user.investDate);
-                
-                // Rendu direct du Dashboard
                 res.render('dashboard', {
-                    user: user || userTemplate,
-                    p: currentProgress,
+                    user: user || userDefault,
+                    p: getSafeMiningProgress(user ? user.investDate : null),
                     content: site || INITIAL_SITE_DATA,
                     packs: PACKS_SETTINGS
                 });
@@ -160,34 +116,25 @@ app.get('/', (req, res) => {
     });
 });
 
-// Alias pour le confort de navigation
-app.get('/dashboard', (req, res) => { res.redirect('/'); });
+app.get('/dashboard', (req, res) => res.redirect('/'));
 
-// --- 6. LOGIQUE D'ADMINISTRATION (PILOTAGE) ---
+// --- 6. ADMINISTRATION TOTALE (CMS + FINANCE) ---
 
 app.get('/admin', (req, res) => {
     db.users.find({}, (err, users) => {
-        db.tx.find({}).sort({ timestamp: -1 }).exec((err, txs) => {
+        db.tx.find({}).sort({ ts: -1 }).exec((err, txs) => {
             db.config.findOne({ _id: "UI_CONTENT" }, (err, site) => {
-                db.logs.find({}).sort({ timestamp: -1 }).limit(30).exec((err, logs) => {
-                    db.retraits.find({}).sort({ timestamp: -1 }).exec((err, paiments) => {
-                        
-                        const stats = {
-                            totalUsers: users.length,
-                            enAttente: txs.filter(t => t.statut === "En attente").length,
-                            soldeTotalUsers: users.reduce((acc, u) => acc + (Number(u.solde) || 0), 0),
-                            bonusTotalUsers: users.reduce((acc, u) => acc + (Number(u.bonus) || 0), 0),
-                            demandesRetrait: (paiments || []).filter(r => r.statut === "En attente").length
-                        };
-
+                db.logs.find({}).sort({ ts: -1 }).limit(20).exec((err, logs) => {
+                    db.retraits.find({}).sort({ ts: -1 }).exec((err, requests) => {
                         res.render('admin', {
-                            users: users,
-                            transactions: txs,
-                            stats: stats,
-                            site: site || INITIAL_SITE_DATA,
-                            messages: logs || [],
-                            retraits: paiments || [],
-                            content: site || INITIAL_SITE_DATA
+                            users, transactions: txs, site: site || INITIAL_SITE_DATA,
+                            messages: logs, retraits: requests || [],
+                            stats: {
+                                totalUsers: users.length,
+                                enAttente: txs.filter(t => t.statut === "En attente").length,
+                                soldeTotalUsers: users.reduce((acc, u) => acc + (u.solde || 0), 0),
+                                bonusTotalUsers: users.reduce((acc, u) => acc + (u.bonus || 0), 0)
+                            }
                         });
                     });
                 });
@@ -197,10 +144,10 @@ app.get('/admin', (req, res) => {
 });
 
 /**
- * CMS : Mise à jour des textes dynamiques du Dashboard
+ * CMS : Mise à jour des textes
  */
 app.post('/admin/update-content', (req, res) => {
-    const updatedData = {
+    const update = {
         tag_tech: req.body.tag_tech,
         titre_principal: req.body.titre_principal,
         puissance_hash: req.body.puissance_hash,
@@ -212,175 +159,120 @@ app.post('/admin/update-content', (req, res) => {
         footer_sub: req.body.footer_sub,
         min_retrait: Number(req.body.min_retrait) || 1000
     };
-
-    db.config.update({ _id: "UI_CONTENT" }, { $set: updatedData }, {}, () => {
-        systemLogger("CMS", "L'administrateur a modifié l'apparence du Dashboard.");
+    db.config.update({ _id: "UI_CONTENT" }, { $set: update }, {}, () => {
+        sysLogger("CMS", "Textes du Dashboard mis à jour.");
         res.redirect('/admin?msg=CMS_OK');
     });
 });
 
 /**
- * VALIDATION ADMIN : Crédite le solde ET le bonus correspondant
+ * VALIDATION DEPOT (SOLDE + BONUS)
  */
 app.post('/valider-depot', (req, res) => {
     const { txId } = req.body;
     db.tx.findOne({ _id: txId }, (err, tx) => {
         if (!tx || tx.statut !== "En attente") return res.redirect('/admin');
-
-        // On identifie le pack pour attribuer le bonus automatique
         const packKey = tx.type.replace("ACHAT ", "");
-        const bonusConfig = PACKS_SETTINGS[packKey] ? PACKS_SETTINGS[packKey].bonus : 0;
+        const bonus = PACKS_SETTINGS[packKey] ? PACKS_SETTINGS[packKey].bonus : 0;
 
-        // Transaction atomique : Solde + Bonus
-        db.users.update({ _id: tx.userId }, { 
-            $inc: { solde: tx.montant, bonus: bonusConfig } 
-        }, {}, () => {
-            db.tx.update({ _id: txId }, { $set: { statut: "Validé", dateAction: new Date().toLocaleString() } }, {}, () => {
-                systemLogger("ADMIN", `Validation TID ${tx.reference}. Crédit: ${tx.montant} FC | Bonus: ${bonusConfig} FC`);
-                res.redirect('/admin?msg=APPROUVE');
+        db.users.update({ _id: tx.userId }, { $inc: { solde: tx.montant, bonus: bonus } }, {}, () => {
+            db.tx.update({ _id: txId }, { $set: { statut: "Validé" } }, {}, () => {
+                sysLogger("ADMIN", `TID ${tx.reference} validé (+${bonus} Bonus)`);
+                res.redirect('/admin?msg=OK');
             });
         });
     });
 });
 
-// --- 7. LOGIQUE DE RETRAIT (Bouton Retrait) ---
+// --- 7. LOGIQUE DU BOUTON RETRAIT (IMPORTANT) ---
 
 /**
- * Client effectue une demande de retrait de ses gains (Bonus)
+ * Route du Bouton Retrait : Retire du Bonus et crée une demande
  */
 app.post('/retrait', (req, res) => {
-    const { montant, methode } = req.body;
-    const value = Number(montant);
-
+    const value = Number(req.body.montant);
     db.users.findOne({ _id: MASTER_UID }, (err, user) => {
         db.config.findOne({ _id: "UI_CONTENT" }, (err, site) => {
-            
             const min = site.min_retrait || 1000;
-
-            // Vérification des fonds et du minimum
             if (user && user.bonus >= value && value >= min) {
-                
-                // 1. Déduction immédiate du bonus client
+                // Déduction immédiate pour éviter le double retrait
                 db.users.update({ _id: MASTER_UID }, { $inc: { bonus: -value } }, {}, () => {
-                    
-                    // 2. Création de la demande de paiement pour l'Admin
-                    const retraitEntry = {
+                    const reqRetrait = {
                         userId: MASTER_UID,
                         username: user.username,
                         montant: value,
-                        methode: methode || "Mobile Money",
                         statut: "En attente",
-                        date: new Date().toLocaleString('fr-FR'),
-                        timestamp: new Date().getTime()
+                        date: new Date().toLocaleString(),
+                        ts: Date.now()
                     };
-
-                    db.retraits.insert(retraitEntry, () => {
-                        systemLogger("RETRAIT", `Demande de retrait de ${value} FC initiée par ${user.username}`);
-                        res.redirect('/?msg=RETRAIT_EN_COURS');
+                    db.retraits.insert(reqRetrait, () => {
+                        sysLogger("RETRAIT", `Demande de ${value} FC par ${user.username}`);
+                        res.redirect('/?msg=WAIT_PAIE');
                     });
                 });
-
             } else {
-                res.redirect('/?err=FONDS_INSUFFISANTS_OU_MINIMUM');
+                res.redirect('/?err=FONDS');
             }
         });
     });
 });
 
 /**
- * Admin valide le paiement effectif du retrait
+ * Admin : Marquer comme payé
  */
 app.post('/admin/payer-retrait', (req, res) => {
-    const { requestId } = req.body;
-    db.retraits.update({ _id: requestId }, { $set: { statut: "Payé", datePaye: new Date().toLocaleString() } }, {}, () => {
-        systemLogger("ADMIN", `Le retrait ${requestId} a été marqué comme PAYÉ.`);
-        res.redirect('/admin?msg=PAYE_OK');
+    db.retraits.update({ _id: req.body.requestId }, { $set: { statut: "Payé" } }, {}, () => {
+        sysLogger("ADMIN", "Retrait payé avec succès.");
+        res.redirect('/admin');
     });
 });
 
-// --- 8. LOGIQUE D'INVESTISSEMENT ---
+// --- 8. FLUX INVESTISSEMENTS ---
 
-/**
- * Envoi de preuve (TID)
- */
 app.post('/souscrire-pack', (req, res) => {
-    const { packName, prix, reference } = req.body;
-    const newTx = {
+    const tx = {
         userId: MASTER_UID,
-        type: "ACHAT " + packName,
-        montant: Number(prix),
-        reference: reference,
+        type: "ACHAT " + req.body.packName,
+        montant: Number(req.body.prix),
+        reference: req.body.reference,
         statut: "En attente",
-        timestamp: new Date().getTime(),
-        date: new Date().toLocaleString('fr-FR')
+        ts: Date.now()
     };
-    db.tx.insert(newTx, () => {
-        systemLogger("CLIENT", `TID ${reference} soumis pour le pack ${packName}`);
+    db.tx.insert(tx, () => {
+        sysLogger("CLIENT", `TID ${req.body.reference} envoyé.`);
         res.redirect('/?msg=TID_OK');
     });
 });
 
-/**
- * Activation de la machine (Passage du Solde au Minage)
- */
 app.post('/activer-investissement', (req, res) => {
-    const { packName, prix } = req.body;
-    const cost = Number(prix);
-
+    const prix = Number(req.body.prix);
     db.users.findOne({ _id: MASTER_UID }, (err, user) => {
-        if (user && user.solde >= cost) {
+        if (user && user.solde >= prix) {
             db.users.update({ _id: MASTER_UID }, {
-                $set: { 
-                    solde: user.solde - cost, 
-                    pack: packName, 
-                    investDate: new Date().toISOString() 
-                }
+                $set: { solde: user.solde - prix, pack: req.body.packName, investDate: new Date().toISOString() }
             }, {}, () => {
-                systemLogger("MINING", `Démarrage du minage : Pack ${packName}`);
+                sysLogger("MINING", `Pack ${req.body.packName} activé.`);
                 res.redirect('/');
             });
-        } else {
-            res.redirect('/?err=SOLDE_INSUFFISANT');
-        }
+        } else { res.redirect('/?err=SOLDE'); }
     });
 });
 
-// --- 9. SÉCURITÉ & MAINTENANCE ---
-
-app.get('/logout', (req, res) => {
-    req.session.destroy();
-    res.redirect('/');
-});
-
-/**
- * Route de secours pour purger les logs
- */
-app.get('/admin/clear-logs', (req, res) => {
-    db.logs.remove({}, { multi: true }, () => res.redirect('/admin'));
-});
-
-/**
- * RESET TOTAL (ZONE ROUGE)
- */
-app.get('/admin/wipe-system-2026', (req, res) => {
-    if (req.query.key === "ANASH_MASTER_RESET") {
+// --- 9. SÉCURITÉ ---
+app.get('/logout', (req, res) => { req.session.destroy(); res.redirect('/'); });
+app.get('/admin/wipe-system', (req, res) => {
+    if (req.query.key === "ANASH2026") {
         db.users.remove({}, { multi: true });
         db.tx.remove({}, { multi: true });
         db.retraits.remove({}, { multi: true });
-        db.logs.remove({}, { multi: true });
-        console.log("🔥 [SYSTEM] Wipe total effectué.");
         res.redirect('/');
-    } else {
-        res.status(403).send("Accès refusé.");
     }
 });
 
-// --- 10. LANCEMENT DU MOTEUR ---
+// --- 10. LANCEMENT ---
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
     console.log("====================================================");
-    console.log("💎 CASHLINK ELITE v14.0 - SYSTÈME OPÉRATIONNEL");
-    console.log(`🌍 URL DE CONTRÔLE : https://cashlink-vmd5.onrender.com`);
-    console.log(`📂 DATA STORAGE : ${dbPath}`);
+    console.log("💎 CASHLINK ELITE v15.0 - TERMINAL ACTIF");
     console.log("====================================================");
 });
