@@ -3,316 +3,381 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CASHLINK | DASHBOARD ELITE v18.0</title>
+    <title><%= content.brand_name %> | Interface Elite v3.0</title>
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
     <style>
-        /* ============================================================
-           MOTEUR DE STYLE "TITAN ULTIMATE" (600 LIGNES DE STYLE)
-           ============================================================ */
+        /* --- CONFIGURATION DES VARIABLES --- */
         :root {
-            --primary: #003399; /* BLEU BIC RDC */
-            --warning: #ffcc00; /* JAUNE VIF */
-            --accent: #00d9ff; /* CYAN NÉON */
-            --success: #10b981;
-            --danger: #f43f5e;
-            --dark-deep: #00081a;
-            --white: #ffffff;
-            --glass: rgba(255, 255, 255, 0.05);
-            --transition-titan: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --bleu-bic: #003399;
+            --neon-blue: #00d9ff;
+            --emerald: #10b981;
+            --rose: #f43f5e;
+            --gold: #fbbf24;
+            --dark-deep: #000c26;
+            --glass-white: rgba(255, 255, 255, 0.1);
+            --glass-dark: rgba(0, 0, 0, 0.2);
+            --transition-smooth: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
         }
 
-        /* CONFIGURATION SCROLLBAR PROFESSIONNELLE */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: var(--dark-deep); }
-        ::-webkit-scrollbar-thumb { background: var(--warning); border-radius: 10px; border: 2px solid var(--dark-deep); }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none !important; }
-
+        /* --- RÉGLAGES GÉNÉRAUX DU CORPS --- */
         body {
-            background-color: var(--primary);
+            background-color: var(--bleu-bic);
             background-image: 
-                radial-gradient(at 0% 0%, #0044cc 0px, transparent 55%),
+                radial-gradient(at 0% 0%, #0044cc 0px, transparent 50%),
+                radial-gradient(at 100% 100%, var(--dark-deep) 0px, transparent 50%),
                 url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
             background-attachment: fixed;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            color: var(--white); margin: 0; padding: 0; min-height: 100vh;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* --- EFFET DE PARTICULES CSS --- */
-        #bg-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
-
-        /* --- BARRE DE NOTIFICATION --- */
-        .notif-top-titan {
-            background: var(--warning); color: #000; padding: 15px;
-            font-weight: 900; text-align: center; text-transform: uppercase;
-            border-bottom: 5px solid #000; position: relative; z-index: 5000;
-            display: flex; justify-content: center; align-items: center; gap: 12px;
-            font-size: 0.8rem; letter-spacing: 0.5px;
-        }
-        .notif-top-titan i { font-size: 1.4rem; animation: pulse 1s infinite; }
-
-        /* --- NAVBAR ELITE --- */
-        .navbar-master {
-            background: var(--warning); padding: 12px 20px;
-            position: sticky; top: 0; z-index: 4000;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-            border-bottom: 3px solid rgba(0,0,0,0.1);
+        /* --- BARRE DE NAVIGATION (NAVBAR) --- */
+        .premium-nav {
+            background: var(--gold);
+            padding: 8px 15px;
+            position: sticky;
+            top: 0;
+            z-index: 2000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            border-bottom: 4px solid rgba(0,0,0,0.1);
         }
 
-        .brand-logo { font-family: 'Space Grotesk', sans-serif; font-weight: 900; color: var(--primary); font-size: 1.8rem; text-decoration: none !important; letter-spacing: -2px; }
+        @media (min-width: 992px) { .premium-nav { padding: 12px 60px; } }
 
-        .profile-card-header {
-            background: #ffffff; padding: 8px 18px; border-radius: 60px;
-            display: flex; align-items: center; gap: 15px; color: #000;
-            border: 2px solid var(--primary); box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
+        .logo-brand { 
+            font-weight: 900; 
+            color: var(--bleu-bic); 
+            font-size: 1.4rem; 
+            text-decoration: none !important; 
+            letter-spacing: -2px;
+            transition: var(--transition-smooth);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .profile-text { line-height: 1.1; border-right: 1.5px solid #e2e8f0; padding-right: 15px; }
-        .bal-display { font-size: 1rem; font-weight: 900; color: var(--primary); font-family: 'Space Grotesk'; }
-
-        .btn-power-titan {
-            background: var(--danger); color: white; border: none;
-            width: 45px; height: 45px; border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 8px 20px rgba(244, 63, 94, 0.4);
-            transition: var(--transition-titan);
-        }
-        .btn-power-titan:hover { transform: rotate(90deg) scale(1.1); }
-
-        /* --- SECTION MARKETING HAUT DE PAGE --- */
-        .hero-marketing {
-            background: #ffffff; color: #000; padding: 60px 30px;
-            border-radius: 0 0 50px 50px; text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.4); margin-bottom: 30px;
-            position: relative; overflow: hidden;
-        }
-        .hero-marketing::before { content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://www.transparenttextures.com/patterns/cubic-maze.png'); opacity: 0.05; }
-        .hero-marketing h1 { font-family: 'Space Grotesk'; font-weight: 900; font-size: 3rem; color: var(--primary); line-height: 0.85; margin-bottom: 20px; }
-        .hero-marketing p { font-weight: 700; color: #475569; max-width: 700px; margin: 0 auto 30px; font-size: 1.1rem; }
-
-        /* --- TERMINAL DE MINAGE NÉON --- */
-        .terminal-wrapper {
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(30px);
-            margin: 20px; padding: 45px; border-radius: 50px;
-            border: 2px solid rgba(255,255,255,0.08);
-            box-shadow: 0 50px 100px rgba(0,0,0,0.7);
-        }
-
-        .neon-track-industrial {
-            height: 28px; background: rgba(0,0,0,0.6);
-            border-radius: 60px; overflow: hidden; margin: 30px 0;
-            border: 3px solid var(--accent); padding: 5px;
-            box-shadow: 0 0 25px rgba(0, 217, 255, 0.2);
-        }
-        .neon-fill-industrial {
-            background: linear-gradient(90deg, var(--accent), var(--success));
-            box-shadow: 0 0 35px var(--accent); height: 100%;
-            border-radius: 50px; width: <%= p || 0 %>%;
-            transition: width 2.5s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .stats-titan-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; margin-bottom: 30px; }
-        @media (min-width: 992px) { .stats-titan-grid { grid-template-columns: repeat(4, 1fr); } }
-
-        .stat-card-industrial {
-            background: rgba(255,255,255,0.06); padding: 25px; border-radius: 35px;
-            border: 1px solid var(--glass); text-align: center;
-            transition: var(--transition-titan);
-        }
-        .stat-card-industrial:hover { border-color: var(--accent); background: rgba(0, 217, 255, 0.05); transform: translateY(-5px); }
-        .stat-label-industrial { font-size: 0.65rem; font-weight: 800; color: var(--accent); text-transform: uppercase; margin-bottom: 12px; display: block; letter-spacing: 1.5px; }
-        .stat-val-industrial { font-size: 1.3rem; font-weight: 900; font-family: 'Space Grotesk'; }
-
-        .btn-withdraw-giga {
-            background: var(--danger); color: white; border: none; width: 100%;
-            padding: 25px; border-radius: 35px; font-weight: 900; font-size: 1.6rem;
-            text-transform: uppercase; box-shadow: 0 25px 60px rgba(244, 63, 94, 0.5);
-            transition: var(--transition-titan);
-        }
-        .btn-withdraw-giga:active { transform: scale(0.96); }
-
-        /* --- PARRAINAGE 10% --- */
-        .referral-container-master {
-            background: rgba(255, 255, 255, 0.03); margin: 20px; padding: 45px;
-            border-radius: 50px; border: 4px dashed var(--warning); text-align: center;
-        }
-        .referral-container-master h4 { font-family: 'Space Grotesk'; font-weight: 900; color: var(--warning); margin-bottom: 20px; }
-        .copy-link-box {
-            background: rgba(255,255,255,0.08); padding: 20px; border-radius: 25px;
-            display: flex; align-items: center; gap: 20px; border: 1px solid rgba(255,255,255,0.1);
-        }
-        .copy-link-box input { background: transparent; border: none; color: white; width: 100%; font-weight: 700; font-size: 0.9rem; }
-
-        /* --- PACKS GRID (ALIGNEMENT PARFAIT 480PX) --- */
-        .packs-grid-industrial {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
-            padding: 20px 20px 100px;
-        }
-        @media (min-width: 1200px) { .packs-grid-industrial { grid-template-columns: repeat(4, 1fr); gap: 40px; padding: 20px 100px 180px; } }
-
-        .pack-elite-card {
-            background: #ffffff; border-radius: 55px; overflow: hidden;
-            color: #000; height: 480px; /* ALIGNEMENT FIXE DEMANDÉ */
-            display: flex; flex-direction: column;
-            box-shadow: 0 40px 80px rgba(0,0,0,0.7); transition: var(--transition-titan);
-            border: none;
-        }
-        .pack-elite-card:hover { transform: translateY(-20px) scale(1.02); }
-
-        .pack-card-head { padding: 25px; text-align: center; color: white; font-weight: 900; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; }
-        .pack-card-body { padding: 40px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .logo-brand:hover { transform: scale(1.02); opacity: 0.9; }
+        @media (min-width: 768px) { .logo-brand { font-size: 2rem; } }
         
-        .pack-price-display { font-size: 2.6rem; font-weight: 900; color: var(--primary); letter-spacing: -3px; font-family: 'Space Grotesk'; }
-        .pack-bonus-tag { 
-            font-size: 0.85rem; font-weight: 900; color: var(--danger); 
-            background: #fff0f0; border: 2.5px dashed var(--danger); 
-            padding: 12px; border-radius: 20px; margin: 15px 0; 
+        .nav-info-box {
+            background: #ffffff;
+            padding: 5px 12px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #0f172a;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
         }
-        .pack-daily-val { font-weight: 900; color: var(--success); font-size: 1.1rem; }
+        @media (min-width: 768px) { .nav-info-box { padding: 10px 25px; gap: 25px; } }
 
-        .btn-activate-industrial {
-            background: var(--primary); color: white; border: none;
-            width: 100%; padding: 20px; border-radius: 25px;
-            font-weight: 900; text-transform: uppercase; font-size: 0.95rem;
-            box-shadow: 0 10px 20px rgba(0, 51, 153, 0.2); transition: 0.3s;
+        .solde-badge { border-right: 2px solid #f1f5f9; padding-right: 12px; }
+        .label-xs { font-size: 0.5rem; font-weight: 800; text-transform: uppercase; color: #94a3b8; display: block; line-height: 1; margin-bottom: 2px; }
+        .val-md { font-weight: 900; font-size: 0.9rem; color: var(--bleu-bic); line-height: 1; }
+        @media (min-width: 768px) { .val-md { font-size: 1.2rem; } .label-xs { font-size: 0.65rem; } }
+
+        /* --- SECTION PUBLICITAIRE --- */
+        .hero-banner {
+            width: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            border-radius: 0 0 35px 35px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            overflow: hidden;
+            margin-bottom: 20px;
         }
-        .btn-activate-industrial:hover { background: #000; }
+        @media (min-width: 768px) { .hero-banner { height: 280px; flex-direction: row; border-radius: 0 0 50px 50px; } }
 
-        /* --- SECTION GUIDE D'UTILISATION --- */
-        .guide-section { background: rgba(0,0,0,0.2); margin: 20px; padding: 60px 40px; border-radius: 50px; border: 1px solid var(--glass); }
-        .guide-step { display: flex; align-items: flex-start; gap: 25px; margin-bottom: 40px; }
-        .step-num { background: var(--warning); color: #000; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; flex-shrink: 0; }
-        .step-text h5 { font-weight: 800; margin-bottom: 8px; color: var(--warning); }
-        .step-text p { opacity: 0.7; line-height: 1.6; margin-bottom: 0; }
+        .banner-left {
+            width: 100%;
+            background: #ffffff;
+            color: #000;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        @media (min-width: 768px) { .banner-left { width: 45%; padding: 50px; align-items: flex-start; text-align: left; } }
 
-        /* --- ACCORDÉONS FAQ TOUT EN BAS --- */
-        .faq-accordion-master { margin: 25px; border-radius: 40px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
-        .accordion-item { background: rgba(0,0,0,0.3) !important; border: none !important; color: white !important; }
-        .accordion-button { background: transparent !important; color: white !important; font-weight: 800; padding: 28px; font-size: 1.05rem; box-shadow: none !important; }
-        .accordion-button:not(.collapsed) { color: var(--warning) !important; border-bottom: 1px solid rgba(255,255,255,0.05); }
-        .accordion-body { opacity: 0.8; font-size: 0.95rem; line-height: 1.8; padding: 30px; }
+        .banner-right { width: 100%; background: #ffffff; display: none; }
+        @media (min-width: 768px) { .banner-right { width: 55%; display: block; } }
 
-        /* --- BOUTON SCROLL TOP --- */
-        #scrollTopBtn {
-            position: fixed; bottom: 35px; right: 35px;
-            width: 65px; height: 65px; background: var(--warning);
-            color: #000; border-radius: 50%; border: none;
-            display: none; align-items: center; justify-content: center;
-            font-size: 1.8rem; z-index: 6000; box-shadow: 0 15px 30px rgba(0,0,0,0.6);
+        .carousel-item img {
+            width: 100%;
+            height: 280px;
+            object-fit: contain;
+            padding: 20px;
+            background: #fff;
+        }
+
+        /* --- ÉLÉMENTS DE STATISTIQUES --- */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 10px 20px;
+        }
+        @media (min-width: 992px) { .stats-container { grid-template-columns: repeat(4, 1fr); padding: 20px 60px; gap: 25px; } }
+
+        .stat-glass-card {
+            background: var(--glass-white);
+            backdrop-filter: blur(12px);
+            padding: 20px;
+            border-radius: 25px;
+            border: 1px solid rgba(255,255,255,0.15);
+            transition: var(--transition-smooth);
+        }
+        .stat-glass-card:hover { background: rgba(255,255,255,0.18); transform: translateY(-5px); }
+        .stat-icon { font-size: 1.8rem; color: var(--neon-blue); margin-bottom: 8px; }
+
+        /* --- SECTION MINAGE --- */
+        .mining-area {
+            background: var(--glass-dark);
+            margin: 15px;
+            padding: 25px;
+            border-radius: 35px;
+            border: 1px solid rgba(255,255,255,0.08);
+            position: relative;
+            overflow: hidden;
+        }
+        @media (min-width: 992px) { .mining-area { margin: 30px 60px; padding: 45px; border-radius: 45px; } }
+
+        .progress-master {
+            height: 30px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50px;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3);
+            overflow: hidden;
+            margin: 15px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .bar-elite {
+            background: linear-gradient(90deg, var(--neon-blue), var(--emerald));
+            box-shadow: 0 0 20px rgba(0, 217, 255, 0.5);
+        }
+
+        /* --- BOUTIQUE DE PACKS --- */
+        .shop-header {
+            padding: 0 25px;
+            margin: 40px 0 30px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        @media (min-width: 992px) { .shop-header { padding: 0 60px; } }
+
+        .shop-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 0 15px 80px;
+        }
+        @media (min-width: 992px) { .shop-grid { grid-template-columns: repeat(4, 1fr); padding: 0 60px 120px; gap: 30px; } }
+
+        .card-elite-pack {
+            background: #ffffff;
+            border-radius: 40px;
+            overflow: hidden;
+            transition: var(--transition-smooth);
+            color: #0f172a;
+            display: flex;
+            flex-direction: column;
+            border: none;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .card-elite-pack:hover { transform: translateY(-12px); box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
+        .is-active { border: 6px solid var(--neon-blue) !important; transform: scale(1.03); }
+
+        .card-top { padding: 20px; text-align: center; color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem; }
+        .card-body-custom { padding: 25px; text-align: center; flex-grow: 1; }
+        
+        .price-tag { font-size: 1.8rem; font-weight: 900; margin: 15px 0; letter-spacing: -1px; }
+        @media (min-width: 768px) { .price-tag { font-size: 2.6rem; } }
+
+        .btn-action-elite {
+            width: 100%;
+            padding: 18px;
+            border-radius: 22px;
+            border: none;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             transition: 0.3s;
+            font-size: 0.8rem;
         }
+        .btn-buy { background: var(--bleu-bic); color: #fff; }
+        .btn-invest { background: var(--emerald); color: #fff; }
+        .btn-active { background: #64748b; color: #fff; cursor: not-allowed; }
 
-        /* --- FOOTER FINAL --- */
-        .footer-elite-master { background: #000; padding: 120px 25px; text-align: center; border-top: 10px solid var(--warning); position: relative; }
-        .footer-logo-text { font-family: 'Space Grotesk', sans-serif; font-weight: 900; color: var(--warning); font-size: 4rem; letter-spacing: -6px; margin-bottom: 15px; }
+        /* --- BOUTON RETOUR EN HAUT --- */
+        #backToTop {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 55px;
+            height: 55px;
+            background: var(--gold);
+            color: var(--bleu-bic);
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            z-index: 3000;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            transition: 0.3s;
+            border: 2px solid rgba(0,0,0,0.1);
+        }
+        #backToTop:hover { transform: translateY(-5px); background: #fff; }
 
         /* --- MODAL PAIEMENT --- */
-        .modal-industrial-style { border-radius: 50px !important; border: none; overflow: hidden; }
-        .payment-card-rdc {
-            background: #f8fafc; padding: 25px; border-radius: 30px;
-            border: 3.5px solid #e2e8f0; margin-bottom: 18px; transition: 0.3s;
+        .modal-elite { border-radius: 40px !important; border: none; overflow: hidden; }
+        .payment-box {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 25px;
+            margin-bottom: 15px;
+            border: 2px solid #e2e8f0;
+            transition: 0.3s;
         }
-        .payment-card-rdc:hover { border-color: var(--primary); background: #fff; transform: translateX(10px); }
+        .payment-box:hover { border-color: var(--bleu-bic); background: #fff; }
+
+        /* --- ANIMATIONS --- */
+        .fade-up { animation: fadeInUp 0.8s ease-out forwards; }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <canvas id="bg-canvas"></canvas>
-
-    <button id="scrollTopBtn" onclick="window.scrollTo({top:0, behavior:'smooth'})"><i class="bi bi-arrow-up-circle-fill"></i></button>
-
-    <div class="notif-top-titan animate__animated animate__fadeInDown">
-        <i class="bi bi-patch-check-fill"></i>
-        <span>PROGRAMME DE PARRAINAGE ELITE : Recevez 10% cash sur chaque investissement de vos amis !</span>
+    <div id="backToTop" onclick="scrollToTop()">
+        <i class="bi bi-arrow-up"></i>
     </div>
 
-    <nav class="navbar-master">
-        <div class="d-flex align-items-center gap-3">
-            <button onclick="window.location.reload()" class="btn btn-primary rounded-3 p-2"><i class="bi bi-arrow-clockwise fs-3"></i></button>
-            <a href="#" class="brand-logo">CASHLINK</a>
+    <nav class="premium-nav">
+        <div class="nav-left d-flex align-items-center gap-2 gap-lg-4">
+            <a href="/" class="logo-brand animate__animated animate__fadeInLeft">
+                <i class="bi bi-cpu-fill"></i> CASHLINK
+            </a>
+            <div class="nav-info-box animate__animated animate__zoomIn">
+                <div class="solde-badge">
+                    <span class="label-xs">Mon Solde</span>
+                    <div class="val-md"><%= (user.solde || 0).toLocaleString() %> FC</div>
+                </div>
+                <div>
+                    <span class="label-xs text-success">Bonus Actif</span>
+                    <div class="val-md text-success">+<%= (user.bonus || 0).toLocaleString() %> FC</div>
+                </div>
+            </div>
         </div>
         
-        <div class="profile-card-header animate__animated animate__zoomIn">
-            <div class="profile-text d-none d-lg-block">
-                <span style="font-size: 0.6rem; font-weight: 800; opacity: 0.5;">UTILISATEUR: <%= user.username %></span>
-                <div style="font-weight: 900; font-size: 0.85rem;">+243 <%= user.phone %></div>
+        <div class="d-flex align-items-center gap-2 gap-lg-4">
+            <div class="text-end d-none d-md-block text-dark animate__animated animate__fadeIn">
+                <div class="fw-900 fs-5 line-height-1"><%= user.username %></div>
+                <div class="small fw-bold opacity-75">Niveau : ELITE V3</div>
             </div>
-            <div class="pe-4 border-end">
-                <span style="font-size: 0.6rem; font-weight: 800; opacity: 0.5;">SOLDE</span>
-                <div class="bal-display"><%= (user.solde || 0).toLocaleString() %> FC</div>
-            </div>
-            <div class="ps-1">
-                <span style="font-size: 0.6rem; font-weight: 800; color: var(--success);">BONUS</span>
-                <div class="bal-display text-success">+<%= (user.bonus || 0).toLocaleString() %> FC</div>
-            </div>
+            <a href="/logout" class="btn btn-dark rounded-pill fw-900 px-4 py-2 shadow-sm">
+                <i class="bi bi-power me-2"></i> <span class="d-none d-sm-inline">DÉCONNEXION</span>
+            </a>
         </div>
-
-        <a href="/logout" class="btn-power-titan shadow-lg"><i class="bi bi-power fs-2"></i></a>
     </nav>
 
-    <header class="hero-marketing animate__animated animate__fadeIn">
-        <h1 class="animate__animated animate__zoomIn">MINAGE AUTOMATISÉ 2026</h1>
-        <p>Générez des revenus passifs sécurisés grâce à la puissance du Cloud Mining décentralisé. Notre technologie CASHLINK Titan v18 gère tout pour vous.</p>
-        <button onclick="document.getElementById('packs-catalog').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-3 fw-900 mt-2 shadow-lg">DÉMARRER MON UNITÉ</button>
+    <header class="hero-banner">
+        <div class="banner-left">
+            <span class="badge bg-primary mb-3 px-3 py-2 rounded-pill">TECHNOLOGIE RDC 2026</span>
+            <h1 class="fw-900 display-5 mb-2">MINAGE <span class="text-primary">AUTO</span></h1>
+            <p class="text-muted fw-bold mb-4">Générez des profits passifs sécurisés grâce à nos fermes de minage décentralisées.</p>
+            <button onclick="document.getElementById('boutique').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-3 fw-900 shadow">DÉCOUVRIR LES OFFRES</button>
+        </div>
+        <div class="banner-right">
+            <div id="tradingCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <img src="https://img.freepik.com/free-vector/gradient-stock-market-concept_23-2149166910.jpg" alt="Trading 1">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://img.freepik.com/free-vector/digital-money-transfer-technology-background_1017-17454.jpg" alt="Trading 2">
+                    </div>
+                    <div class="carousel-item">
+                        <img src="https://img.freepik.com/free-vector/gradient-cryptocurrency-concept_23-2149151121.jpg" alt="Trading 3">
+                    </div>
+                </div>
+            </div>
+        </div>
     </header>
 
-    <div class="terminal-wrapper animate__animated animate__fadeInUp">
-        <div class="d-flex justify-content-between align-items-end mb-1">
-            <div>
-                <h3 class="fw-900 text-uppercase mb-0" style="letter-spacing: 4px; color: var(--accent);">TERMINAL DE MINAGE</h3>
-                <p class="small opacity-75 fw-bold mb-0">STATUT : UNITÉ <%= user.pack %> ENGINE</p>
-            </div>
-            <div class="fw-900" style="color: var(--accent); font-size: 4.5rem; line-height: 1; font-family: 'Space Grotesk';"><%= p || 0 %>%</div>
+    <div class="stats-container">
+        <div class="stat-glass-card">
+            <i class="bi bi-lightning-charge-fill stat-icon"></i>
+            <span class="label-xs">Puissance Hash</span>
+            <div class="fs-4 fw-900"><%= (user.pack && user.pack !== 'Aucun') ? '104.2 TH/s' : '0.00 TH/s' %></div>
         </div>
-        
-        <div class="neon-track-industrial">
-            <div class="neon-fill-industrial"></div>
+        <div class="stat-glass-card">
+            <i class="bi bi-people-fill stat-icon" style="color: var(--emerald);"></i>
+            <span class="label-xs">Réseau Elite</span>
+            <div class="fs-4 fw-900">Actif</div>
         </div>
-
-        <div class="stats-titan-grid">
-            <div class="stat-card-industrial">
-                <span class="stat-label-industrial">STATUT RÉSEAU</span>
-                <div class="stat-val-industrial text-success">OPÉRATIONNEL</div>
-            </div>
-            <div class="stat-card-industrial">
-                <span class="stat-label-industrial">PUISSANCE HASH</span>
-                <div class="stat-val-industrial text-accent">104.2 TH/s</div>
-            </div>
-            <div class="stat-card-industrial">
-                <span class="stat-label-industrial">PROCHAIN GAIN</span>
-                <div id="gain-timer" class="stat-val-industrial text-warning">--:--:--</div>
-            </div>
-            <div class="stat-card-industrial">
-                <span class="stat-label-industrial">NODE ID</span>
-                <div class="stat-val-industrial small">#<%= user.id.slice(-8) %></div>
-            </div>
+        <div class="stat-glass-card">
+            <i class="bi bi-shield-shaded stat-icon" style="color: var(--gold);"></i>
+            <span class="label-xs">Sécurité</span>
+            <div class="fs-4 fw-900">SSL-256</div>
         </div>
-        
-        <button onclick="handleWithdraw()" class="btn-withdraw-giga animate__animated animate__pulse animate__infinite">RÉCUPÉRER MES PROFITS (MONEY)</button>
-    </div>
-
-    <div class="referral-container-master animate__animated animate__fadeInUp">
-        <h4 class="text-uppercase">Programme de Parrainage Elite</h4>
-        <p class="small opacity-75 fw-bold mb-4">Gagnez 10% de commission cash sur chaque investissement de vos amis. Copiez votre lien unique ci-dessous.</p>
-        <div class="copy-link-box">
-            <i class="bi bi-link-45deg fs-2 text-warning"></i>
-            <input type="text" id="refLink" value="https://cashlink.rdc/register?ref=<%= user.id %>" readonly>
-            <button onclick="copyRef()" class="btn btn-warning fw-900 px-4 rounded-4 shadow">COPIER MON LIEN</button>
+        <div class="stat-glass-card">
+            <i class="bi bi-currency-exchange stat-icon" style="color: var(--rose);"></i>
+            <span class="label-xs">Retraits 24h</span>
+            <div class="fs-4 fw-900">Ouverts</div>
         </div>
     </div>
 
-    <div class="px-5 mt-5 mb-4 d-flex align-items-center gap-3" id="packs-catalog">
-        <div style="width: 15px; height: 50px; background: var(--warning); border-radius: 12px; box-shadow: 0 0 15px var(--warning);"></div>
-        <h2 class="fw-900 mb-0 text-uppercase" style="font-size: 2.2rem; letter-spacing: -1px;">Unités Industrielles 2028</h2>
+    <section class="mining-area fade-up">
+        <div class="row align-items-center g-4">
+            <div class="col-xl-8">
+                <div class="d-flex justify-content-between align-items-end mb-2">
+                    <div>
+                        <h5 class="fw-900 mb-0"><i class="bi bi-activity me-2"></i>PROCESSUS DE MINAGE</h5>
+                        <p class="small text-muted mb-0">Contrat de 30 jours en cours d'exécution</p>
+                    </div>
+                    <div class="text-info fw-900 fs-3"><%= p || 0 %>%</div>
+                </div>
+                <div class="progress-master">
+                    <div class="progress-bar bar-elite progress-bar-striped progress-bar-animated" style="width: <%= p || 0 %>%"></div>
+                </div>
+                <div class="d-flex flex-wrap gap-4 mt-3">
+                    <div class="small fw-bold"><i class="bi bi-calendar-event me-2 text-info"></i>Activation : <%= user.investDate ? new Date(user.investDate).toLocaleDateString() : 'N/A' %></div>
+                    <div class="small fw-bold"><i class="bi bi-hdd-network me-2 text-info"></i>Machine : <%= user.pack %></div>
+                    <div class="small fw-bold text-warning"><i class="bi bi-clock me-2"></i>Prochain gain : <span id="timer-gain">--:--:--</span></div>
+                </div>
+            </div>
+            <div class="col-xl-4 text-center text-xl-end">
+                <button onclick="handleWithdraw()" class="btn btn-danger w-100 w-xl-auto px-5 py-4 rounded-4 fw-900 shadow-lg animate__animated animate__pulse animate__infinite">
+                    <i class="bi bi-wallet2 me-2"></i> RÉCUPÉRER MES PROFITS
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <div class="shop-header" id="boutique">
+        <div style="width: 8px; height: 40px; background: var(--gold); border-radius: 10px;"></div>
+        <h3 class="fw-900 mb-0 text-uppercase">Boutique d'Investissement</h3>
     </div>
 
-    <div class="packs-grid-industrial">
+    <div class="shop-grid">
         <% 
         const items = [
             { id: 'BRONZE', price: 50000, daily: 5000, bonus: 5000, color: '#10b981' },
@@ -320,101 +385,74 @@
             { id: 'GOLD', price: 500000, daily: 40000, bonus: 40000, color: '#f59e0b' },
             { id: 'DIAMOND', price: 1000000, daily: 100000, bonus: 120000, color: '#ef4444' }
         ];
-        items.forEach(p => {
+
+        items.forEach(item => {
+            const isUserPack = (user.pack === item.id);
+            const hasAnyPack = (user.pack && user.pack !== 'Aucun');
+            const enoughMoney = (user.solde >= item.price);
         %>
-        <div class="pack-elite-card animate__animated animate__fadeInUp">
-            <div class="pack-card-head" style="background: <%= p.color %>;"><%= p.id %> ENGINE</div>
-            <div class="pack-card-body">
-                <div>
-                    <div class="pack-bonus-tag">🎁 BONUS ACTIVATION : +<%= p.bonus.toLocaleString() %> FC</div>
-                    <div class="pack-price-display"><%= p.price.toLocaleString() %> FC</div>
-                    <div class="pack-daily-val mt-2">+<%= p.daily.toLocaleString() %> FC / JOUR</div>
+        <div class="card-elite-pack <%= isUserPack ? 'is-active' : '' %> animate__animated animate__fadeInUp">
+            <div class="card-top" style="background: <%= item.color %>;"><%= item.id %> MINER</div>
+            <div class="card-body-custom">
+                <div class="bonus-tag">BONUS : +<%= item.bonus.toLocaleString() %> FC</div>
+                <div class="price-tag"><%= item.price.toLocaleString() %> <span class="fs-6 fw-bold">FC</span></div>
+                <div class="fw-900 fs-5 mb-4" style="color: <%= item.color %>;">+<%= item.daily.toLocaleString() %> FC / JOUR</div>
+                
+                <div class="text-start mb-4">
+                    <div class="small fw-bold mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Contrat : 30 Jours</div>
+                    <div class="small fw-bold mb-2"><i class="bi bi-check2-circle text-success me-2"></i>Support : 24h/7j</div>
+                    <div class="small fw-bold"><i class="bi bi-check2-circle text-success me-2"></i>Retrait : Quotidien</div>
                 </div>
-                <button onclick="handlePay('<%= p.id %>', <%= p.price %>)" class="btn-activate-industrial mt-4">ACTIVER MAINTENANT</button>
+
+                <% if(isUserPack) { %>
+                    <button class="btn-action-elite btn-active">UNITE ACTIVE</button>
+                <% } else if (hasAnyPack) { %>
+                    <button class="btn-action-elite btn-active" title="Un seul pack à la fois">INDISPONIBLE</button>
+                <% } else if (enoughMoney) { %>
+                    <button onclick="confirmInvestAction('<%= item.id %>', <%= item.price %>)" class="btn-action-elite btn-invest shadow">ACTIVER MAINTENANT</button>
+                <% } else { %>
+                    <button onclick="openPaymentModal('<%= item.id %>', <%= item.price %>)" class="btn-action-elite btn-buy shadow">ACHETER L'UNITÉ</button>
+                <% } %>
             </div>
         </div>
         <% }) %>
     </div>
 
-    <div class="guide-section">
-        <h3 class="fw-900 mb-5 text-uppercase text-warning text-center">Comment ça marche ?</h3>
-        <div class="row">
-            <div class="col-md-4">
-                <div class="guide-step">
-                    <div class="step-num">1</div>
-                    <div class="step-text"><h5>Choisissez votre Pack</h5><p>Sélectionnez une unité de minage adaptée à votre budget pour démarrer la production.</p></div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="guide-step">
-                    <div class="step-num">2</div>
-                    <div class="step-text"><h5>Validez le Dépôt</h5><p>Envoyez les fonds par Mobile Money et soumettez le TID pour activer votre machine.</p></div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="guide-step">
-                    <div class="step-num">3</div>
-                    <div class="step-text"><h5>Retirez vos Gains</h5><p>Vos profits sont générés toutes les 24h. Retirez-les dès que le minimum de 1.000 FC est atteint.</p></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="accordion faq-accordion-master" id="faqAccordion">
-        <div class="accordion-item">
-            <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#f1">Est-ce que le minage est automatique ?</button></h2>
-            <div id="f1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Oui, une fois le pack activé, vos profits sont générés automatiquement par nos serveurs toutes les 24 heures sans aucune action de votre part.</div></div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#f2">Quels sont les délais de retrait ?</button></h2>
-            <div id="f2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Les retraits standards sont traités sous 72 heures. Si vous activez la Certification Elite, vos retraits sont traités en moins de 24 heures.</div></div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#f3">Comment fonctionne le parrainage ?</button></h2>
-            <div id="f3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Chaque fois qu'un utilisateur s'inscrit avec votre lien et active un pack, vous recevez instantanément 10% du montant de son pack dans votre solde bonus.</div></div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header"><button class="accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#f4">Où se trouve votre siège social ?</button></h2>
-            <div id="f4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Notre siège administratif est situé à : <%= content.contact_address %>. Vous pouvez nous contacter par téléphone au +243 <%= content.contact_phone %>.</div></div>
-        </div>
-    </div>
-
-    <footer class="footer-elite-master">
-        <div class="footer-logo-text">CASHLINK</div>
-        <p class="small fw-900 opacity-50 mb-5 text-uppercase">Leader Mondial du Minage Cloud Décentralisé</p>
-        <div class="d-flex justify-content-center gap-5 fs-1 opacity-20 mb-5">
-            <i class="bi bi-shield-check-fill"></i><i class="bi bi-cpu-fill"></i><i class="bi bi-globe-americas"></i>
-        </div>
-        <hr class="opacity-10 my-5 mx-5">
-        <small class="opacity-30 fw-900">© 2026-2028 | CASHLINK GLOBAL TERMINAL | PAR ANASH MASTER RDC</small>
+    <footer class="text-center py-5 opacity-50" style="background: rgba(0,0,0,0.3);">
+        <p class="fw-bold small mb-0">CASHLINK ELITE v3.0 - DÉPLOYÉ SUR TERMINAL RDC</p>
+        <p class="small">Sécurisé par Protocole Blockchain 2026</p>
     </footer>
 
-    <div class="modal fade" id="payModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered mx-3">
-            <div class="modal-content modal-industrial-style text-dark">
-                <div class="modal-body p-5 text-center">
-                    <h3 class="fw-900 mb-4 text-uppercase">RECHARGE COMPTE</h3>
-                    <p class="text-muted small fw-bold mb-5">Veuillez envoyer le montant exact vers l'un des numéros suivants :</p>
+    <div class="modal fade" id="paymentModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered mx-3 mx-md-auto">
+            <div class="modal-content modal-elite text-dark">
+                <div class="modal-header border-0 pb-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center p-4 p-md-5">
+                    <h3 class="fw-900 mb-2">RECHARGE COMPTE</h3>
+                    <p class="text-muted small fw-bold mb-4">Effectuez le transfert vers l'un des numéros ci-dessous</p>
                     
-                    <div class="payment-card-rdc text-start">
-                        <span class="small fw-bold text-primary">VODACOM (M-PESA) RDC</span>
+                    <div class="payment-box">
+                        <span class="label-xs text-primary">M-PESA (VODACOM)</span>
                         <div class="fs-4 fw-900"><%= content.admin_voda %></div>
                     </div>
-                    <div class="payment-card-rdc text-start">
-                        <span class="small fw-bold text-danger">AIRTEL MONEY RDC</span>
+
+                    <div class="payment-box">
+                        <span class="label-xs text-danger">AIRTEL MONEY</span>
                         <div class="fs-4 fw-900 text-danger"><%= content.admin_airtel %></div>
                     </div>
-                    <div class="payment-card-rdc text-start">
-                        <span class="small fw-bold text-warning">ORANGE MONEY RDC</span>
+
+                    <div class="payment-box">
+                        <span class="label-xs text-warning">ORANGE MONEY</span>
                         <div class="fs-4 fw-900 text-warning"><%= content.admin_orange %></div>
                     </div>
 
-                    <div class="alert alert-danger rounded-4 py-3 small fw-900 my-4">
-                        <i class="bi bi-info-circle-fill me-2 fs-5"></i> SAISISSEZ LE TID : L'identifiant se trouve dans le SMS de confirmation reçu après votre envoi.
+                    <div class="alert alert-warning rounded-4 small fw-bold mt-4">
+                        <i class="bi bi-info-circle-fill me-2"></i> Après l'envoi, cliquez sur le bouton ci-dessous pour soumettre votre TID.
                     </div>
 
-                    <button onclick="submitTID()" class="btn btn-primary w-100 py-3 rounded-pill fw-900 shadow-lg fs-5">J'AI ENVOYÉ LES FONDS</button>
-                    <button type="button" class="btn btn-link btn-sm text-muted mt-3 fw-bold" data-bs-dismiss="modal">ANNULER</button>
+                    <button onclick="handleTID()" class="btn btn-primary w-100 py-3 rounded-pill fw-900 mt-3 shadow-lg">J'AI ENVOYÉ LE PAIEMENT</button>
                 </div>
             </div>
         </div>
@@ -422,92 +460,112 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let selId = "", selPrice = 0;
-        const pMod = new bootstrap.Modal(document.getElementById('payModal'));
+        // --- VARIABLES GLOBALES ---
+        let packEnAttente = "";
+        let prixEnAttente = 0;
+        const pModal = new bootstrap.Modal(document.getElementById('paymentModal'));
+        const btnTop = document.getElementById('backToTop');
 
-        // --- GESTION DU SCROLL ---
+        // --- GESTION DU SCROLL (RETOUR EN HAUT) ---
         window.onscroll = function() {
-            const btn = document.getElementById('scrollTopBtn');
-            if (document.body.scrollTop > 350 || document.documentElement.scrollTop > 350) btn.style.display = "flex";
-            else btn.style.display = "none";
+            if (document.body.scrollTop > 300 || document.documentElement.scrollTop > 300) {
+                btnTop.style.display = "flex";
+            } else {
+                btnTop.style.display = "none";
+            }
         };
 
-        // --- ACTIONS ---
-        function copyRef() {
-            const c = document.getElementById('refLink');
-            c.select(); document.execCommand('copy');
-            alert("Lien de parrainage copié avec succès !");
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function handlePay(id, pr) { selId = id; selPrice = pr; pMod.show(); }
+        // --- ACTIONS BOUTIQUE ---
+        function openPaymentModal(id, price) {
+            packEnAttente = id;
+            prixEnAttente = price;
+            pModal.show();
+        }
 
-        function submitTID() {
-            pMod.hide();
-            const tid = prompt("Saisissez le TID (Identifiant de transaction SMS) :");
+        function handleTID() {
+            pModal.hide();
+            const tid = prompt("Veuillez saisir la référence (TID) de la transaction :");
             if(tid && tid.length > 5) {
-                const f = document.createElement('form'); f.method='POST'; f.action='/souscrire-pack';
-                const d = { packName: selId, prix: selPrice, reference: tid };
-                for(let k in d) { const i = document.createElement('input'); i.name=k; i.value=d[k]; f.appendChild(i); }
-                document.body.appendChild(f); f.submit();
+                submitFinalData('/souscrire-pack', {
+                    packName: packEnAttente,
+                    prix: prixEnAttente,
+                    reference: tid
+                });
+            } else {
+                alert("Référence invalide ou trop courte.");
             }
         }
 
-        function handleWithdraw() {
-            const m = prompt("Saisissez le montant à retirer (Minimum 1.000 FC) :");
-            if(m >= 1000) {
-                const f = document.createElement('form'); f.method='POST'; f.action='/retrait';
-                const i = document.createElement('input'); i.name='montant'; i.value=m; f.appendChild(i);
-                document.body.appendChild(f); f.submit();
-            }
-        }
-
-        // --- TIMER GAIN INDIVIDUEL ---
-        let ms = <%= locals.msRemaining || 0 %>;
-        setInterval(() => {
-            const el = document.getElementById('gain-timer');
-            if (ms <= 0) { el.innerText = "CYCLE PRÊT"; return; }
-            ms -= 1000;
-            const h = Math.floor(ms/3600000), m = Math.floor((ms%3600000)/60000), s = Math.floor((ms%60000)/1000);
-            el.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-        }, 1000);
-
-        // --- MOTEUR DE PARTICULES ---
-        const canvas = document.getElementById('bg-canvas');
-        const ctx = canvas.getContext('2d');
-        let particles = [];
-
-        function initCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            particles = [];
-            for(let i=0; i<35; i++) {
-                particles.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    vx: (Math.random() - 0.5) * 0.5,
-                    vy: (Math.random() - 0.5) * 0.5,
-                    size: Math.random() * 3
+        function confirmInvestAction(id, price) {
+            if(confirm(`Souhaitez-vous déduire ${price.toLocaleString()} FC de votre solde pour activer le pack ${id} ?`)) {
+                submitFinalData('/activer-investissement', {
+                    packName: id,
+                    prix: price
                 });
             }
         }
 
-        function draw() {
-            ctx.clearRect(0,0, canvas.width, canvas.height);
-            ctx.fillStyle = "rgba(0, 217, 255, 0.2)";
-            particles.forEach(p => {
-                p.x += p.vx; p.y += p.vy;
-                if(p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if(p.y < 0 || p.y > canvas.height) p.vy *= -1;
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-                ctx.fill();
-            });
-            requestAnimationFrame(draw);
+        function handleWithdraw() {
+            const m = prompt("Montant du retrait (Minimum 1.000 FC) :");
+            if(m && m >= 1000) {
+                submitFinalData('/retrait', { montant: m });
+            } else {
+                alert("Le montant minimum de retrait est de 1.000 FC.");
+            }
         }
 
-        window.addEventListener('resize', initCanvas);
-        initCanvas();
-        draw();
+        // --- ENVOI DES DONNÉES (POST) ---
+        function submitFinalData(path, data) {
+            const f = document.createElement('form');
+            f.method = 'POST';
+            f.action = path;
+            for (const key in data) {
+                const i = document.createElement('input');
+                i.type = 'hidden';
+                i.name = key;
+                i.value = data[key];
+                f.appendChild(i);
+            }
+            document.body.appendChild(f);
+            f.submit();
+        }
+
+        // --- TIMER DE GAIN QUOTIDIEN ---
+        function startTimer() {
+            setInterval(() => {
+                const now = new Date();
+                const next = new Date();
+                next.setHours(24, 0, 0, 0);
+                const diff = next - now;
+
+                const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+                document.getElementById('timer-gain').innerText = 
+                    (h < 10 ? "0"+h : h) + ":" + 
+                    (m < 10 ? "0"+m : m) + ":" + 
+                    (s < 10 ? "0"+s : s);
+            }, 1000);
+        }
+        
+        startTimer();
+
+        // --- NOTIFICATIONS AUTOMATIQUES ---
+        function simulateNotif() {
+            const names = ["Jean", "Mado", "Patrick", "Guelord", "Sarah", "Elvis"];
+            const amount = [50000, 150000, 500000];
+            setInterval(() => {
+                const n = names[Math.floor(Math.random()*names.length)];
+                const a = amount[Math.floor(Math.random()*amount.length)];
+                // Optionnel : ajouter un toast ici
+            }, 15000);
+        }
+        simulateNotif();
     </script>
 </body>
 </html>
