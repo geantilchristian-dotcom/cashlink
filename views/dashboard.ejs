@@ -349,7 +349,92 @@
         .modal-titan-industrial-heavy { border-radius: 80px !important; border: none; overflow: hidden; }
         .payment-titan-industrial-heavy-card { background: #f8fafc; padding: 45px; border-radius: 50px; border: 6px solid #e2e8f0; margin-bottom: 35px; transition: 0.5s; }
         .payment-titan-industrial-heavy-card:hover { border-color: var(--bleu-bic); transform: translateX(30px); }
-    </style>
+
+          /* ============================================================
+             OPTIMISATION MOBILE MAXIMALE - TOUS ÉCRANS < 768px
+             ============================================================ */
+          @media (max-width: 767px) {
+
+              /* NAVBAR */
+              .premium-nav-titan { padding: 10px 12px !important; }
+              .logo-titan-industrial { font-size: 1.2rem !important; letter-spacing: -2px !important; }
+              .nav-info-box-titan { padding: 7px 12px !important; gap: 8px !important; border-radius: 50px !important; }
+              .val-titan-heavy { font-size: 0.85rem !important; }
+              .label-titan-bold { font-size: 0.5rem !important; margin-bottom: 2px !important; }
+              .solde-badge-industrial { padding-right: 10px !important; border-right-width: 2px !important; }
+              .btn-logout-industrial { width: 34px !important; height: 34px !important; flex-shrink: 0; }
+              .btn-logout-industrial i { font-size: 0.85rem !important; }
+
+              /* HERO BANNER */
+              .hero-industrial-banner { padding: 35px 15px 45px !important; border-radius: 0 0 30px 30px !important; margin-bottom: 20px !important; }
+              .hero-title-titan-heavy { font-size: 2.2rem !important; letter-spacing: -2px !important; margin-bottom: 12px !important; line-height: 0.85 !important; }
+              .hero-para-titan-heavy { font-size: 0.85rem !important; line-height: 1.5 !important; margin: 0 0 18px !important; }
+              .user-id-badge-industrial { font-size: 0.6rem !important; padding: 8px 16px !important; margin-bottom: 12px !important; }
+              .hero-industrial-banner .btn { font-size: 0.85rem !important; padding: 12px 22px !important; }
+
+              /* STATS GRID */
+              .stats-industrial-grid { gap: 10px !important; padding: 10px !important; }
+              .stat-industrial-card { padding: 18px 10px !important; border-radius: 18px !important; border-width: 2px !important; }
+              .stat-industrial-icon { font-size: 1.6rem !important; margin-bottom: 8px !important; }
+              .stat-industrial-card .val-titan-heavy { font-size: 0.85rem !important; }
+              .btn-certif-industrial { padding: 10px !important; font-size: 0.6rem !important; margin-top: 10px !important; letter-spacing: 0 !important; border-radius: 10px !important; }
+
+              /* PARRAINAGE */
+              .referral-industrial-container { margin: 15px 10px !important; padding: 22px 14px !important; border-radius: 25px !important; border-width: 3px !important; }
+              .ref-title-industrial { font-size: 1.2rem !important; letter-spacing: 1px !important; margin-bottom: 10px !important; }
+              .referral-industrial-container p.fs-4 { font-size: 0.8rem !important; }
+              .industrial-copy-group { flex-direction: column !important; padding: 10px !important; gap: 8px !important; margin-top: 15px !important; border-radius: 18px !important; }
+              .industrial-copy-group input { font-size: 0.75rem !important; padding-left: 10px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+              .btn-copy-industrial-action { padding: 12px !important; border-radius: 12px !important; font-size: 0.75rem !important; width: 100% !important; letter-spacing: 0 !important; }
+
+              /* TERMINAL MINAGE */
+              .mining-industrial-terminal { margin: 15px 10px !important; padding: 18px 14px !important; border-radius: 22px !important; }
+              .mining-industrial-terminal .d-flex.justify-content-between { flex-wrap: wrap; gap: 5px; }
+              .mining-industrial-terminal h3.fw-900 { font-size: 0.7rem !important; }
+              .mining-industrial-terminal p.label-titan-bold { font-size: 0.55rem !important; }
+              .mining-industrial-terminal .text-success.fw-900.fs-1 { font-size: 1.3rem !important; }
+              .progress-industrial-track { height: 30px !important; margin: 15px 0 !important; border-width: 2px !important; padding: 4px !important; }
+              .btn-withdraw-industrial-heavy { padding: 16px 10px !important; font-size: 0.85rem !important; border-radius: 18px !important; margin-top: 12px !important; letter-spacing: 0.5px !important; box-shadow: 0 8px 25px rgba(244,63,94,0.5) !important; }
+              .mining-industrial-terminal .fw-900.text-warning { font-size: 0.75rem !important; }
+              .mining-industrial-terminal .d-flex.flex-wrap { gap: 10px !important; margin-top: 15px !important; }
+
+              /* SHOP HEADER */
+              .shop-industrial-header { padding: 0 12px !important; margin: 35px 0 18px !important; gap: 10px !important; }
+              .shop-industrial-header > div:first-child { width: 6px !important; height: 35px !important; border-radius: 8px !important; }
+              .shop-industrial-header h2 { font-size: 1.3rem !important; letter-spacing: -0.5px !important; }
+
+              /* FAQ */
+              .industrial-faq-titan { margin: 25px 10px 60px !important; }
+              .accordion-titan-industrial-item { border-radius: 18px !important; margin-bottom: 12px !important; border-width: 2px !important; }
+              .accordion-titan-industrial-button { padding: 16px 14px !important; font-size: 0.85rem !important; }
+              .accordion-titan-industrial-button i { margin-right: 10px !important; font-size: 0.9rem !important; }
+              .accordion-titan-industrial-body { padding: 16px 14px !important; font-size: 0.85rem !important; line-height: 1.7 !important; }
+
+              /* FOOTER */
+              footer h1 { font-size: 2.2rem !important; letter-spacing: -3px !important; }
+              footer p { font-size: 0.7rem !important; }
+
+              /* TOAST */
+              #titan-toast-industrial-heavy { bottom: 10px !important; left: 8px !important; right: 8px !important; padding: 14px 16px !important; border-radius: 18px !important; gap: 12px !important; border-left-width: 6px !important; }
+              #titan-toast-industrial-heavy i { font-size: 1.5rem !important; }
+              #toast-industrial-heavy-msg { font-size: 0.8rem !important; }
+              #titan-toast-industrial-heavy .small { font-size: 0.55rem !important; }
+
+              /* BOUTON SCROLL TOP */
+              #scrollTopIndustrialHeavy { width: 45px !important; height: 45px !important; bottom: 12px !important; right: 12px !important; font-size: 1.3rem !important; }
+
+              /* MODAL PAIEMENT */
+              .modal-dialog { margin: 8px !important; }
+              .modal-titan-industrial-heavy { border-radius: 25px !important; }
+              .modal-body.p-5 { padding: 20px 16px !important; }
+              .modal-body h2.fw-900 { font-size: 1.2rem !important; margin-bottom: 16px !important; }
+              .payment-titan-industrial-heavy-card { padding: 16px !important; border-radius: 18px !important; border-width: 3px !important; margin-bottom: 12px !important; }
+              .payment-titan-industrial-heavy-card small { font-size: 0.7rem !important; }
+              .payment-titan-industrial-heavy-card .fw-900.fs-2 { font-size: 1.1rem !important; }
+              .modal-body .alert { padding: 14px !important; font-size: 0.8rem !important; border-radius: 15px !important; margin: 12px 0 !important; }
+              .modal-body .btn { font-size: 0.85rem !important; padding: 12px !important; }
+          }
+      </style>
 </head>
 <body>
 
