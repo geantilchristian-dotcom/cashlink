@@ -2,10 +2,7 @@
  * ==============================================================================
  * CASHLINK ELITE v27.3 - SYSTÈME INDUSTRIEL COMPLET (RDC 2026)
  * ------------------------------------------------------------------------------
- * CORRECTIFS INCLUS : 
- * - Anti-crash 'investDate' (TypeError sur Render)
- * - Persistance forcée des données CMS (Bouton Sauvegarder)
- * - Synchronisation complète Admin/Dashboard
+ * CORRECTIFS : Anti-crash 'investDate' et Persistance CMS (Bouton Sauvegarder)
  * ==============================================================================
  */
 
@@ -77,7 +74,6 @@ const INITIAL_SITE_CONTENT = {
     footer_sub: "Sécurisé par Protocole Blockchain 2026"
 };
 
-// Initialisation forcée au démarrage
 db.config.findOne({ _id: "UI_CONTENT" }, (err, doc) => {
     if (!doc) db.config.insert(INITIAL_SITE_CONTENT);
 });
@@ -112,9 +108,8 @@ app.get('/', (req, res) => {
     db.users.update({ _id: MASTER_UID }, { $set: { lastVisit: new Date().toISOString() } }, { upsert: true }, () => {
         db.users.findOne({ _id: MASTER_UID }, (err, user) => {
             db.config.findOne({ _id: "UI_CONTENT" }, (err, site) => {
-                
-                // Correction du crash investDate
                 const activeUser = user || defaultUser;
+                // Sécurité anti-crash pour investDate
                 const progress = (activeUser && activeUser.investDate) ? getMiningProgress(activeUser.investDate) : "0.0";
 
                 res.render('dashboard', {
@@ -128,24 +123,18 @@ app.get('/', (req, res) => {
     });
 });
 
-// --- 6. SAUVEGARDE ADMIN (FONCTIONNELLE) ---
+// --- 6. SAUVEGARDE ADMIN (FORCÉE ET FIABLE) ---
 app.post('/admin/update-content', (req, res) => {
-    // On capture tout le corps du formulaire
     const updateData = req.body;
-    
-    // On s'assure que le minimum retrait reste un nombre
     if(updateData.min_retrait) updateData.min_retrait = Number(updateData.min_retrait);
 
-    // Mise à jour avec 'upsert' pour garantir l'enregistrement
+    // Utilisation de upsert:true pour forcer la mise à jour des données
     db.config.update({ _id: "UI_CONTENT" }, { $set: updateData }, { upsert: true }, (err) => {
         if (err) return res.status(500).send("Erreur de sauvegarde");
+        addSystemLog("CMS", "Mise à jour des informations effectuée.");
         
-        addSystemLog("CMS", "Mise à jour des informations par l'administrateur.");
-        
-        // Petit délai pour Render avant la redirection
-        setTimeout(() => {
-            res.redirect('/admin');
-        }, 300);
+        // Délai de sécurité pour l'écriture disque sur Render
+        setTimeout(() => { res.redirect('/admin'); }, 300);
     });
 });
 
