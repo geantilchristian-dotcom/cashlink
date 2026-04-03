@@ -1,8 +1,9 @@
 /**
  * ==========================================================================
- * CASH LINK - CORE ENGINE v5.5 (ÉDITION TITAN)
+ * CASH LINK - CORE ENGINE v5.6 (ÉDITION TITAN FINALE)
  * ARCHITECTURE : NODE.JS | EXPRESS | EJS | SESSIONS
- * LOGIQUE : MINAGE AUTO 24H, RETRAITS (3J/24H), SÉCURITÉ 9 CHIFFRES
+ * LOCALISATION : RÉPUBLIQUE DÉMOCRATIQUE DU CONGO (RDC)
+ * LOGIQUE : MINAGE AUTO 24H, RETRAITS SÉCURISÉS, SÉCURITÉ 9 CHIFFRES
  * ==========================================================================
  */
 
@@ -21,7 +22,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // --- SESSIONS PERSISTANTES (7 JOURS) ---
-// Permet au client de rester connecté automatiquement
+// L'utilisateur reste connecté même s'il ferme son navigateur
 app.use(session({
     secret: 'cashlink_titan_ultra_secure_alpha_2026',
     resave: false,
@@ -148,14 +149,18 @@ app.post('/register', (req, res) => {
     res.redirect('/dashboard?welcome=true');
 });
 
-// Connexion Classique
+// Connexion Classique avec Distinction de Rôle
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
     const user = users.find(u => u.username === username && u.password === password);
     
     if (user) {
         req.session.user = user;
-        res.redirect(user.role === "ADMIN" ? '/admin' : '/dashboard');
+        if (user.role === "ADMIN") {
+            return res.redirect('/admin');
+        } else {
+            return res.redirect('/dashboard');
+        }
     } else {
         res.send("Identifiants incorrects.");
     }
@@ -280,7 +285,7 @@ app.post('/admin/approve-tx', (req, res) => {
             user.solde += tx.montant;
             user.investDate = new Date(); // Démarre le cycle de minage
             
-            // Attribution bonus immédiat
+            // Attribution bonus immédiat (Bienvenue)
             const bonusMap = { "BRONZE": 5000, "SILVER": 9000, "GOLD": 40000, "DIAMOND": 120000 };
             user.bonus += bonusMap[tx.pack] || 0;
         }
@@ -308,6 +313,7 @@ setInterval(() => {
             const diffHours = (now - start) / (1000 * 60 * 60);
 
             if (diffHours >= 24) {
+                // Table de Gains Journaliers
                 const dailyIncome = { "BRONZE": 5000, "SILVER": 15000, "GOLD": 40000, "DIAMOND": 100000 };
                 const gain = dailyIncome[user.pack] || 0;
                 
@@ -330,7 +336,7 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`
     ============================================================
-    CASH LINK TERMINAL v5.5 OPÉRATIONNEL
+    CASH LINK TERMINAL v5.6 OPÉRATIONNEL
     PORT: ${PORT} | RÉGION: RDC (2026)
     ============================================================
     `);
