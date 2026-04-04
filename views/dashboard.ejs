@@ -476,7 +476,7 @@
         <div class="stat-industrial-card"><i class="bi bi-gpu-card stat-industrial-icon"></i><span class="label-titan-bold">Calcul Hash</span><div class="val-titan-heavy text-white fs-2"><%= (user.pack && user.pack !== 'Aucun') ? '104.2 TH/s' : '0.00 TH/s' %></div></div>
         <div class="stat-industrial-card">
             <i class="bi bi-patch-check-fill stat-industrial-icon text-warning"></i><span class="label-titan-bold">Niveau Compte</span><div class="val-titan-heavy text-white fs-2"><%= user.certified ? 'CERTIFIÉ ÉLITE' : 'BASIQUE' %></div>
-            <% if(!user.certified) { %><button onclick="openPaymentModal('CERTIFICATION', 30000)" class="btn-certif-industrial">CERTIFIER (30.000 FC)</button><% } %>
+            <% if(!user.certified) { %><button onclick="openPaymentModal('CERTIFICATION', <%= content.cert_price || 30000 %>)" class="btn-certif-industrial">CERTIFIER (<%= (parseInt(content.cert_price)||30000).toLocaleString() %> FC)</button><% } %>
         </div>
         <div class="stat-industrial-card"><i class="bi bi-currency-exchange stat-industrial-icon text-success"></i><span class="label-titan-bold">Flux Retrait</span><div class="val-titan-heavy text-white fs-2">SÉCURISÉ</div></div>
         <div class="stat-industrial-card"><i class="bi bi-shield-lock-fill stat-industrial-icon text-info"></i><span class="label-titan-bold">Cryptage</span><div class="val-titan-heavy text-white fs-2">AES-512</div></div>
@@ -486,7 +486,7 @@
         <h3 class="ref-title-industrial">Programme de Parrainage Elite</h3>
         <p class="fs-4 fw-bold">Multipliez vos profits en invitant vos proches. Recevez instantanément 10% cash sur chaque investissement de vos parrainés, crédités sur votre solde bonus.</p>
         <div class="industrial-copy-group">
-            <input type="text" id="refLinkHeavy" value="https://cashlink-rdc.cd/register?ref=<%= user.id %>" readonly>
+            <input type="text" id="refLinkHeavy" id="refLinkHeavy" value="https://cashlink-rdc.cd/?ref=<%= user.id %>" readonly>
             <button class="btn-copy-industrial-action" onclick="copyHeavyLink()">COPIER MON LIEN</button>
         </div>
     </div>
