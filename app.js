@@ -403,14 +403,19 @@ app.post('/valider-depot', authAdmin, async (req,res) => {
         if (user && user.referredBy) {
             const referrer = await dbFindOne('users', {id: user.referredBy});
             if (referrer) {
-                // Palier : 100 filleuls actifs = +100 FC
+                // 10% du pack investi → bonus parrain
+                const commission = Math.floor(tx.montant * 0.10);
+                await dbUpdate('users',{id:referrer.id},{$inc:{bonus:commission}});
+                broadcastUpdate(referrer.id);
+                await addLog('PARRAINAGE 10%: '+referrer.username+' +'+commission+' FC via '+tx.utilisateur);
+                // Palier : chaque 100 filleuls actifs = +100.000 FC
                 const allReferrals = await dbFind('users',{referredBy:referrer.id,pack:{$ne:'Aucun'}});
                 const count = allReferrals.length;
                 const prevCount = count - 1;
                 if (count > 0 && Math.floor(count/100) > Math.floor(prevCount/100)) {
-                    await dbUpdate('users',{id:referrer.id},{$inc:{bonus:100}});
+                    await dbUpdate('users',{id:referrer.id},{$inc:{bonus:100000}});
                     broadcastUpdate(referrer.id);
-                    await addLog('MILESTONE PARRAINAGE: '+referrer.username+' | '+count+' filleuls | +100 FC');
+                    await addLog('MILESTONE PARRAINAGE: '+referrer.username+' | '+count+' filleuls | +100.000 FC');
                     broadcastActivity({type:'pack', username:referrer.username+' ('+count+' filleuls)', pack:'BONUS'});
                 }
             }
