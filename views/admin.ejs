@@ -252,6 +252,30 @@
                 <h4 class="fw-900 text-info mb-4"><i class="bi bi-chat-quote-fill me-3"></i>Messages &amp; Infos Personnalisées</h4>
                 <form action="/admin/update-content" method="POST">
                 <div class="row g-4">
+                    <div class="col-12">
+                        <div class="p-3 mb-2 rounded-3" style="background:rgba(6,182,212,0.1);border:1px dashed #06b6d4;">
+                            <div class="fw-900 text-info mb-3" style="font-size:0.8rem;letter-spacing:1px;"><i class="bi bi-card-heading me-2"></i>TEXTES DE LA PAGE D'ACCUEIL</div>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label class="fw-800 text-warning mb-2" style="font-size:0.72rem;">NOM DU SITE (ex: CASHLINK)</label>
+                                    <input type="text" name="brand_name" class="form-control bg-dark text-white border-secondary" style="border-radius:10px;" value="<%= content.brand_name || 'CASHLINK' %>">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="fw-800 text-warning mb-2" style="font-size:0.72rem;">TITRE HÉRO (ex: MINAGE INDUSTRIEL)</label>
+                                    <input type="text" name="hero_title" class="form-control bg-dark text-white border-secondary" style="border-radius:10px;" value="<%= content.hero_title || 'MINAGE INDUSTRIEL' %>">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="fw-800 text-warning mb-2" style="font-size:0.72rem;">SLOGAN / TAGLINE</label>
+                                    <input type="text" name="tagline" class="form-control bg-dark text-white border-secondary" style="border-radius:10px;" value="<%= content.tagline || '' %>">
+                                </div>
+                                <div class="col-12">
+                                    <label class="fw-800 text-warning mb-2" style="font-size:0.72rem;">SOUS-TITRE HÉRO (description sous le titre)</label>
+                                    <textarea name="hero_subtitle" class="form-control bg-dark text-white border-secondary" rows="3" style="border-radius:10px;"><%= content.hero_subtitle || 'Le protocole CASHLINK v28.0 déploie une puissance de calcul décentralisée pour chaque citoyen congolais.' %></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="col-md-6">
                         <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">MESSAGE D'ACCUEIL (affiché sur le site)</label>
                         <textarea name="welcome_msg" class="form-control bg-dark text-white border-secondary" rows="4" style="border-radius:12px;" placeholder="Ex: Bienvenue sur CashLink..."><%= content.welcome_msg || '' %></textarea>
@@ -279,14 +303,6 @@
                     <div class="col-md-4">
                         <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">PRIX CERTIFICATION (FC)</label>
                         <input type="number" name="cert_price" class="form-control bg-dark text-white border-secondary" style="border-radius:12px;" value="<%= content.cert_price || 30000 %>">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">NOM DU SITE</label>
-                        <input type="text" name="site_name" class="form-control bg-dark text-white border-secondary" style="border-radius:12px;" value="<%= content.site_name || 'CashLink' %>">
-                    </div>
-                    <div class="col-md-4">
-                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">SLOGAN / TAGLINE</label>
-                        <input type="text" name="tagline" class="form-control bg-dark text-white border-secondary" style="border-radius:12px;" value="<%= content.tagline || '' %>">
                     </div>
                     <div class="col-12 text-end">
                         <button type="submit" class="btn btn-info fw-900 px-5 py-3 rounded-pill"><i class="bi bi-save me-2"></i>ENREGISTRER LES MODIFICATIONS</button>
