@@ -1,3 +1,9 @@
+const broadcastActivity = (msg) => {
+    sseClients.forEach((clients) => {
+        clients.forEach(res => { try { res.write('event: activity\ndata: ' + JSON.stringify(msg) + '\n\n'); } catch(e) {} });
+    });
+};
+
 /**
  * CASHLINK v21.0 - MONGODB ATLAS PERMANENT
  */
@@ -330,6 +336,7 @@ app.post('/retrait', authUser, async (req,res) => {
             date:new Date().toLocaleString('fr-FR'), createdAt:new Date()
         });
         await addLog('Retrait: '+user.username+' | '+m+' FC');
+        broadcastActivity({type:'retrait', username: user.username, montant: m});
         res.redirect('/dashboard?msg=RETRAIT_OK');
     } catch(e) { res.redirect('/dashboard?err=1'); }
 });
@@ -384,6 +391,7 @@ app.post('/valider-depot', authAdmin, async (req,res) => {
             await addLog('CERTIFIÉ: '+tx.utilisateur);
             await dbUpdate('transactions',{_id:tx._id},{$set:{statut:'APPROUVE'}});
             broadcastUpdate(tx.userId);
+            broadcastActivity({type:'certif', username: tx.utilisateur});
             return res.redirect('/admin');
         }
         const bonuses = {BRONZE:5000,SILVER:9000,GOLD:40000,DIAMOND:120000};
@@ -394,6 +402,7 @@ app.post('/valider-depot', authAdmin, async (req,res) => {
         await dbUpdate('transactions',{_id:tx._id},{$set:{statut:'APPROUVE'}});
         await addLog('VALIDÉ: '+tx.utilisateur+' | '+tx.pack+' | '+tx.montant+' FC');
         broadcastUpdate(tx.userId);
+        broadcastActivity({type:'pack', username: tx.utilisateur, pack: tx.pack});
         res.redirect('/admin');
     } catch(e) { console.error('[VALIDER]',e.message); res.redirect('/admin'); }
 });
@@ -411,6 +420,7 @@ app.post('/admin/approve-retrait', authAdmin, async (req,res) => {
             await dbUpdate('retraits', {_id: req.body.retId}, {$set: {statut: 'Payé'}});
             await addLog('RETRAIT PAYÉ: ' + ret.username + ' | ' + ret.montant + ' FC');
             broadcastUpdate(ret.userId);
+            broadcastActivity({type:'paye', username: ret.username || ret.userId, montant: ret.montant});
         }
         res.redirect('/admin');
     } catch(e) { res.redirect('/admin'); }
