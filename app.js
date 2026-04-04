@@ -204,8 +204,8 @@ app.get('/dashboard', authUser, async (req,res) => {
         const user = await dbFindOne('users',{id:req.session.userId});
         if (!user) { req.session.destroy(); return res.redirect('/'); }
         const packStart = user.packActivatedDate ? new Date(user.packActivatedDate) : null;
-        const packDaysLeft = packStart ? Math.max(0, 30 - Math.floor((Date.now()-packStart.getTime())/(24*3600000))) : 30;
-        res.render('dashboard',{user,content:cfg,p:progress(user),msRemaining:remainMs(user),packDaysLeft});
+        const pendingRetrait = await dbFindOne('retraits', {userId: user.id, statut: 'En attente'});
+        res.render('dashboard',{user,content:cfg,p:progress(user),msRemaining:remainMs(user),packDaysLeft,pendingRetrait});
     } catch(e) { res.status(500).send('Erreur dashboard: '+e.message); }
 });
 
@@ -314,13 +314,16 @@ app.post('/retrait', authUser, async (req,res) => {
         const user = await dbFindOne('users',{id:req.session.userId});
         const m = parseInt(req.body.montant);
         if (!user||user.bonus<m||m<1000) return res.send(alertBack('Solde insuffisant ou montant trop bas (min 1.000 FC).'));
+        // Vérifier s'il y a déjà un retrait en attente
+        const existingPending = await dbFindOne('retraits', {userId: user.id, statut: 'En attente'});
+        if (existingPending) return res.send(alertBack('Vous avez déjà une demande de retrait en cours. Veuillez patienter pendant que l\'admin confirme votre demande.'));
         const waitMs = user.certified ? 24*3600000 : 72*3600000;
         const waitLabel = user.certified ? '24h (Certifié)' : '72h (Non certifié)';
         if (user.lastRetrait && (Date.now()-new Date(user.lastRetrait).getTime())<waitMs) {
             const h = Math.ceil((waitMs-(Date.now()-new Date(user.lastRetrait).getTime()))/3600000);
             return res.send(alertBack('Prochain retrait possible dans '+h+'h. Fréquence : '+waitLabel));
         }
-        await dbUpdate('users',{id:user.id},{$inc:{bonus:-m},$set:{lastRetrait:new Date()}});
+        // Bonus non déduit immédiatement - seulement quand admin confirme
         await dbInsert('retraits',{
             username:user.username, phone:user.phone,
             userId:user.id, montant:m, statut:'En attente',
@@ -401,8 +404,16 @@ app.post('/admin/reject-tx', authAdmin, async (req,res) => {
 });
 
 app.post('/admin/approve-retrait', authAdmin, async (req,res) => {
-    try { await dbUpdate('retraits',{_id:req.body.retId},{$set:{statut:'Payé'}}); res.redirect('/admin'); }
-    catch(e) { res.redirect('/admin'); }
+    try { 
+        const ret = await dbFindOne('retraits', {_id: req.body.retId});
+        if (ret && ret.statut === 'En attente') {
+            await dbUpdate('users', {id: ret.userId}, {$inc: {bonus: -ret.montant}, $set: {lastRetrait: new Date()}});
+            await dbUpdate('retraits', {_id: req.body.retId}, {$set: {statut: 'Payé'}});
+            await addLog('RETRAIT PAYÉ: ' + ret.username + ' | ' + ret.montant + ' FC');
+            broadcastUpdate(ret.userId);
+        }
+        res.redirect('/admin');
+    } catch(e) { res.redirect('/admin'); }
 });
 
 app.delete('/admin/delete-user/:id', authAdmin, async (req,res) => {
