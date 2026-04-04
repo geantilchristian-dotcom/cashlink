@@ -685,7 +685,7 @@
     </div>
     </div><!-- /admin-layout-wrapper -->
 
-    <script>ipt>
+    <script>
         function openTab(tabId, btn) {
             document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
             var el = document.getElementById(tabId);
@@ -740,6 +740,72 @@
                     .catch(() => alert('Erreur réseau.'));
             }
         }
-    </script>
+    
+        /* ════ NOTIFICATIONS TEMPS RÉEL ════ */
+        let _prevCounts = { tid: -1, retraits: -1, annulations: -1 };
+        let _adminToast = null;
+
+        function showAdminToast(msg, color) {
+            let t = document.getElementById('admin-notif-toast');
+            if (!t) {
+                t = document.createElement('div');
+                t.id = 'admin-notif-toast';
+                t.style.cssText = 'position:fixed;bottom:28px;right:28px;z-index:99999;background:#0f1629;border:2px solid '+color+';border-radius:18px;padding:14px 22px;color:#fff;font-weight:900;font-size:0.9rem;box-shadow:0 20px 60px rgba(0,0,0,0.8);display:flex;align-items:center;gap:12px;max-width:320px;transition:opacity 0.4s;';
+                document.body.appendChild(t);
+            }
+            t.style.borderColor = color;
+            t.innerHTML = '<span style="font-size:1.4rem;">🔔</span><span>' + msg + '</span>';
+            t.style.opacity = '1';
+            clearTimeout(_adminToast);
+            _adminToast = setTimeout(() => { t.style.opacity = '0'; }, 5000);
+        }
+
+        function updateAdminBadges(data) {
+            // TID badge in sidebar
+            document.querySelectorAll('.nav-item-custom').forEach(nav => {
+                if (nav.textContent.includes('Validations TID')) {
+                    let b = nav.querySelector('.badge');
+                    if (data.tid > 0) {
+                        if (!b) { b = document.createElement('span'); b.className = 'badge bg-danger ms-auto'; nav.appendChild(b); }
+                        b.textContent = data.tid;
+                    } else if (b) b.remove();
+                }
+                if (nav.textContent.includes('Retraits')) {
+                    let b = nav.querySelector('.badge');
+                    if (data.retraits > 0) {
+                        if (!b) { b = document.createElement('span'); b.className = 'badge bg-warning text-dark ms-auto'; nav.appendChild(b); }
+                        b.textContent = data.retraits;
+                    } else if (b) b.remove();
+                }
+            });
+            // Mobile badges
+            document.querySelectorAll('.mob-nav-item').forEach(nav => {
+                if (nav.textContent.includes('Validations TID')) {
+                    let b = nav.querySelector('.badge');
+                    if (data.tid > 0) {
+                        if (!b) { b = document.createElement('span'); b.className = 'badge bg-danger ms-1'; nav.appendChild(b); }
+                        b.textContent = data.tid;
+                    } else if (b) b.remove();
+                }
+            });
+            // Toast on new items
+            if (_prevCounts.tid >= 0) {
+                if (data.tid > _prevCounts.tid) showAdminToast('Nouveau paiement TID à valider !', '#3b82f6');
+                else if (data.retraits > _prevCounts.retraits) showAdminToast('Nouvelle demande de retrait !', '#f59e0b');
+                else if (data.annulations > _prevCounts.annulations) showAdminToast('Nouvelle demande d'annulation !', '#ef4444');
+            }
+            _prevCounts = { tid: data.tid, retraits: data.retraits, annulations: data.annulations };
+        }
+
+        function pollAdminNotifs() {
+            fetch('/api/admin-notifications')
+                .then(r => r.json())
+                .then(data => updateAdminBadges(data))
+                .catch(() => {});
+        }
+        pollAdminNotifs();
+        setInterval(pollAdminNotifs, 12000);
+
+</script>
 </body>
 </html>
