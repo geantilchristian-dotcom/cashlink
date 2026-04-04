@@ -108,7 +108,7 @@
         /* Barre mobile cachée sur desktop */
         .mobile-admin-topbar { display: none; }
 
-        @media (max-width: 1099px) {
+        @media (max-width: 767px) {
             /* Cacher la sidebar fixe */
             .admin-sidebar { display: none !important; }
 
@@ -141,7 +141,7 @@
             .row.g-4 .col-md-3 { flex: 0 0 50%; max-width: 50%; }
         }
 
-        @media (max-width: 480px) {
+        @media (max-width: 420px) {
             .admin-main-content { padding: 12px 8px !important; }
             .glass-card { padding: 12px 10px !important; border-radius: 14px !important; }
             .row.g-4 .col-md-3 { flex: 0 0 100%; max-width: 100%; }
@@ -627,13 +627,17 @@
     <script>
         function openTab(tabId, btn) {
             document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
+            var el = document.getElementById(tabId);
+            if (el) el.classList.add('active');
             document.querySelectorAll('.nav-item-custom').forEach(n => n.classList.remove('active'));
             document.querySelectorAll('.mob-nav-item').forEach(n => n.classList.remove('mob-active'));
             if (btn) {
                 if (btn.classList.contains('mob-nav-item')) btn.classList.add('mob-active');
                 else btn.classList.add('active');
             }
+            // Close mobile menu if open
+            var menu = document.getElementById('mob-menu');
+            if (menu && menu.style.display === 'block') closeMobileMenu();
         }
         function toggleMobileMenu() {
             const menu = document.getElementById('mob-menu');
@@ -651,8 +655,7 @@
                 function previewImg() { document.getElementById('preview').src = document.getElementById('cover_input').value; }
         let deletedCount = 0;
         function deleteUser(id) {
-            if(confirm('⚠️ Supprimer cet utilisateur définitivement ?
-Ses retraits, transactions et annulations seront aussi effacés.')) {
+            if(confirm('⚠️ Supprimer cet utilisateur définitivement ?\nSes retraits, transactions et annulations seront aussi effacés.')) {
                 fetch('/admin/delete-user/' + id, { method: 'DELETE' })
                     .then(r => r.json())
                     .then(d => {
