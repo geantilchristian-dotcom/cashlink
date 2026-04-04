@@ -631,6 +631,118 @@
         <% }) %>
     </div>
 
+
+    <div style="margin:60px 30px;padding:0;" class="animate__animated animate__fadeInUp">
+        <div style="background:linear-gradient(135deg,rgba(6,182,212,0.12),rgba(99,102,241,0.12));border:2px solid rgba(6,182,212,0.4);border-radius:40px;padding:50px 40px;">
+            <h2 style="font-weight:900;letter-spacing:-1px;font-size:2.2rem;color:#fff;margin-bottom:30px;"><i class="bi bi-book-fill text-info me-3"></i>RÈGLES D'INVESTISSEMENT</h2>
+            
+            <!-- PACKS & GAINS -->
+            <div style="margin-bottom:35px;">
+                <h5 style="font-weight:900;color:#f59e0b;letter-spacing:2px;font-size:0.85rem;margin-bottom:16px;"><i class="bi bi-box-seam-fill me-2"></i>PACKS D'INVESTISSEMENT</h5>
+                <div style="overflow-x:auto;">
+                    <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
+                        <thead>
+                            <tr style="background:rgba(255,255,255,0.08);">
+                                <th style="padding:12px 16px;text-align:left;font-weight:900;color:#94a3b8;font-size:0.72rem;letter-spacing:1px;">PACK</th>
+                                <th style="padding:12px 16px;text-align:right;font-weight:900;color:#94a3b8;font-size:0.72rem;letter-spacing:1px;">INVESTISSEMENT</th>
+                                <th style="padding:12px 16px;text-align:right;font-weight:900;color:#94a3b8;font-size:0.72rem;letter-spacing:1px;">GAIN/JOUR</th>
+                                <th style="padding:12px 16px;text-align:right;font-weight:900;color:#94a3b8;font-size:0.72rem;letter-spacing:1px;">GAIN/30 JOURS</th>
+                                <th style="padding:12px 16px;text-align:right;font-weight:900;color:#94a3b8;font-size:0.72rem;letter-spacing:1px;">BONUS ACTIVATION</th>
+                                <th style="padding:12px 16px;text-align:right;font-weight:900;color:#94a3b8;font-size:0.72rem;letter-spacing:1px;">CONTRAT</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% const packDefs = [
+                                {name:"BRONZE",color:"#10b981",price:content.price_BRONZE||50000,daily:content.daily_BRONZE||5000,bonus:5000},
+                                {name:"SILVER",color:"#4f46e5",price:content.price_SILVER||150000,daily:content.daily_SILVER||15000,bonus:9000},
+                                {name:"GOLD",color:"#f59e0b",price:content.price_GOLD||500000,daily:content.daily_GOLD||40000,bonus:40000},
+                                {name:"DIAMOND",color:"#ef4444",price:content.price_DIAMOND||1000000,daily:content.daily_DIAMOND||100000,bonus:120000},
+                            ]; %>
+                            <% packDefs.forEach(pk => { %>
+                            <tr style="border-top:1px solid rgba(255,255,255,0.07);<%= user.pack===pk.name ? 'background:rgba(245,158,11,0.08);' : '' %>">
+                                <td style="padding:12px 16px;"><span style="background:<%= pk.color %>;color:#fff;font-weight:900;padding:3px 12px;border-radius:20px;font-size:0.75rem;"><%= pk.name %></span><%= user.pack===pk.name ? ' <span style="font-size:0.65rem;color:#f59e0b;font-weight:900;">✅ VOTRE PACK</span>' : '' %></td>
+                                <td style="padding:12px 16px;text-align:right;font-weight:900;color:#fff;"><%= parseInt(pk.price).toLocaleString() %> FC</td>
+                                <td style="padding:12px 16px;text-align:right;font-weight:900;color:#10b981;">+<%= parseInt(pk.daily).toLocaleString() %> FC</td>
+                                <td style="padding:12px 16px;text-align:right;font-weight:900;color:#06b6d4;">+<%= (parseInt(pk.daily)*30).toLocaleString() %> FC</td>
+                                <td style="padding:12px 16px;text-align:right;font-weight:900;color:#f59e0b;">+<%= parseInt(pk.bonus).toLocaleString() %> FC</td>
+                                <td style="padding:12px 16px;text-align:right;color:#94a3b8;font-weight:700;">30 jours</td>
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- PARRAINAGE -->
+            <div style="margin-bottom:35px;">
+                <h5 style="font-weight:900;color:#f59e0b;letter-spacing:2px;font-size:0.85rem;margin-bottom:16px;"><i class="bi bi-people-fill me-2"></i>PROGRAMME DE PARRAINAGE</h5>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;">
+                            <div style="font-size:0.8rem;font-weight:900;color:#94a3b8;margin-bottom:12px;">TAUX SELON VOTRE PACK</div>
+                            <div style="display:flex;flex-direction:column;gap:8px;font-size:0.85rem;">
+                                <div style="display:flex;justify-content:space-between;align-items:center;"><span style="background:#10b981;color:#fff;padding:2px 10px;border-radius:10px;font-weight:900;font-size:0.72rem;">BRONZE</span><span style="font-weight:900;color:#fff;">5% du montant du filleul</span></div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;"><span style="background:#4f46e5;color:#fff;padding:2px 10px;border-radius:10px;font-weight:900;font-size:0.72rem;">SILVER</span><span style="font-weight:900;color:#fff;">10% du montant du filleul</span></div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;"><span style="background:#f59e0b;color:#000;padding:2px 10px;border-radius:10px;font-weight:900;font-size:0.72rem;">GOLD</span><span style="font-weight:900;color:#fff;">15% du montant du filleul</span></div>
+                                <div style="display:flex;justify-content:space-between;align-items:center;"><span style="background:#ef4444;color:#fff;padding:2px 10px;border-radius:10px;font-weight:900;font-size:0.72rem;">DIAMOND</span><span style="font-weight:900;color:#fff;">20% du montant du filleul</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;">
+                            <div style="font-size:0.8rem;font-weight:900;color:#94a3b8;margin-bottom:12px;">BONUS DE PALIER (filleuls actifs)</div>
+                            <div style="display:flex;flex-direction:column;gap:8px;font-size:0.85rem;">
+                                <div style="display:flex;justify-content:space-between;"><span style="color:#94a3b8;font-weight:700;">100 filleuls</span><span style="font-weight:900;color:#f59e0b;">+100.000 FC</span></div>
+                                <div style="display:flex;justify-content:space-between;"><span style="color:#94a3b8;font-weight:700;">200 filleuls</span><span style="font-weight:900;color:#f59e0b;">+200.000 FC</span></div>
+                                <div style="display:flex;justify-content:space-between;"><span style="color:#94a3b8;font-weight:700;">300 filleuls</span><span style="font-weight:900;color:#f59e0b;">+300.000 FC</span></div>
+                                <div style="display:flex;justify-content:space-between;"><span style="color:#94a3b8;font-weight:700;">N × 100 filleuls</span><span style="font-weight:900;color:#f59e0b;">+N × 100.000 FC</span></div>
+                            </div>
+                            <div style="font-size:0.72rem;color:#10b981;font-weight:800;margin-top:10px;"><i class="bi bi-check-circle-fill me-1"></i>Commission retirable directement</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- RETRAITS -->
+            <div style="margin-bottom:35px;">
+                <h5 style="font-weight:900;color:#f59e0b;letter-spacing:2px;font-size:0.85rem;margin-bottom:16px;"><i class="bi bi-cash-coin me-2"></i>RÈGLES DE RETRAIT</h5>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;text-align:center;">
+                            <div style="font-size:2rem;font-weight:900;color:#06b6d4;">1.000 FC</div>
+                            <div style="font-size:0.75rem;color:#94a3b8;font-weight:800;">MONTANT MINIMUM</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;text-align:center;">
+                            <div style="font-size:2rem;font-weight:900;color:#ef4444;">72H</div>
+                            <div style="font-size:0.75rem;color:#94a3b8;font-weight:800;">DÉLAI (COMPTE STANDARD)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;text-align:center;">
+                            <div style="font-size:2rem;font-weight:900;color:#10b981;">24H</div>
+                            <div style="font-size:0.75rem;color:#94a3b8;font-weight:800;">DÉLAI (COMPTE CERTIFIÉ 🔵)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- UPGRADE PACKS -->
+            <div>
+                <h5 style="font-weight:900;color:#f59e0b;letter-spacing:2px;font-size:0.85rem;margin-bottom:16px;"><i class="bi bi-arrow-up-circle-fill me-2"></i>RÈGLES D'UPGRADE DE PACK</h5>
+                <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;font-size:0.88rem;line-height:2;">
+                    <div><i class="bi bi-check-circle-fill text-success me-2"></i>Vous pouvez toujours <strong class="text-white">monter vers un pack supérieur</strong> (BRONZE → SILVER → GOLD → DIAMOND)</div>
+                    <div><i class="bi bi-x-circle-fill text-danger me-2"></i>Il est <strong class="text-white">impossible de descendre</strong> vers un pack inférieur</div>
+                    <div><i class="bi bi-x-circle-fill text-danger me-2"></i>Il est <strong class="text-white">impossible d'acheter 2 fois</strong> le même pack</div>
+                    <div><i class="bi bi-info-circle-fill text-info me-2"></i>Chaque contrat dure <strong class="text-white">30 jours</strong> — le minage s'arrête automatiquement après</div>
+                    <div><i class="bi bi-info-circle-fill text-info me-2"></i>Activez votre pack en cliquant <strong class="text-white">ACTIVER MON PACK</strong> pour démarrer le minage</div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
     <div class="industrial-faq-titan" id="accTitanHeavy">
         <div class="accordion-titan-industrial-item shadow-lg">
             <h2 class="accordion-header"><button class="accordion-button-titan-industrial collapsed" data-bs-toggle="collapse" data-bs-target="#qa1"><i class="bi bi-info-circle-fill me-5 text-info"></i> VISION CASHLINK RDC 2026</button></h2>
