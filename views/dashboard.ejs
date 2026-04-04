@@ -566,6 +566,12 @@
             <% } else { %>
                 <button onclick="handleWithdrawHeavy()" class="btn-withdraw-industrial-heavy animate__animated animate__pulse animate__infinite">RÉCUPÉRER MES PROFITS (MONEY)</button>
             <% } %>
+            <% if(typeof pendingAnnulation !== 'undefined' && pendingAnnulation) { %>
+                <div style="background:rgba(239,68,68,0.12);border:2px solid #ef4444;border-radius:16px;padding:14px 20px;text-align:center;margin-top:12px;">
+                    <div class="fw-900 text-danger fs-5"><i class="bi bi-x-octagon-fill me-2"></i>ANNULATION EN COURS DE TRAITEMENT</div>
+                    <div class="text-danger opacity-75 mt-1" style="font-size:0.82rem;">Remboursement de <strong><%= (pendingAnnulation.remboursement||0).toLocaleString() %> FC (50%)</strong> en cours — traitement sous 72h</div>
+                </div>
+            <% } %>
         </div>
     </section>
 
@@ -618,6 +624,9 @@
                 <% if(isOwned) { %>
                     <% if(packDaysLeft === null || packDaysLeft > 0) { %>
                         <button onclick="submitHeavyPost('/activer-gain', { pack: '<%= item.id %>' })" class="btn-industrial-heavy-action btn-activate-industrial-heavy">ACTIVER MAINTENANT</button>
+                        <button onclick="confirmerAnnulation('<%= item.id %>', <%= item.price %>)" class="btn-industrial-heavy-action" style="background:transparent;border:2px solid rgba(239,68,68,0.5);color:#ef4444;font-size:0.7rem;padding:10px;margin-top:8px;box-shadow:none;">
+                            <i class="bi bi-x-circle me-1"></i>ANNULER MON ABONNEMENT
+                        </button>
                     <% } else { %>
                         <button disabled class="btn-industrial-heavy-action" style="background:#374151;cursor:not-allowed;opacity:0.7;">CONTRAT EXPIRÉ (30 JOURS)</button>
                     <% } %>
@@ -781,6 +790,29 @@
                 </div>
             </div>
         </div>
+
+    <div class="modal fade" id="annulModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered mx-3">
+            <div class="modal-content" style="background:#1e293b;border:2px solid #ef4444;border-radius:30px;color:#fff;">
+                <div class="modal-body p-5 text-center">
+                    <div style="font-size:3rem;">⚠️</div>
+                    <h3 class="fw-900 my-3">ANNULER MON ABONNEMENT</h3>
+                    <div style="background:rgba(239,68,68,0.1);border-radius:16px;padding:16px;margin:16px 0;font-size:0.9rem;">
+                        <div class="fw-900 text-danger mb-2">CONDITIONS D'ANNULATION</div>
+                        <div>Vous serez remboursé à <strong class="text-warning">50% de votre investissement initial</strong></div>
+                        <div class="mt-2 text-warning fw-900">Remboursement estimé : <span id="annulRemboursement">0</span> FC</div>
+                        <div class="mt-2 text-muted" style="font-size:0.8rem;">Traitement sous <strong>72 heures</strong> par l'admin</div>
+                    </div>
+                    <div class="d-flex gap-3 mt-4">
+                        <button onclick="document.getElementById('annulModal').querySelector('.btn-close-modal').click()" class="btn btn-secondary w-50 py-3 rounded-pill fw-900">NON, GARDER</button>
+                        <button onclick="confirmerAnnulationFinal()" class="btn btn-danger w-50 py-3 rounded-pill fw-900">OUI, ANNULER</button>
+                    </div>
+                    <button class="btn-close-modal d-none" data-bs-dismiss="modal"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -867,6 +899,21 @@
             
             evtSrc.onerror = function() { setTimeout(() => {}, 5000); };
         })();
+
+
+        // === ANNULATION D'ABONNEMENT ===
+        let annulPack = ''; let annulPrix = 0;
+        const annulModalEl = new bootstrap.Modal(document.getElementById('annulModal'));
+        function confirmerAnnulation(pack, prix) {
+            annulPack = pack; annulPrix = prix;
+            const remb = Math.floor(prix * 0.5);
+            document.getElementById('annulRemboursement').innerText = remb.toLocaleString('fr-FR');
+            annulModalEl.show();
+        }
+        function confirmerAnnulationFinal() {
+            annulModalEl.hide();
+            submitHeavyPost('/annuler-abonnement', { pack: annulPack });
+        }
 
     </script>
 </body>
