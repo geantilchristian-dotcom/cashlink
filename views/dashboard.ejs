@@ -645,6 +645,21 @@
         setInterval(() => {
             if(Math.random() > 0.4) triggerHeavyToast(`${masterNames[Math.floor(Math.random()*masterNames.length)]} ${masterActs[Math.floor(Math.random()*masterActs.length)]}`);
         }, 30000);
+    
+        // TEMPS RÉEL: actualisation auto toutes les 15 secondes
+        const updateBalances = async () => {
+            try {
+                const r = await fetch('/api/me');
+                const d = await r.json();
+                if (d.error) return;
+                const soldeEl = document.querySelector('.solde-badge-industrial .val-titan-heavy');
+                const bonusEl = document.querySelectorAll('.val-titan-heavy.text-success')[0];
+                if (soldeEl) soldeEl.textContent = d.solde.toLocaleString() + ' FC';
+                if (bonusEl) bonusEl.textContent = '+' + d.bonus.toLocaleString() + ' FC';
+            } catch(e) {}
+        };
+        setInterval(updateBalances, 15000);
+
     </script>
 </body>
 </html>
