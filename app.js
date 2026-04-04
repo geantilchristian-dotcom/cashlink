@@ -10,6 +10,7 @@
   const bodyParser = require('body-parser');
   const path     = require('path');
   const Datastore = require('nedb');
+const fs = require('fs');
 
   const app = express();
 
@@ -26,6 +27,10 @@
   }));
 
   /* ── BASE DE DONNÉES PERSISTANTE ─────────────────────────────────────── */
+  // Créer le dossier database s'il n'existe pas (important sur Render)
+  const dbDir = path.join(__dirname, 'database');
+  if (!fs.existsSync(dbDir)) { fs.mkdirSync(dbDir, { recursive: true }); }
+
   const usersDB = new Datastore({ filename: path.join(__dirname, 'database/users.db'),        autoload: true });
   const txDB    = new Datastore({ filename: path.join(__dirname, 'database/transactions.db'), autoload: true });
   const retDB   = new Datastore({ filename: path.join(__dirname, 'database/retraits.db'),    autoload: true });
