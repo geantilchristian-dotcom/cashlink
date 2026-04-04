@@ -273,6 +273,78 @@
         .shop-industrial-header h2 { font-family: 'Space Grotesk'; font-weight: 900; font-size: 3.5rem; text-transform: uppercase; letter-spacing: -2px; }
 
 
+
+        /* ============================================================
+           BOUTIQUE / CATALOGUE PACKS
+           ============================================================ */
+        .industrial-shop-grid-full {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 40px;
+            padding: 40px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+        .pack-industrial-heavy-card {
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .pack-industrial-heavy-card:hover { transform: translateY(-10px); border-color: rgba(255,255,255,0.3); box-shadow: 0 40px 80px rgba(0,0,0,0.7); }
+        .pack-industrial-active-border { border: 3px solid #10b981 !important; box-shadow: 0 0 40px rgba(16,185,129,0.4) !important; transform: scale(1.02); }
+        .pack-industrial-locked-mode { opacity: 0.5; filter: grayscale(0.7); }
+        .lock-industrial-overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.65); display: flex;
+            align-items: center; justify-content: center; z-index: 10;
+        }
+        .lock-industrial-badge {
+            background: #ef4444; color: white; padding: 10px 28px;
+            border-radius: 30px; font-weight: 900; font-size: 0.85rem; letter-spacing: 2px;
+        }
+        .p-head-industrial-heavy {
+            padding: 22px 28px; font-weight: 900; font-size: 1.05rem;
+            letter-spacing: 2px; color: white; text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            text-transform: uppercase;
+        }
+        .p-body-industrial-heavy { padding: 25px; display: flex; flex-direction: column; gap: 15px; }
+        .p-price-industrial-heavy { font-size: 2.2rem; font-weight: 900; color: white; font-family: 'Space Grotesk', sans-serif; }
+        .p-bonus-industrial-heavy { color: #10b981; font-weight: 700; font-size: 0.9rem; margin-top: -8px; }
+        .p-daily-industrial-heavy { color: #f59e0b; font-weight: 900; font-size: 1.3rem; }
+        .industrial-details-list { list-style: none; padding: 0; margin: 10px 0; }
+        .industrial-details-list li {
+            padding: 7px 0; color: rgba(255,255,255,0.75);
+            font-size: 0.85rem; font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .industrial-details-list li i { color: #10b981; margin-right: 8px; }
+        .btn-industrial-heavy-action {
+            width: 100%; padding: 16px; border: none; border-radius: 14px;
+            font-weight: 900; font-size: 0.9rem; letter-spacing: 1px;
+            text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; margin-top: 10px;
+        }
+        .btn-buy-industrial-heavy { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; }
+        .btn-buy-industrial-heavy:hover { transform: scale(1.03); box-shadow: 0 10px 30px rgba(79,70,229,0.5); }
+        .btn-activate-industrial-heavy { background: linear-gradient(135deg, #10b981, #059669); color: white; }
+        .btn-activate-industrial-heavy:hover { transform: scale(1.03); box-shadow: 0 10px 30px rgba(16,185,129,0.5); }
+
+        /* FAQ SECTION */
+        .industrial-faq-titan { max-width: 1000px; margin: 80px auto; padding: 0 40px; }
+        .accordion-titan-industrial-item {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px; margin-bottom: 16px; overflow: hidden;
+        }
+        .accordion-button-titan-industrial {
+            background: transparent; color: white; width: 100%; text-align: left;
+            padding: 22px 28px; border: none; font-weight: 800; font-size: 1rem;
+            cursor: pointer; display: flex; align-items: center;
+        }
+        .accordion-button-titan-industrial:hover { background: rgba(255,255,255,0.05); }
+        .accordion-titan-industrial-body { padding: 20px 28px; color: rgba(255,255,255,0.7); line-height: 1.8; font-size: 0.95rem; }
     </style>
     <div class="industrial-shop-grid-full">
         <% 
