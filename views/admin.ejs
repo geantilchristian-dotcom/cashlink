@@ -178,24 +178,84 @@
         </div>
 
         <div id="clients" class="section-panel">
-            <div class="glass-card">
-                <h4 class="fw-900 mb-4">Investisseurs</h4>
+            <div class="glass-card" style="padding:30px;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="fw-900 m-0"><i class="bi bi-people-fill me-3 text-info"></i>Gestion des Membres</h4>
+                    <span class="badge bg-info text-dark fw-800 px-3 py-2" style="border-radius:20px;font-size:0.8rem;"><%= users.length %> membres inscrits</span>
+                </div>
                 <div class="table-responsive">
-                    <table class="premium-table">
-                        <thead>
-                            <tr><th>Nom</th><th>Téléphone</th><th>Pack</th><th>Statut</th><th>Gains</th><th>Actions</th></tr>
-                        </thead>
+                    <table class="premium-table" style="border-spacing:0 8px;">
+                        <thead><tr>
+                            <th style="color:#00d9ff;">IDENTITÉ</th>
+                            <th style="color:#00d9ff;">TÉLÉPHONE</th>
+                            <th style="color:#00d9ff;">PACK</th>
+                            <th style="color:#00d9ff;">STATUT</th>
+                            <th style="color:#00d9ff;">SOLDE ACTIF</th>
+                            <th style="color:#00d9ff;">PROFITS</th>
+                            <th style="color:#00d9ff;">PARRAIN</th>
+                            <th style="color:#00d9ff;">FILLEULS</th>
+                            <th style="color:#00d9ff;">INSCRIPTION</th>
+                            <th style="color:#00d9ff;">ACTIONS</th>
+                        </tr></thead>
                         <tbody>
-                            <% (typeof users !== 'undefined' ? users : []).forEach(u => { %>
-                            <tr id="row-<%= u._id %>">
-                                <td><i class="bi bi-person-circle me-2 text-info"></i> <%= u.username %></td>
-                                <td><%= u.phone %></td>
-                                <td><span class="badge bg-dark px-3 py-2"><%= u.pack || 'Aucun' %></span></td>
-                                <td><% if(u.certified){ %><span class="badge-vip">CERTIFIÉ VIP</span><% } else { %><span class="badge-std">STANDARD</span><% } %></td>
-                                <td class="text-success fw-bold"><%= (u.bonus || 0).toLocaleString() %> FC</td>
-                                <td><button class="btn-action btn-del" onclick="deleteUser('<%= u._id %>')"><i class="bi bi-trash"></i></button></td>
-                            </tr>
-                            <% }) %>
+                        <% (typeof users !== 'undefined' ? users : []).forEach((u,i) => {
+                            const packColor = u.pack==='DIAMOND'?'#a855f7':u.pack==='GOLD'?'#f59e0b':u.pack==='SILVER'?'#94a3b8':u.pack==='BRONZE'?'#b45309':'#374151';
+                            const packBg = u.pack==='DIAMOND'?'rgba(168,85,247,0.15)':u.pack==='GOLD'?'rgba(245,158,11,0.15)':u.pack==='SILVER'?'rgba(148,163,184,0.1)':u.pack==='BRONZE'?'rgba(180,83,9,0.15)':'rgba(55,65,81,0.3)';
+                        %>
+                        <tr id="row-<%= u._id %>" style="<% if(i%2===0){%>background:rgba(255,255,255,0.015);<% } %>">
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#00d9ff,#0066ff);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:0.85rem;flex-shrink:0;">
+                                        <%= u.username.charAt(0).toUpperCase() %>
+                                    </div>
+                                    <div>
+                                        <div class="fw-900" style="font-size:0.9rem;"><%= u.username %></div>
+                                        <div style="font-size:0.65rem;color:#64748b;font-weight:600;">ID: <%= u.id ? u.id.slice(-8) : 'N/A' %></div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-700" style="font-size:0.85rem;">+243 <%= u.phone %></div>
+                            </td>
+                            <td>
+                                <span style="background:<%= packBg %>;color:<%= packColor %>;border:1px solid <%= packColor %>;padding:5px 14px;border-radius:20px;font-weight:900;font-size:0.75rem;letter-spacing:0.5px;">
+                                    <%= u.pack || 'AUCUN' %>
+                                </span>
+                            </td>
+                            <td>
+                                <% if(u.certified){ %>
+                                <span style="background:rgba(29,78,216,0.2);color:#60a5fa;border:1px solid #1d4ed8;padding:4px 10px;border-radius:20px;font-size:0.7rem;font-weight:900;"><i class="bi bi-patch-check-fill me-1"></i>CERTIFIÉ</span>
+                                <% } else { %>
+                                <span style="background:rgba(100,116,139,0.15);color:#64748b;border:1px solid #334155;padding:4px 10px;border-radius:20px;font-size:0.7rem;font-weight:700;">BASIQUE</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <div class="fw-900" style="color:#10b981;font-size:0.9rem;"><%= (u.solde||0).toLocaleString() %> FC</div>
+                            </td>
+                            <td>
+                                <div class="fw-900" style="color:#fbbf24;font-size:0.9rem;"><%= (u.bonus||0).toLocaleString() %> FC</div>
+                            </td>
+                            <td>
+                                <div style="font-size:0.8rem;color:#94a3b8;font-weight:700;"><%= u.referredBy || '—' %></div>
+                            </td>
+                            <td class="text-center">
+                                <span style="background:rgba(0,217,255,0.1);color:#00d9ff;padding:3px 12px;border-radius:20px;font-weight:900;font-size:0.8rem;">
+                                    <%= u.referralCount || 0 %>
+                                </span>
+                            </td>
+                            <td>
+                                <div style="font-size:0.75rem;color:#64748b;font-weight:600;"><%= u.createdAt ? new Date(u.createdAt).toLocaleDateString('fr-FR') : 'N/A' %></div>
+                            </td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <button onclick="voirCahier('<%= u.id %>','<%= u.username %>')" class="btn btn-sm fw-800" style="background:rgba(0,217,255,0.1);color:#00d9ff;border:1px solid #00d9ff;border-radius:10px;font-size:0.7rem;padding:6px 12px;">
+                                        <i class="bi bi-journal-bookmark-fill me-1"></i>CAHIER
+                                    </button>
+                                    <button class="btn-action btn-del" onclick="deleteUser('<%= u._id %>')"><i class="bi bi-trash"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+                        <% }) %>
                         </tbody>
                     </table>
                 </div>
@@ -315,33 +375,58 @@
 
         <div id="retraits" class="section-panel">
             <div class="glass-card">
-                <h4 class="fw-900 text-warning mb-4">Demandes de Retrait en attente</h4>
-                <div class="table-responsive">
-                    <table class="premium-table">
-                        <thead>
-                            <tr><th>Membre</th><th>Téléphone</th><th>Montant</th><th>Date</th><th>Action</th></tr>
-                        </thead>
-                        <tbody>
-                            <% (typeof retraits !== 'undefined' ? retraits : []).forEach(ret => { %>
-                            <tr>
-                                <td><b><%= ret.username %></b></td>
-                                <td><%= ret.phone %></td>
-                                <td class="text-warning fw-900"><%= (ret.montant || 0).toLocaleString() %> FC</td>
-                                <td class="small opacity-50"><%= ret.date %></td>
-                                <td>
-                                    <form action="/admin/approve-retrait" method="POST">
-                                        <input type="hidden" name="retId" value="<%= ret._id %>">
-                                        <button class="btn btn-warning rounded-pill px-3 fw-bold text-dark btn-sm">APPROUVER</button>
-                                    </form>
-                                </td>
-                            </tr>
-                            <% }) %>
-                            <% if(!retraits || retraits.length === 0) { %>
-                            <tr><td colspan="5" class="text-center py-4 opacity-50">Aucune demande en attente</td></tr>
-                            <% } %>
-                        </tbody>
-                    </table>
+                <div class="d-flex align-items-center justify-content-between mb-4">
+                    <h4 class="fw-900 text-warning m-0"><i class="bi bi-cash-coin me-3"></i>Demandes de Retrait</h4>
+                    <span class="badge bg-warning text-dark fw-800 px-3 py-2" style="border-radius:20px;font-size:0.8rem;"><%= retraits ? retraits.length : 0 %> en attente</span>
                 </div>
+                <% if(!retraits || retraits.length === 0) { %>
+                    <div class="text-center py-5"><i class="bi bi-check-circle-fill text-success" style="font-size:3rem;"></i><br><span class="opacity-50 mt-3 d-block fw-700">Aucune demande de retrait en attente</span></div>
+                <% } else { %>
+                <div class="d-flex flex-column gap-4">
+                <% (typeof retraits !== 'undefined' ? retraits : []).forEach(ret => { %>
+                    <div style="background:rgba(245,158,11,0.06);border:2px solid rgba(245,158,11,0.3);border-radius:24px;padding:24px;">
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-5">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#ef4444);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1.2rem;flex-shrink:0;">
+                                        <%= ret.username.charAt(0).toUpperCase() %>
+                                    </div>
+                                    <div>
+                                        <div class="fw-900" style="font-size:1rem;color:#fff;"><%= ret.username %></div>
+                                        <div style="font-size:0.75rem;color:#94a3b8;font-weight:700;margin-top:2px;">📱 +243 <%= ret.phone %></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <span style="background:rgba(245,158,11,0.15);color:#fbbf24;border:1px solid rgba(245,158,11,0.4);padding:3px 12px;border-radius:20px;font-size:0.72rem;font-weight:900;">
+                                        PACK: <%= ret.pack || 'N/A' %>
+                                    </span>
+                                    <span style="background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.3);padding:3px 12px;border-radius:20px;font-size:0.72rem;font-weight:900;">
+                                        <i class="bi bi-phone-fill me-1"></i>M-PESA / AIRTEL
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <div style="font-size:0.72rem;color:#94a3b8;font-weight:700;text-transform:uppercase;margin-bottom:4px;">Montant à payer</div>
+                                <div style="font-size:2rem;font-weight:900;color:#f59e0b;"><%= (ret.montant || 0).toLocaleString() %> FC</div>
+                                <div style="font-size:0.72rem;color:#64748b;margin-top:4px;"><%= ret.date %></div>
+                            </div>
+                            <div class="col-md-4 text-end">
+                                <div style="background:rgba(0,0,0,0.3);border-radius:16px;padding:16px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.05);">
+                                    <div style="font-size:0.72rem;color:#64748b;font-weight:700;margin-bottom:4px;">NUMÉRO DE PAIEMENT VÉRIFIÉ</div>
+                                    <div style="font-size:1.1rem;font-weight:900;color:#10b981;"><i class="bi bi-phone-fill me-2"></i>+243 <%= ret.phone %></div>
+                                </div>
+                                <form action="/admin/approve-retrait" method="POST">
+                                    <input type="hidden" name="retId" value="<%= ret._id %>">
+                                    <button class="btn btn-warning fw-900 w-100 py-3 rounded-pill text-dark" style="font-size:0.85rem;">
+                                        <i class="bi bi-check-circle-fill me-2"></i>CONFIRMER LE PAIEMENT
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+                </div>
+                <% } %>
             </div>
         </div>
 
