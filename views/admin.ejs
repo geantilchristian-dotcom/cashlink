@@ -823,73 +823,63 @@
 
         /* ════ VOIR CAHIER UTILISATEUR ════ */
         function voirCahier(userId, username) {
-            // Create or show modal
-            let m = document.getElementById('cahierModal');
+            var m = document.getElementById('cahierModal');
             if (!m) {
                 m = document.createElement('div');
                 m.id = 'cahierModal';
                 m.style.cssText = 'display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.8);overflow-y:auto;padding:20px;';
-                m.innerHTML = '<div style="max-width:700px;margin:auto;background:#0f1629;border:1px solid rgba(0,217,255,0.2);border-radius:24px;overflow:hidden;">' +
-                    '<div style="background:linear-gradient(135deg,#0033cc,#00d9ff);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;">' +
-                    '<div><div style="color:rgba(255,255,255,0.7);font-size:0.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;">ACTIVITÉ DU MEMBRE</div>' +
-                    '<div id="cahierTitle" style="color:#fff;font-weight:900;font-size:1.2rem;"></div></div>' +
-                    '<button onclick="document.getElementById('cahierModal').style.display='none'" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:1rem;cursor:pointer;">&#x2715;</button></div>' +
-                    '<div id="cahierBody" style="padding:24px;"></div></div>';
+                // Build modal header
+                var header = document.createElement('div');
+                header.style.cssText = 'max-width:700px;margin:auto;background:#0f1629;border:1px solid rgba(0,217,255,0.2);border-radius:24px;overflow:hidden;';
+                header.innerHTML = [
+                    '<div style="background:linear-gradient(135deg,#0033cc,#00d9ff);padding:20px 24px;display:flex;justify-content:space-between;align-items:center;">',
+                    '<div>',
+                    '<div style="color:rgba(255,255,255,0.7);font-size:0.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;">ACTIVITE DU MEMBRE</div>',
+                    '<div id="cahierTitle" style="color:#fff;font-weight:900;font-size:1.2rem;"></div>',
+                    '</div>',
+                    '<button id="cahierCloseBtn" style="background:rgba(255,255,255,0.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:1rem;cursor:pointer;">&#x2715;</button>',
+                    '</div>',
+                    '<div id="cahierBody" style="padding:24px;"></div>'
+                ].join('');
+                m.appendChild(header);
                 document.body.appendChild(m);
                 m.addEventListener('click', function(e){ if(e.target===m) m.style.display='none'; });
             }
+            var closeBtn = document.getElementById('cahierCloseBtn');
+            if (closeBtn) closeBtn.onclick = function(){ document.getElementById('cahierModal').style.display='none'; };
             m.style.display = 'block';
             document.getElementById('cahierTitle').textContent = username;
             document.getElementById('cahierBody').innerHTML = '<div style="text-align:center;padding:30px;color:#64748b;">Chargement...</div>';
 
             fetch('/admin/user-activity/' + userId)
-                .then(r => r.json())
-                .then(data => {
+                .then(function(r){ return r.json(); })
+                .then(function(data) {
                     if (data.error) { document.getElementById('cahierBody').innerHTML = '<div style="color:#ef4444;padding:20px;">Erreur: '+data.error+'</div>'; return; }
-                    const u = data.user || {};
-                    let html = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">' +
-                        '<div style="background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:14px;padding:14px;text-align:center;">' +
-                        '<div style="color:#64748b;font-size:0.65rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;">SOLDE</div>' +
-                        '<div style="color:#00d9ff;font-weight:900;font-size:1.2rem;">'+(u.solde||0).toLocaleString()+' FC</div></div>' +
-                        '<div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:14px;text-align:center;">' +
-                        '<div style="color:#64748b;font-size:0.65rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;">PACK</div>' +
-                        '<div style="color:#10b981;font-weight:900;font-size:1.2rem;">'+(u.pack||'Aucun')+'</div></div>' +
-                        '<div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:14px;padding:14px;text-align:center;">' +
-                        '<div style="color:#64748b;font-size:0.65rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;">BONUS</div>' +
-                        '<div style="color:#f59e0b;font-weight:900;font-size:1.2rem;">'+(u.bonus||0).toLocaleString()+' FC</div></div></div>';
-
-                    // Transactions
-                    html += '<div style="font-weight:900;font-size:0.75rem;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Transactions ('+(data.transactions||[]).length+')</div>';
-                    if ((data.transactions||[]).length === 0) {
-                        html += '<div style="color:#475569;font-size:0.85rem;padding:10px;text-align:center;">Aucune transaction</div>';
-                    } else {
-                        (data.transactions||[]).slice(0,10).forEach(t => {
-                            const c = t.statut==='VALIDÉ'?'#10b981':t.statut==='EN_ATTENTE'?'#f59e0b':'#ef4444';
-                            html += '<div style="background:#1e293b;border-radius:10px;padding:10px 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">' +
-                                '<div><div style="color:#fff;font-weight:700;font-size:0.85rem;">'+t.type+'</div>' +
-                                '<div style="color:#64748b;font-size:0.72rem;">'+(t.reference||'')+'</div></div>' +
-                                '<div style="text-align:right;"><div style="color:#00d9ff;font-weight:900;">'+(t.montant||0).toLocaleString()+' FC</div>' +
-                                '<div style="color:'+c+';font-size:0.7rem;font-weight:800;">'+t.statut+'</div></div></div>';
-                        });
-                    }
-
-                    // Retraits
-                    html += '<div style="font-weight:900;font-size:0.75rem;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin:12px 0 8px;">Retraits ('+(data.retraits||[]).length+')</div>';
-                    if ((data.retraits||[]).length === 0) {
-                        html += '<div style="color:#475569;font-size:0.85rem;padding:10px;text-align:center;">Aucun retrait</div>';
-                    } else {
-                        (data.retraits||[]).slice(0,5).forEach(r => {
-                            const c = r.statut==='Payé'?'#10b981':r.statut==='En attente'?'#f59e0b':'#ef4444';
-                            html += '<div style="background:#1e293b;border-radius:10px;padding:10px 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">' +
-                                '<div style="color:#fff;font-weight:700;font-size:0.85rem;">Retrait</div>' +
-                                '<div style="text-align:right;"><div style="color:#f59e0b;font-weight:900;">'+(r.montant||0).toLocaleString()+' FC</div>' +
-                                '<div style="color:'+c+';font-size:0.7rem;font-weight:800;">'+r.statut+'</div></div></div>';
-                        });
-                    }
-                    document.getElementById('cahierBody').innerHTML = html;
+                    var u = data.user || {};
+                    var out = '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">';
+                    out += '<div style="background:rgba(0,217,255,0.08);border:1px solid rgba(0,217,255,0.2);border-radius:14px;padding:14px;text-align:center;"><div style="color:#64748b;font-size:0.65rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;">SOLDE</div><div style="color:#00d9ff;font-weight:900;font-size:1.2rem;">'+(u.solde||0).toLocaleString()+' FC</div></div>';
+                    out += '<div style="background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:14px;padding:14px;text-align:center;"><div style="color:#64748b;font-size:0.65rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;">PACK</div><div style="color:#10b981;font-weight:900;font-size:1.2rem;">'+(u.pack||'Aucun')+'</div></div>';
+                    out += '<div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:14px;padding:14px;text-align:center;"><div style="color:#64748b;font-size:0.65rem;font-weight:900;letter-spacing:1px;text-transform:uppercase;">BONUS</div><div style="color:#f59e0b;font-weight:900;font-size:1.2rem;">'+(u.bonus||0).toLocaleString()+' FC</div></div>';
+                    out += '</div>';
+                    var txs = data.transactions || [];
+                    out += '<div style="font-weight:900;font-size:0.75rem;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Transactions ('+txs.length+')</div>';
+                    if (txs.length === 0) { out += '<div style="color:#475569;font-size:0.85rem;padding:10px;text-align:center;">Aucune transaction</div>'; }
+                    else { txs.slice(0,10).forEach(function(t){
+                        var c = t.statut==='VALIDE'?'#10b981':t.statut==='EN_ATTENTE'?'#f59e0b':'#ef4444';
+                        out += '<div style="background:#1e293b;border-radius:10px;padding:10px 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;"><div><div style="color:#fff;font-weight:700;font-size:0.85rem;">'+t.type+'</div><div style="color:#64748b;font-size:0.72rem;">'+(t.reference||'')+'</div></div><div style="text-align:right;"><div style="color:#00d9ff;font-weight:900;">'+(t.montant||0).toLocaleString()+' FC</div><div style="color:'+c+';font-size:0.7rem;font-weight:800;">'+t.statut+'</div></div></div>';
+                    }); }
+                    var rets = data.retraits || [];
+                    out += '<div style="font-weight:900;font-size:0.75rem;color:#94a3b8;letter-spacing:1px;text-transform:uppercase;margin:12px 0 8px;">Retraits ('+rets.length+')</div>';
+                    if (rets.length === 0) { out += '<div style="color:#475569;font-size:0.85rem;padding:10px;text-align:center;">Aucun retrait</div>'; }
+                    else { rets.slice(0,5).forEach(function(r){
+                        var c = r.statut==='Paye'?'#10b981':r.statut==='En attente'?'#f59e0b':'#ef4444';
+                        out += '<div style="background:#1e293b;border-radius:10px;padding:10px 14px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;"><div style="color:#fff;font-weight:700;font-size:0.85rem;">Retrait</div><div style="text-align:right;"><div style="color:#f59e0b;font-weight:900;">'+(r.montant||0).toLocaleString()+' FC</div><div style="color:'+c+';font-size:0.7rem;font-weight:800;">'+r.statut+'</div></div></div>';
+                    }); }
+                    document.getElementById('cahierBody').innerHTML = out;
                 })
-                .catch(() => { document.getElementById('cahierBody').innerHTML = '<div style="color:#ef4444;padding:20px;">Erreur réseau.</div>'; });
+                .catch(function(){ document.getElementById('cahierBody').innerHTML = '<div style="color:#ef4444;padding:20px;">Erreur reseau.</div>'; });
         }
+
 
 </script>
 </body>
