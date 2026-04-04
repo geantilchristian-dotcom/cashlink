@@ -1,7 +1,7 @@
 {
-  "name": "loma-tombola",
-  "version": "1.0.0",
-  "description": "Plateforme de Tombola CashLink",
+  "name": "cashlink",
+  "version": "21.0.0",
+  "description": "Plateforme de Minage CashLink - MongoDB Atlas",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
@@ -11,7 +11,7 @@
     "ejs": "^3.1.9",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "nedb": "^1.8.0"
+    "mongodb": "^6.3.0"
   },
   "engines": {
     "node": ">=18.0.0"
