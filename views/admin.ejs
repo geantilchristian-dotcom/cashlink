@@ -393,7 +393,52 @@
                             <input type="number" name="cert_price" class="admin-input" value="<%= (typeof content !== 'undefined' ? content.cert_price : 0) %>">
                         </div>
                     </div>
-                    <button type="submit" class="btn-update mt-4">SAUVEGARDER L'INTERFACE</button>
+
+                    <!-- ════ NUMÉROS DE RECHARGE ════ -->
+                    <div style="background:rgba(0,217,255,0.04);border:2px dashed rgba(0,217,255,0.25);border-radius:22px;padding:22px;margin-top:28px;margin-bottom:8px;">
+                        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+                            <div style="background:var(--neon-blue);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i class="bi bi-phone-fill text-dark"></i>
+                            </div>
+                            <div>
+                                <div class="fw-900" style="font-size:0.9rem;">Numéros de Recharge Client</div>
+                                <div style="font-size:0.65rem;color:#64748b;font-weight:700;letter-spacing:1px;">Ces numéros s'affichent aux clients dans le modal de paiement</div>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.3);border-radius:14px;padding:14px;">
+                                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                                        <div style="width:28px;height:28px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:8px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-phone-fill" style="color:#fff;font-size:0.8rem;"></i></div>
+                                        <span style="color:#60a5fa;font-weight:900;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;">VODACOM M-PESA</span>
+                                    </div>
+                                    <label class="admin-label" style="color:#60a5fa;">Numéro (sans +243)</label>
+                                    <input type="text" name="admin_voda" class="admin-input" style="margin-bottom:0;border-color:rgba(59,130,246,0.3);" placeholder="810000000" value="<%= (typeof content !== 'undefined' ? content.admin_voda : '') %>">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:14px;padding:14px;">
+                                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                                        <div style="width:28px;height:28px;background:linear-gradient(135deg,#b91c1c,#ef4444);border-radius:8px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-phone-fill" style="color:#fff;font-size:0.8rem;"></i></div>
+                                        <span style="color:#f87171;font-weight:900;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;">AIRTEL MONEY</span>
+                                    </div>
+                                    <label class="admin-label" style="color:#f87171;">Numéro (sans +243)</label>
+                                    <input type="text" name="admin_airtel" class="admin-input" style="margin-bottom:0;border-color:rgba(239,68,68,0.3);" placeholder="970000000" value="<%= (typeof content !== 'undefined' ? content.admin_airtel : '') %>">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div style="background:rgba(251,146,60,0.08);border:1px solid rgba(251,146,60,0.3);border-radius:14px;padding:14px;">
+                                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+                                        <div style="width:28px;height:28px;background:linear-gradient(135deg,#c2410c,#fb923c);border-radius:8px;display:flex;align-items:center;justify-content:center;"><i class="bi bi-phone-fill" style="color:#fff;font-size:0.8rem;"></i></div>
+                                        <span style="color:#fb923c;font-weight:900;font-size:0.7rem;letter-spacing:1px;text-transform:uppercase;">ORANGE MONEY</span>
+                                    </div>
+                                    <label class="admin-label" style="color:#fb923c;">Numéro (sans +243)</label>
+                                    <input type="text" name="admin_orange" class="admin-input" style="margin-bottom:0;border-color:rgba(251,146,60,0.3);" placeholder="890000000" value="<%= (typeof content !== 'undefined' ? content.admin_orange : '') %>">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                                        <button type="submit" class="btn-update mt-4">SAUVEGARDER L'INTERFACE</button>
                 </form>
             </div>
         </div>
