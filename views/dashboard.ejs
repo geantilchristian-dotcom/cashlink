@@ -473,13 +473,11 @@
     </header>
 
     <div class="stats-industrial-grid">
-        <div class="stat-industrial-card"><i class="bi bi-gpu-card stat-industrial-icon"></i><span class="label-titan-bold">Calcul Hash</span><div class="val-titan-heavy text-white fs-2"><%= (user.pack && user.pack !== 'Aucun') ? '104.2 TH/s' : '0.00 TH/s' %></div></div>
         <div class="stat-industrial-card">
             <i class="bi bi-patch-check-fill stat-industrial-icon text-warning"></i><span class="label-titan-bold">Niveau Compte</span><div class="val-titan-heavy text-white fs-2"><%= user.certified ? 'CERTIFIÉ ÉLITE' : 'BASIQUE' %></div>
             <% if(!user.certified) { %><button onclick="openPaymentModal('CERTIFICATION', <%= content.cert_price || 30000 %>)" class="btn-certif-industrial">CERTIFIER (<%= (parseInt(content.cert_price)||30000).toLocaleString() %> FC)</button><% } %>
         </div>
         <div class="stat-industrial-card"><i class="bi bi-currency-exchange stat-industrial-icon text-success"></i><span class="label-titan-bold">Flux Retrait</span><div class="val-titan-heavy text-white fs-2">SÉCURISÉ</div></div>
-        <div class="stat-industrial-card"><i class="bi bi-shield-lock-fill stat-industrial-icon text-info"></i><span class="label-titan-bold">Cryptage</span><div class="val-titan-heavy text-white fs-2">AES-512</div></div>
     </div>
 
     <div class="referral-industrial-container animate__animated animate__fadeInUp">
@@ -673,11 +671,38 @@
             t.style.display = "flex"; setTimeout(() => t.style.display = "none", 7000);
         }
 
-        const masterNames = ["Patrick", "Bijou", "Sarah", "Guelord", "Mado", "Junior", "Elvis"];
-        const masterActs = ["retrait 50.000 FC", "pack GOLD actif", "bonus parrainage", "gains reçus"];
-        setInterval(() => {
             if(Math.random() > 0.4) triggerHeavyToast(`${masterNames[Math.floor(Math.random()*masterNames.length)]} ${masterActs[Math.floor(Math.random()*masterActs.length)]}`);
         }, 30000);
+
+        // === VRAIES NOTIFICATIONS TEMPS RÉEL ===
+        (function() {
+            const evtSrc = new EventSource('/stream');
+            
+            // Écouter les mises à jour de données (bonus, solde)
+            evtSrc.onmessage = function(e) {
+                try {
+                    const d = JSON.parse(e.data);
+                    if(d.bonus !== undefined) { const b = document.getElementById('bonus-display'); if(b) b.innerText = Number(d.bonus).toLocaleString('fr-FR') + ' FC'; }
+                    if(d.solde !== undefined) { const s = document.getElementById('solde-display'); if(s) s.innerText = Number(d.solde).toLocaleString('fr-FR') + ' FC'; }
+                } catch(err) {}
+            };
+            
+            // Écouter les activités globales (pack achat, retrait, bonus)
+            evtSrc.addEventListener('activity', function(e) {
+                try {
+                    const act = JSON.parse(e.data);
+                    let msg = '';
+                    if(act.type === 'pack') msg = `🎉 ${act.username} vient d'activer le pack ${act.pack}`;
+                    else if(act.type === 'retrait') msg = `💸 ${act.username} a soumis un retrait de ${Number(act.montant).toLocaleString('fr-FR')} FC`;
+                    else if(act.type === 'paye') msg = `✅ ${act.username} a reçu son paiement de ${Number(act.montant).toLocaleString('fr-FR')} FC`;
+                    else if(act.type === 'certif') msg = `🔵 ${act.username} vient d'être certifié`;
+                    if(msg) triggerHeavyToast(msg);
+                } catch(err) {}
+            });
+            
+            evtSrc.onerror = function() { setTimeout(() => {}, 5000); };
+        })();
+
     </script>
 </body>
 </html>
