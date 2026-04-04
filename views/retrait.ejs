@@ -156,6 +156,18 @@
         .pending { background: rgba(255, 204, 0, 0.1); color: #ffcc00; }
         .confirmed { background: rgba(0, 255, 136, 0.1); color: var(--emerald); }
 
+
+        /* Mobile */
+        @media (max-width: 575px) {
+            body { padding: 10px !important; }
+            .withdraw-glass-card { padding: 22px 16px !important; border-radius: 20px !important; }
+            .history-box { border-radius: 16px !important; margin-top: 24px !important; }
+            .table thead th, .table td { padding: 12px 10px !important; font-size: 0.75rem !important; }
+            .btn-withdraw-neon { padding: 14px !important; font-size: 0.9rem !important; }
+            .history-box { overflow-x: auto; }
+            .table { min-width: 480px; }
+        }
+
     </style>
 </head>
 <body>
