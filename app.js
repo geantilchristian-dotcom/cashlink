@@ -21,12 +21,8 @@ app.use(session({
 }));
 
 /* ── BASE DE DONNÉES MONGODB ──────────────────────────────────────────────── */
-const MONGO_URI = process.env.MONGODB_URI;
+const MONGO_URI = process.env.MONGODB_URI || '';
 console.log('[DB] MONGODB_URI présent:', !!MONGO_URI);
-if (!MONGO_URI) {
-    console.error('[FATAL] MONGODB_URI non défini dans les variables d\'environnement !');
-    process.exit(1);
-}
 
 let _db;
 let dbConnected = false;
@@ -363,6 +359,12 @@ app.use((err,req,res,next) => {
 
 /* ── CONNEXION MONGODB ET DÉMARRAGE ──────────────────────────────────────── */
 async function connectMongo() {
+    if (!MONGO_URI) {
+        dbError = 'MONGODB_URI manquant - Ajoutez-le dans Render > Environment';
+        console.error('[DB]', dbError);
+        setTimeout(connectMongo, 30000);
+        return;
+    }
     try {
         console.log('[DB] Connexion à MongoDB Atlas...');
         const client = new MongoClient(MONGO_URI, {
