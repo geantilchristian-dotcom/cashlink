@@ -191,6 +191,19 @@
             input.type = input.type === 'password' ? 'text' : 'password';
         }
 
+        // Inject referral code from URL into register form
+        const urlParams = new URLSearchParams(window.location.search);
+        const refCode = urlParams.get('ref');
+        if (refCode) {
+            const refInput = document.createElement('input');
+            refInput.type = 'hidden';
+            refInput.name = 'ref';
+            refInput.value = refCode;
+            document.querySelector('form[action="/register"]').appendChild(refInput);
+            // Switch to register tab automatically
+            showTab('register-box', document.querySelectorAll('.auth-tab-btn')[1]);
+        }
+
         function validateReg() {
             const phone = document.getElementById('reg-phone').value;
             const pass = document.getElementById('pass-reg').value;
