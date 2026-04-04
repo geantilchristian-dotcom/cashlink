@@ -465,7 +465,11 @@
 
     <header class="hero-industrial-banner">
         <div class="animate__animated animate__fadeIn">
-            <div class="user-id-badge-industrial">SESSION ACTIVE : <%= user.username %> | RÉSEAU : +243 <%= user.phone %></div>
+            <div class="user-id-badge-industrial">
+                SESSION ACTIVE : <%= user.username %>
+                <% if(user.certified) { %><span style="display:inline-flex;align-items:center;gap:4px;background:#1d4ed8;color:#fff;font-size:0.65rem;font-weight:900;padding:2px 10px;border-radius:20px;margin-left:6px;letter-spacing:0.5px;vertical-align:middle;"><i class="bi bi-patch-check-fill" style="font-size:0.75rem;"></i> CERTIFIÉ</span><% } %>
+                | RÉSEAU : +243 <%= user.phone %>
+            </div>
             <h1 class="hero-title-titan-heavy"><%= content.hero_title || 'MINAGE <span class="text-primary">INDUSTRIEL</span>' %></h1>
             <p class="hero-para-titan-heavy"><%= content.hero_subtitle || 'Le protocole CASHLINK v28.0 déploie une puissance de calcul décentralisée pour chaque citoyen congolais. Sécurisez votre avenir financier avec le minage Cloud Master.' %></p>
             <button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-4 fw-900 shadow-lg fs-2">LANCER MON UNITÉ DE MINAGE</button>
