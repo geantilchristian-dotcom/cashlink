@@ -432,21 +432,42 @@
 
         <div id="security" class="section-panel">
             <div class="glass-card">
-                <h4 class="fw-900 text-info mb-4">Accès &amp; Sécurité</h4>
-                <div class="row">
+                <h4 class="fw-900 text-info mb-5"><i class="bi bi-lock-fill me-3"></i>Accès &amp; Sécurité</h4>
+                <% const secErr = typeof query !== 'undefined' && query && query.err; const secOk = typeof query !== 'undefined' && query && query.ok; %>
+                <div class="row g-4">
                     <div class="col-md-6">
-                        <div class="p-4" style="background:rgba(255,255,255,0.03);border-radius:20px;border:1px solid rgba(255,255,255,0.08);">
-                            <h6 class="fw-800 text-warning mb-3">Accès Administrateur</h6>
-                            <p class="small opacity-50">Mot de passe admin défini via variable d'environnement <code>ADMIN_PASS</code>.</p>
-                            <p class="small opacity-50 mb-0">Chemin de connexion : <code>/admin-login</code></p>
+                        <div class="p-4" style="background:rgba(239,68,68,0.05);border-radius:24px;border:2px solid rgba(239,68,68,0.2);">
+                            <h5 class="fw-900 text-warning mb-4"><i class="bi bi-key-fill me-3"></i>Changer le mot de passe admin</h5>
+                            <% if(secErr === 'wrong_pwd') { %><div class="alert alert-danger rounded-3 fw-700">Mot de passe actuel incorrect.</div><% } %>
+                            <% if(secErr === 'too_short') { %><div class="alert alert-danger rounded-3 fw-700">Nouveau mot de passe trop court (min. 6 caractères).</div><% } %>
+                            <% if(secErr === 'mismatch') { %><div class="alert alert-danger rounded-3 fw-700">Les deux nouveaux mots de passe ne correspondent pas.</div><% } %>
+                            <% if(secOk) { %><div class="alert alert-success rounded-3 fw-900"><i class="bi bi-check-circle-fill me-2"></i>Mot de passe changé avec succès !</div><% } %>
+                            <form action="/admin/change-password" method="POST">
+                                <div class="mb-3">
+                                    <label class="admin-label">Mot de passe actuel</label>
+                                    <input type="password" name="currentPwd" class="admin-input" placeholder="Mot de passe actuel" required style="border-radius:14px;">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="admin-label">Nouveau mot de passe</label>
+                                    <input type="password" name="newPwd" class="admin-input" placeholder="Min. 6 caractères" required style="border-radius:14px;">
+                                </div>
+                                <div class="mb-4">
+                                    <label class="admin-label">Confirmer le nouveau mot de passe</label>
+                                    <input type="password" name="confirmPwd" class="admin-input" placeholder="Répétez le mot de passe" required style="border-radius:14px;">
+                                </div>
+                                <button type="submit" class="btn-update" style="border-radius:16px;"><i class="bi bi-shield-lock-fill me-2"></i>CHANGER LE MOT DE PASSE</button>
+                            </form>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="p-4" style="background:rgba(255,255,255,0.03);border-radius:20px;border:1px solid rgba(255,255,255,0.08);">
-                            <h6 class="fw-800 text-info mb-3">Base de données</h6>
-                            <p class="small opacity-50">Stockage dans <code>/tmp/cashlink-data</code>. Les données sont effacées à chaque redémarrage du serveur.</p>
-                            <a href="/admin-logout" class="btn btn-sm btn-outline-danger mt-2">Déconnexion Admin</a>
+                        <div class="p-4 mb-4" style="background:rgba(0,217,255,0.04);border-radius:24px;border:2px solid rgba(0,217,255,0.15);">
+                            <h6 class="fw-800 text-info mb-3"><i class="bi bi-info-circle-fill me-2"></i>Informations système</h6>
+                            <div class="mb-2 small fw-700">URL de connexion : <code class="text-warning">/admin-login</code></div>
+                            <div class="small opacity-60">Le mot de passe est sauvegardé en base de données MongoDB et résiste aux redémarrages du serveur.</div>
                         </div>
+                        <a href="/admin-logout" class="btn btn-outline-danger w-100 py-3 rounded-pill fw-900">
+                            <i class="bi bi-power me-2"></i>DÉCONNEXION ADMIN
+                        </a>
                     </div>
                 </div>
             </div>
@@ -514,13 +535,29 @@
             btn.classList.add('active');
         }
         function previewImg() { document.getElementById('preview').src = document.getElementById('cover_input').value; }
+        let deletedCount = 0;
         function deleteUser(id) {
-            if(confirm('Supprimer cet utilisateur définitivement ?')) {
+            if(confirm('⚠️ Supprimer cet utilisateur définitivement ?
+Ses retraits, transactions et annulations seront aussi effacés.')) {
                 fetch('/admin/delete-user/' + id, { method: 'DELETE' })
                     .then(r => r.json())
                     .then(d => {
-                        if(d.ok) { const row = document.getElementById('row-' + id); if(row) row.remove(); }
-                        else { alert('Erreur: ' + d.error); }
+                        if(d.ok) {
+                            const row = document.getElementById('row-' + id);
+                            if(row) { row.style.transition='opacity 0.4s'; row.style.opacity='0'; setTimeout(()=>row.remove(),400); }
+                            deletedCount++;
+                            // Mettre à jour les compteurs visibles
+                            document.querySelectorAll('.stat-val').forEach(el => {
+                                const label = el.previousElementSibling;
+                                if(label && label.textContent.includes('Membres') || label && label.textContent.includes('Inscrits')) {
+                                    const cur = parseInt(el.textContent.replace(/[^0-9]/g,'')) || 0;
+                                    if(cur > 0) el.textContent = (cur - 1).toLocaleString();
+                                }
+                            });
+                            // Badge membres dans onglet clients
+                            const membBadge = document.querySelector('#clients .badge.bg-info');
+                            if(membBadge) { const n = parseInt(membBadge.textContent)||0; membBadge.textContent = Math.max(0,n-1)+' membres inscrits'; }
+                        } else { alert('Erreur: ' + d.error); }
                     })
                     .catch(() => alert('Erreur réseau.'));
             }
