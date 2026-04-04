@@ -466,8 +466,8 @@
     <header class="hero-industrial-banner">
         <div class="animate__animated animate__fadeIn">
             <div class="user-id-badge-industrial">SESSION ACTIVE : <%= user.username %> | RÉSEAU : +243 <%= user.phone %></div>
-            <h1 class="hero-title-titan-heavy">MINAGE <span class="text-primary">INDUSTRIEL</span></h1>
-            <p class="hero-para-titan-heavy">Le protocole CASHLINK v28.0 déploie une puissance de calcul décentralisée pour chaque citoyen congolais. Sécurisez votre avenir financier avec le minage Cloud Master.</p>
+            <h1 class="hero-title-titan-heavy"><%= content.hero_title || 'MINAGE <span class="text-primary">INDUSTRIEL</span>' %></h1>
+            <p class="hero-para-titan-heavy"><%= content.hero_subtitle || 'Le protocole CASHLINK v28.0 déploie une puissance de calcul décentralisée pour chaque citoyen congolais. Sécurisez votre avenir financier avec le minage Cloud Master.' %></p>
             <button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-4 fw-900 shadow-lg fs-2">LANCER MON UNITÉ DE MINAGE</button>
         </div>
     </header>
@@ -567,7 +567,7 @@
                     </ul>
                 </div>
                 <% if(isOwned) { %>
-                    <% if(packDaysLeft > 0) { %>
+                    <% if(packDaysLeft === null || packDaysLeft > 0) { %>
                         <button onclick="submitHeavyPost('/activer-gain', { pack: '<%= item.id %>' })" class="btn-industrial-heavy-action btn-activate-industrial-heavy">ACTIVER MAINTENANT</button>
                     <% } else { %>
                         <button disabled class="btn-industrial-heavy-action" style="background:#374151;cursor:not-allowed;opacity:0.7;">CONTRAT EXPIRÉ (30 JOURS)</button>
