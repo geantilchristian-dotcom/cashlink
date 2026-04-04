@@ -77,8 +77,8 @@ const PACKS     = ['BRONZE','SILVER','GOLD','DIAMOND'];
 let adminPwd = process.env.ADMIN_PASS || 'cashlink2026';
 
 /* ── UTILITAIRES ─────────────────────────────────────────────────────────── */
-const remainMs  = u => (!u||!u.investDate||u.pack==='Aucun') ? 0 : Math.max(0, new Date(u.investDate).getTime()+86400000-Date.now());
-const progress  = u => { if(!u||u.pack==='Aucun') return 0; const ms=remainMs(u); return ms===0?100:Math.floor(((86400000-ms)/86400000)*100); };
+const remainMs  = u => (!u||!u.investDate||u.pack==='Aucun'||!u.packActivated) ? 0 : Math.max(0, new Date(u.investDate).getTime()+86400000-Date.now());
+const progress  = u => { if(!u||u.pack==='Aucun'||!u.packActivated) return 0; const ms=remainMs(u); return ms===0?100:Math.floor(((86400000-ms)/86400000)*100); };
 const gradients = { BRONZE:'linear-gradient(135deg,#10b981,#059669)', SILVER:'linear-gradient(135deg,#6366f1,#4f46e5)', GOLD:'linear-gradient(135deg,#f59e0b,#d97706)', DIAMOND:'linear-gradient(135deg,#ef4444,#dc2626)' };
 const addLog    = async t => { try { await dbInsert('logs',{text:t,date:new Date().toLocaleString('fr-FR'),createdAt:new Date()}); }catch(e){} };
 const alertBack = (msg) => '<script>alert('+JSON.stringify(String(msg))+');window.history.back();</script>';
@@ -546,12 +546,15 @@ setInterval(async () => {
     try {
         const active = await dbFind('users',{pack:{$ne:'Aucun'}});
         for (const u of active) {
-            if (!u.investDate) continue;
+            // Ignorer les utilisateurs non activés ou sans investDate
+            if (!u.investDate || !u.packActivated) continue;
             const packStart = u.packActivatedDate ? new Date(u.packActivatedDate) : new Date(u.investDate);
             const daysSince = (Date.now()-packStart.getTime())/(24*3600000);
             if (daysSince > 30) { await addLog('Contrat expiré: '+u.username); continue; }
             if (Date.now()-new Date(u.investDate).getTime()>=86400000) {
-                await dbUpdate('users',{id:u.id},{$inc:{bonus:cfg['daily_'+u.pack]||0},$set:{investDate:new Date()}});
+                const dailyGain = parseInt(cfg['daily_'+u.pack])||0;
+                await dbUpdate('users',{id:u.id},{$inc:{bonus:dailyGain},$set:{investDate:new Date()}});
+                await addLog('GAIN QUOTIDIEN: '+u.username+' | +'+dailyGain+' FC | '+u.pack);
                 broadcastUpdate(u.id);
             }
         }
