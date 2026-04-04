@@ -88,45 +88,105 @@
         .btn-del { background: rgba(244, 63, 94, 0.1); color: var(--rose); }
         .cover-preview { width: 100%; height: 180px; border-radius: 20px; object-fit: cover; border: 2px dashed var(--border-glass); margin-bottom: 15px; }
 
-        /* ============================================================
-           ADMIN RESPONSIVE — Tablette & Mobile (< 1100px)
-           ============================================================ */
-        @media (max-width: 1099px) {
-            .admin-sidebar {
-                position: relative !important; width: 100% !important; height: auto !important;
-                padding: 15px 10px !important; flex-direction: row !important;
-                flex-wrap: wrap !important; border-right: none !important;
-                border-bottom: 1px solid rgba(255,255,255,0.08) !important;
-                overflow-x: auto !important;
-            }
-            .admin-main-content { margin-left: 0 !important; padding: 18px 12px !important; }
-            .nav-item-custom {
-                padding: 9px 12px !important; margin-bottom: 0 !important;
-                font-size: 0.7rem !important; gap: 6px !important;
-                border-radius: 14px !important; white-space: nowrap;
-            }
-            .nav-item-custom span { display: none !important; }
-            .nav-item-custom i { font-size: 1.2rem !important; }
-            .glass-card { padding: 18px 14px !important; border-radius: 20px !important; }
-            .table-responsive { overflow-x: auto !important; }
-            .table { font-size: 0.75rem !important; }
-            .table td, .table th { padding: 10px 8px !important; }
-            .btn-action { width: 32px !important; height: 32px !important; font-size: 0.7rem !important; }
-            .col-md-3.glass-card { text-align: center; }
-            .stat-val { font-size: 1.5rem !important; }
+
+        /* Style des items du menu mobile */
+        .mob-nav-item {
+            display: flex; align-items: center;
+            padding: 12px 14px; border-radius: 14px;
+            color: rgba(255,255,255,0.65); font-weight: 700;
+            font-size: 0.85rem; cursor: pointer;
+            margin-bottom: 4px; transition: 0.2s;
+        }
+        .mob-nav-item:hover, .mob-nav-item.mob-active {
+            background: var(--neon-blue); color: #000;
         }
 
-        @media (max-width: 767px) {
-            .admin-sidebar { padding: 10px 8px !important; }
-            .nav-item-custom { padding: 8px 10px !important; }
-            .glass-card { padding: 14px 10px !important; border-radius: 16px !important; margin-bottom: 16px !important; }
-            h2.fw-900, h3.fw-900 { font-size: 1.1rem !important; }
-            .table { min-width: 600px; }
+        /* ============================================================
+           ADMIN RESPONSIVE — Mobile & Tablette (< 1100px)
+           ============================================================ */
+
+        /* Barre mobile cachée sur desktop */
+        .mobile-admin-topbar { display: none; }
+
+        @media (max-width: 1099px) {
+            /* Cacher la sidebar fixe */
+            .admin-sidebar { display: none !important; }
+
+            /* Afficher la barre mobile */
+            .mobile-admin-topbar {
+                display: block;
+                position: sticky; top: 0; z-index: 1100;
+                background: rgba(0,12,36,0.97);
+                backdrop-filter: blur(20px);
+                border-bottom: 1px solid rgba(0,217,255,0.2);
+                box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+            }
+
+            /* Contenu principal pleine largeur */
+            .admin-main-content { margin-left: 0 !important; padding: 16px 12px !important; }
+
+            /* Cards */
+            .glass-card { padding: 16px 12px !important; border-radius: 20px !important; margin-bottom: 16px !important; }
+            h2.fw-900, h3.fw-900, h4.fw-900, h5.fw-900 { font-size: 1rem !important; }
+            .stat-val { font-size: 1.4rem !important; }
+
+            /* Tables scrollables */
+            .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .premium-table { min-width: 700px; }
+            .premium-table thead th { font-size: 0.6rem !important; padding: 0 10px 8px !important; }
+            .premium-table td { padding: 12px 10px !important; font-size: 0.75rem !important; }
+            .btn-action { width: 30px !important; height: 30px !important; font-size: 0.65rem !important; border-radius: 8px !important; }
+
+            /* Row stats 2 colonnes */
+            .row.g-4 .col-md-3 { flex: 0 0 50%; max-width: 50%; }
+        }
+
+        @media (max-width: 480px) {
+            .admin-main-content { padding: 12px 8px !important; }
+            .glass-card { padding: 12px 10px !important; border-radius: 14px !important; }
+            .row.g-4 .col-md-3 { flex: 0 0 100%; max-width: 100%; }
+            .admin-input { padding: 10px 14px !important; border-radius: 12px !important; }
         }
 
     </style>
 </head>
 <body>
+
+    <!-- ======= BARRE NAVIGATION MOBILE (< 1100px) ======= -->
+    <div class="mobile-admin-topbar">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:13px 16px;">
+            <div style="display:flex;align-items:center;gap:10px;">
+                <div style="background:var(--neon-blue);width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 12px rgba(0,217,255,0.4);">
+                    <i class="bi bi-shield-lock-fill text-dark" style="font-size:1rem;"></i>
+                </div>
+                <div>
+                    <div style="font-weight:900;font-size:0.95rem;line-height:1;">ELITE COMMAND</div>
+                    <div style="font-size:0.6rem;color:rgba(0,217,255,0.7);font-weight:700;letter-spacing:1px;">CASHLINK MASTER</div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+                <a href="/logout" style="background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.3);color:#f43f5e;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;text-decoration:none;" title="Déconnexion">
+                    <i class="bi bi-power"></i>
+                </a>
+                <button onclick="toggleMobileMenu()" id="mob-hamburger" style="background:rgba(0,217,255,0.1);border:1px solid rgba(0,217,255,0.3);color:var(--neon-blue);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Menu déroulant -->
+        <div id="mob-menu" style="display:none;padding:6px 12px 14px;border-top:1px solid rgba(255,255,255,0.06);max-height:70vh;overflow-y:auto;">
+            <div class="mob-nav-item active" onclick="openTab('stats',this);closeMobileMenu()"><i class="bi bi-cpu me-2"></i>Performances CA</div>
+            <div class="mob-nav-item" onclick="openTab('validations',this);closeMobileMenu()"><i class="bi bi-shield-check me-2"></i>Validations TID<% if(stats.enAttente > 0){ %> <span class="badge bg-danger ms-1"><%= stats.enAttente %></span><% } %></div>
+            <div class="mob-nav-item" onclick="openTab('clients',this);closeMobileMenu()"><i class="bi bi-people me-2"></i>Gestion Membres</div>
+            <div class="mob-nav-item" onclick="openTab('interface',this);closeMobileMenu()"><i class="bi bi-palette me-2"></i>Design & Pubs</div>
+            <div class="mob-nav-item" onclick="openTab('packs',this);closeMobileMenu()"><i class="bi bi-box-seam me-2"></i>Config Machines</div>
+            <div class="mob-nav-item" onclick="openTab('messages',this);closeMobileMenu()"><i class="bi bi-chat-dots me-2"></i>Messages Clients</div>
+            <div class="mob-nav-item" onclick="openTab('retraits',this);closeMobileMenu()"><i class="bi bi-cash-coin me-2"></i>Retraits<% if(retraits && retraits.length > 0){ %> <span class="badge bg-warning text-dark ms-1"><%= retraits.length %></span><% } %></div>
+            <div class="mob-nav-item" onclick="openTab('logs',this);closeMobileMenu()"><i class="bi bi-journal-text me-2"></i>Journal Activité</div>
+            <div class="mob-nav-item" onclick="openTab('annulations',this);closeMobileMenu()"><i class="bi bi-x-octagon me-2"></i>Annulations</div>
+            <div class="mob-nav-item" onclick="openTab('security',this);closeMobileMenu()"><i class="bi bi-lock me-2"></i>Accès & Sécurité</div>
+        </div>
+    </div>
 
     <div class="admin-sidebar">
         <div class="text-center mb-5">
@@ -295,7 +355,7 @@
                         <% }) %>
                         </tbody>
                     </table>
-                </div>
+</div>                </div>
             </div>
         </div>
 
@@ -542,7 +602,7 @@
                         <% }) %>
                         </tbody>
                     </table>
-                </div>
+</div>                </div>
                 <% } %>
             </div>
         </div>
@@ -569,9 +629,26 @@
             document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
             document.getElementById(tabId).classList.add('active');
             document.querySelectorAll('.nav-item-custom').forEach(n => n.classList.remove('active'));
-            btn.classList.add('active');
+            document.querySelectorAll('.mob-nav-item').forEach(n => n.classList.remove('mob-active'));
+            if (btn) {
+                if (btn.classList.contains('mob-nav-item')) btn.classList.add('mob-active');
+                else btn.classList.add('active');
+            }
         }
-        function previewImg() { document.getElementById('preview').src = document.getElementById('cover_input').value; }
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mob-menu');
+            const icon = document.querySelector('#mob-hamburger i');
+            const isOpen = menu.style.display === 'block';
+            menu.style.display = isOpen ? 'none' : 'block';
+            icon.className = isOpen ? 'bi bi-list fs-5' : 'bi bi-x-lg fs-5';
+        }
+        function closeMobileMenu() {
+            const menu = document.getElementById('mob-menu');
+            if (menu) menu.style.display = 'none';
+            const icon = document.querySelector('#mob-hamburger i');
+            if (icon) icon.className = 'bi bi-list fs-5';
+        }
+                function previewImg() { document.getElementById('preview').src = document.getElementById('cover_input').value; }
         let deletedCount = 0;
         function deleteUser(id) {
             if(confirm('⚠️ Supprimer cet utilisateur définitivement ?
