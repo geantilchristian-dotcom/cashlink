@@ -14,18 +14,24 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-app.use(session({
+const sessionOpts = {
     secret: process.env.SESSION_SECRET || 'cashlink_titan_2026',
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGODB_URI || '',
-        dbName: 'CashlinkDB',
-        collectionName: 'sessions',
-        ttl: 7 * 24 * 60 * 60
-    }),
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
-}));
+};
+if (process.env.MONGODB_URI) {
+    try {
+        sessionOpts.store = MongoStore.create({
+            mongoUrl: process.env.MONGODB_URI,
+            dbName: 'CashlinkDB',
+            collectionName: 'sessions',
+            ttl: 7 * 24 * 60 * 60
+        });
+        console.log('[SESSION] MongoStore activé');
+    } catch(e) { console.warn('[SESSION] MongoStore échoué, MemoryStore utilisé:', e.message); }
+}
+app.use(session(sessionOpts));
 
 /* ── BASE DE DONNÉES MONGODB ──────────────────────────────────────────────── */
 const MONGO_URI = process.env.MONGODB_URI || '';
@@ -194,7 +200,9 @@ app.get('/dashboard', authUser, async (req,res) => {
     try {
         const user = await dbFindOne('users',{id:req.session.userId});
         if (!user) { req.session.destroy(); return res.redirect('/'); }
-        res.render('dashboard',{user,content:cfg,p:progress(user),msRemaining:remainMs(user)});
+        const packStart = user.packActivatedDate ? new Date(user.packActivatedDate) : null;
+        const packDaysLeft = packStart ? Math.max(0, 30 - Math.floor((Date.now()-packStart.getTime())/(24*3600000))) : 30;
+        res.render('dashboard',{user,content:cfg,p:progress(user),msRemaining:remainMs(user),packDaysLeft});
     } catch(e) { res.status(500).send('Erreur dashboard: '+e.message); }
 });
 
@@ -303,7 +311,13 @@ app.post('/retrait', authUser, async (req,res) => {
         const user = await dbFindOne('users',{id:req.session.userId});
         const m = parseInt(req.body.montant);
         if (!user||user.bonus<m||m<1000) return res.send(alertBack('Solde insuffisant ou montant trop bas (min 1.000 FC).'));
-        await dbUpdate('users',{id:user.id},{$inc:{bonus:-m}});
+        const waitMs = user.certified ? 24*3600000 : 72*3600000;
+        const waitLabel = user.certified ? '24h (Certifié)' : '72h (Non certifié)';
+        if (user.lastRetrait && (Date.now()-new Date(user.lastRetrait).getTime())<waitMs) {
+            const h = Math.ceil((waitMs-(Date.now()-new Date(user.lastRetrait).getTime()))/3600000);
+            return res.send(alertBack('Prochain retrait possible dans '+h+'h. Fréquence : '+waitLabel));
+        }
+        await dbUpdate('users',{id:user.id},{:{bonus:-m},:{lastRetrait:new Date()}});
         await dbInsert('retraits',{
             username:user.username, phone:user.phone,
             userId:user.id, montant:m, statut:'En attente',
@@ -359,9 +373,16 @@ app.post('/valider-depot', authAdmin, async (req,res) => {
     try {
         const tx = await dbFindOne('transactions',{_id:req.body.txId});
         if (!tx) return res.redirect('/admin');
+        if (tx.pack === 'CERTIFICATION') {
+            await dbUpdate('users',{id:tx.userId},{:{certified:true,solde:0}});
+            await addLog('CERTIFIÉ: '+tx.utilisateur);
+            await dbUpdate('transactions',{_id:tx._id},{:{statut:'APPROUVE'}});
+            broadcastUpdate(tx.userId);
+            return res.redirect('/admin');
+        }
         const bonuses = {BRONZE:5000,SILVER:9000,GOLD:40000,DIAMOND:120000};
-        /* Solde → 0 (fonds investis dans le pack) + bonus initial immédiatement retirable */
-        await dbUpdate('users',{id:tx.userId},{$set:{pack:tx.pack,investDate:new Date(),solde:0},$inc:{bonus:bonuses[tx.pack]||0}});
+        /* Solde → 0 + bonus initial + date activation pack */
+        await dbUpdate('users',{id:tx.userId},{:{pack:tx.pack,investDate:new Date(),packActivatedDate:new Date(),solde:0},:{bonus:bonuses[tx.pack]||0}});
         const user = await dbFindOne('users',{id:tx.userId});
         if (user&&user.referredBy) await dbUpdate('users',{id:user.referredBy},{$inc:{bonus:Math.floor(tx.montant*0.10)}});
         await dbUpdate('transactions',{_id:tx._id},{$set:{statut:'APPROUVE'}});
@@ -410,11 +431,14 @@ setInterval(async () => {
     if (!dbConnected) return;
     try {
         const active = await dbFind('users',{pack:{$ne:'Aucun'}});
-        for (const u of active) {
             if (!u.investDate) continue;
-            if (Date.now()-new Date(u.investDate).getTime()>=86400000)
-                await dbUpdate('users',{id:u.id},{$inc:{bonus:cfg['daily_'+u.pack]||0},$set:{investDate:new Date()}});
-        }
+            const packStart = u.packActivatedDate ? new Date(u.packActivatedDate) : new Date(u.investDate);
+            const daysSince = (Date.now()-packStart.getTime())/(24*3600000);
+            if (daysSince > 30) { await addLog('Contrat expiré: '+u.username); continue; }
+            if (Date.now()-new Date(u.investDate).getTime()>=86400000) {
+                await dbUpdate('users',{id:u.id},{:{bonus:cfg['daily_'+u.pack]||0},:{investDate:new Date()}});
+                broadcastUpdate(u.id);
+            }
     } catch(e) { console.error('[CRON]',e.message); }
 }, 30*60*1000);
 
