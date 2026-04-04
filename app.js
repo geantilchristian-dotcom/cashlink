@@ -74,7 +74,7 @@ let cfg = {
     price_DIAMOND:1000000, daily_DIAMOND:100000
 };
 const PACKS     = ['BRONZE','SILVER','GOLD','DIAMOND'];
-const ADMIN_PWD = process.env.ADMIN_PASS || 'cashlink2026';
+let adminPwd = process.env.ADMIN_PASS || 'cashlink2026';
 
 /* ── UTILITAIRES ─────────────────────────────────────────────────────────── */
 const remainMs  = u => (!u||!u.investDate||u.pack==='Aucun') ? 0 : Math.max(0, new Date(u.investDate).getTime()+86400000-Date.now());
@@ -94,7 +94,7 @@ const saveCfg = async () => {
 const loadCfg = async () => {
     try {
         const saved = await col('settings').findOne({_id:'cfg'});
-        if (saved) { delete saved._id; cfg = {...cfg,...saved}; console.log('[CFG] Config chargée depuis MongoDB'); }
+        if (saved) { delete saved._id; cfg = {...cfg,...saved}; if(saved.adminPwd) adminPwd=saved.adminPwd; console.log('[CFG] Config chargée depuis MongoDB'); }
     } catch(e) { console.error('[CFG] Chargement échoué:',e.message); }
 };
 
@@ -349,7 +349,7 @@ app.post('/retrait', authUser, async (req,res) => {
 app.get('/admin-login', (req,res) => req.session.isAdmin ? res.redirect('/admin') : res.render('admin_login',{error:null}));
 
 app.post('/admin-login', (req,res) => {
-    if (req.body.password===ADMIN_PWD) { req.session.isAdmin=true; req.session.save(()=>res.redirect('/admin')); }
+    if (req.body.password===adminPwd) { req.session.isAdmin=true; req.session.save(()=>res.redirect('/admin')); }
     else res.render('admin_login',{error:'Mot de passe incorrect.'});
 });
 
@@ -381,7 +381,7 @@ app.get('/admin', authAdmin, async (req,res) => {
             packsYear:sum(year),   totalGagne:sum(approved),
             soldeTotalUsers:allUsers.reduce((a,u)=>a+(u.bonus||0),0)
         };
-        res.render('admin',{stats,transactions,retraits:pendingRet,annulations:pendingAnn,users:allUsers,site:cfg,content:cfg,packs:PACKS,logs:logs.slice(0,50)});
+        res.render('admin',{stats,transactions,retraits:pendingRet,annulations:pendingAnn,users:allUsers,site:cfg,content:cfg,packs:PACKS,logs:logs.slice(0,50),query:req.query});
     } catch(e) { res.status(500).send('Erreur admin: '+e.message); }
 });
 
@@ -483,11 +483,35 @@ app.post('/admin/process-annulation', authAdmin, async (req,res) => {
 
 
 app.delete('/admin/delete-user/:id', authAdmin, async (req,res) => {
-    try { await dbRemove('users',{_id:req.params.id}); res.json({ok:true}); }
+    try {
+        const u = await dbFindOne('users',{_id:req.params.id});
+        if (u) {
+            await dbRemove('retraits',{userId:u.id});
+            await dbRemove('transactions',{userId:u.id});
+            await dbRemove('annulations',{userId:u.id});
+            await addLog('SUPPRESSION: '+u.username+' ('+u.phone+') | '+u.pack);
+        }
+        await dbRemove('users',{_id:req.params.id});
+        res.json({ok:true});
+    }
     catch(e) { res.json({ok:false,error:e.message}); }
 });
 
 
+
+app.post('/admin/change-password', authAdmin, async (req,res) => {
+    try {
+        const {currentPwd, newPwd, confirmPwd} = req.body;
+        if (currentPwd !== adminPwd) return res.redirect('/admin?tab=security&err=wrong_pwd');
+        if (!newPwd || newPwd.length < 6) return res.redirect('/admin?tab=security&err=too_short');
+        if (newPwd !== confirmPwd) return res.redirect('/admin?tab=security&err=mismatch');
+        adminPwd = newPwd;
+        cfg.adminPwd = newPwd;
+        await saveCfg();
+        await addLog('MOT DE PASSE ADMIN CHANGÉ');
+        res.redirect('/admin?tab=security&ok=1');
+    } catch(e) { res.redirect('/admin?tab=security&err=1'); }
+});
 app.get('/admin/user-activity/:userId', authAdmin, async (req,res) => {
     try {
         const user = await dbFindOne('users',{id:req.params.userId});
