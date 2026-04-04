@@ -152,6 +152,9 @@ app.get('/stream', authUser, (req,res) => {
    ROUTES PUBLIQUES
    ========================================================================== */
 
+app.get('/', (req,res) => req.session.userId ? res.redirect('/dashboard') : res.render('login'));
+app.get('/login', (req,res) => req.session.userId ? res.redirect('/dashboard') : res.render('login'));
+
 app.post('/register', async (req,res) => {
     try {
         const {username,phone,password,ref,q_naissance,q_pere} = req.body;
