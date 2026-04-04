@@ -490,6 +490,16 @@ app.delete('/admin/delete-user/:id', authAdmin, async (req,res) => {
     catch(e) { res.json({ok:false,error:e.message}); }
 });
 
+
+app.get('/admin/user-activity/:userId', authAdmin, async (req,res) => {
+    try {
+        const user = await dbFindOne('users',{id:req.params.userId});
+        const transactions = await dbFind('transactions',{userId:req.params.userId},{createdAt:-1});
+        const retraits = await dbFind('retraits',{userId:req.params.userId},{createdAt:-1});
+        const annulations = await dbFind('annulations',{userId:req.params.userId},{createdAt:-1});
+        res.json({user,transactions,retraits,annulations});
+    } catch(e){ res.json({error:e.message}); }
+});
 app.post('/admin/update-content', authAdmin, async (req,res) => {
     const updates = {...req.body};
     ['cert_price'].forEach(f => { if(updates[f]!==undefined) updates[f]=parseInt(updates[f])||0; });
