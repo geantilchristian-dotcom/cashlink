@@ -272,138 +272,293 @@
         .shop-industrial-header { padding: 0 40px; margin: 100px 0 50px; display: flex; align-items: center; gap: 35px; }
         .shop-industrial-header h2 { font-family: 'Space Grotesk'; font-weight: 900; font-size: 3.5rem; text-transform: uppercase; letter-spacing: -2px; }
 
-
-
-        /* ============================================================
-           BOUTIQUE / CATALOGUE PACKS
-           ============================================================ */
         .industrial-shop-grid-full {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 40px;
-            padding: 40px;
-            max-width: 1600px;
-            margin: 0 auto;
+            grid-template-columns: repeat(2, 1fr); /* GRILLE DE 2 SUR MOBILE */
+            gap: 12px;
+            padding: 0 15px 100px;
         }
-        .pack-industrial-heavy-card {
-            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 24px;
-            overflow: hidden;
-            position: relative;
-            transition: all 0.3s ease;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
-        .pack-industrial-heavy-card:hover { transform: translateY(-10px); border-color: rgba(255,255,255,0.3); box-shadow: 0 40px 80px rgba(0,0,0,0.7); }
-        .pack-industrial-active-border { border: 3px solid #10b981 !important; box-shadow: 0 0 40px rgba(16,185,129,0.4) !important; transform: scale(1.02); }
-        .pack-industrial-locked-mode { opacity: 0.5; filter: grayscale(0.7); }
-        .lock-industrial-overlay {
-            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.65); display: flex;
-            align-items: center; justify-content: center; z-index: 10;
-        }
-        .lock-industrial-badge {
-            background: #ef4444; color: white; padding: 10px 28px;
-            border-radius: 30px; font-weight: 900; font-size: 0.85rem; letter-spacing: 2px;
-        }
-        .p-head-industrial-heavy {
-            padding: 22px 28px; font-weight: 900; font-size: 1.05rem;
-            letter-spacing: 2px; color: white; text-shadow: 0 2px 8px rgba(0,0,0,0.5);
-            text-transform: uppercase;
-        }
-        .p-body-industrial-heavy { padding: 25px; display: flex; flex-direction: column; gap: 15px; }
-        .p-price-industrial-heavy { font-size: 2.2rem; font-weight: 900; color: white; font-family: 'Space Grotesk', sans-serif; }
-        .p-bonus-industrial-heavy { color: #10b981; font-weight: 700; font-size: 0.9rem; margin-top: -8px; }
-        .p-daily-industrial-heavy { color: #f59e0b; font-weight: 900; font-size: 1.3rem; }
-        .industrial-details-list { list-style: none; padding: 0; margin: 10px 0; }
-        .industrial-details-list li {
-            padding: 7px 0; color: rgba(255,255,255,0.75);
-            font-size: 0.85rem; font-weight: 600;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-        }
-        .industrial-details-list li i { color: #10b981; margin-right: 8px; }
-        .btn-industrial-heavy-action {
-            width: 100%; padding: 16px; border: none; border-radius: 14px;
-            font-weight: 900; font-size: 0.9rem; letter-spacing: 1px;
-            text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; margin-top: 10px;
-        }
-        .btn-buy-industrial-heavy { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; }
-        .btn-buy-industrial-heavy:hover { transform: scale(1.03); box-shadow: 0 10px 30px rgba(79,70,229,0.5); }
-        .btn-activate-industrial-heavy { background: linear-gradient(135deg, #10b981, #059669); color: white; }
-        .btn-activate-industrial-heavy:hover { transform: scale(1.03); box-shadow: 0 10px 30px rgba(16,185,129,0.5); }
 
-        /* FAQ SECTION */
-        .industrial-faq-titan { max-width: 1000px; margin: 80px auto; padding: 0 40px; }
-        .accordion-titan-industrial-item {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px; margin-bottom: 16px; overflow: hidden;
+        @media (min-width: 992px) { 
+            .industrial-shop-grid-full { grid-template-columns: repeat(2, 1fr); gap: 50px; padding: 0 100px 200px; } 
         }
-        .accordion-button-titan-industrial {
-            background: transparent; color: white; width: 100%; text-align: left;
-            padding: 22px 28px; border: none; font-weight: 800; font-size: 1rem;
-            cursor: pointer; display: flex; align-items: center;
+        @media (min-width: 1600px) { 
+            .industrial-shop-grid-full { grid-template-columns: repeat(4, 1fr); } 
         }
-        .accordion-button-titan-industrial:hover { background: rgba(255,255,255,0.05); }
-        .accordion-titan-industrial-body { padding: 20px 28px; color: rgba(255,255,255,0.7); line-height: 1.8; font-size: 0.95rem; }
-    </style>
+
+        .pack-industrial-heavy-card {
+            background: #ffffff;
+            border-radius: 20px; 
+            overflow: hidden;
+            color: #0f172a;
+            min-height: auto; 
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            transition: var(--transition-titan);
+            position: relative;
+            border: none;
+        }
+
+        @media (max-width: 768px) {
+            /* SUPPRESSION DE L'ESPACE VIDE BLANC SOULIGNÉ */
+            .p-head-industrial-heavy { padding: 12px 5px !important; font-size: 0.65rem !important; letter-spacing: 0px !important; }
+            .p-body-industrial-heavy { padding: 10px 8px !important; } /* Réduction du padding pour enlever le vide */
+            
+            /* TAILLE DE TEXTE COMPACTE (STYLE ALIBABA) */
+            .p-price-industrial-heavy { font-size: 1.1rem !important; letter-spacing: -1px !important; margin: 8px 0 !important; }
+            .p-bonus-industrial-heavy { font-size: 0.55rem !important; padding: 5px !important; border-radius: 8px !important; border-width: 1px !important; margin-bottom: 8px !important; }
+            .p-daily-industrial-heavy { font-size: 0.8rem !important; margin-bottom: 12px !important; }
+            
+            .industrial-details-list { margin: 5px 0 !important; padding: 5px 0 !important; border-top: 1px solid #f1f5f9 !important; }
+            .industrial-details-list li { font-size: 0.5rem !important; margin-bottom: 4px !important; gap: 4px !important; }
+            .industrial-details-list li i { font-size: 0.7rem !important; }
+            
+            .btn-industrial-heavy-action { padding: 12px 5px !important; border-radius: 12px !important; font-size: 0.7rem !important; }
+            .lock-industrial-badge { padding: 10px 20px !important; font-size: 0.8rem !important; border-radius: 50px !important; }
+        }
+
+        /* Styles Desktop d'origine conservés */
+        .pack-industrial-heavy-card:hover { transform: translateY(-30px); filter: brightness(1.05); }
+        .pack-industrial-active-border { border: 8px solid var(--emerald) !important; transform: scale(1.02); z-index: 50; }
+        .pack-industrial-locked-mode { filter: grayscale(1) opacity(0.6); }
+        .lock-industrial-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 60; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+        .lock-industrial-badge { background: var(--gold); color: #000; padding: 20px 50px; border-radius: 100px; font-weight: 900; font-size: 1.8rem; box-shadow: 0 30px 60px rgba(0,0,0,0.8); letter-spacing: 2px; }
+        .p-head-industrial-heavy { padding: 45px; text-align: center; color: #fff; font-weight: 900; text-transform: uppercase; font-size: 1.5rem; letter-spacing: 5px; }
+        .p-body-industrial-heavy { padding: 55px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+        .p-price-industrial-heavy { font-size: 3.5rem; font-weight: 900; color: var(--bleu-bic); margin: 25px 0 15px; font-family: 'Space Grotesk'; letter-spacing: -4px; line-height: 0.9; }
+        .p-bonus-industrial-heavy { font-size: 1.2rem; font-weight: 900; color: var(--rose); background: #fff0f0; border: 4px dashed var(--rose); padding: 18px; border-radius: 30px; margin-bottom: 15px; }
+        .p-daily-industrial-heavy { font-weight: 900; color: var(--emerald); font-size: 2.2rem; letter-spacing: -2px; margin-bottom: 35px; }
+        .industrial-details-list { text-align: left; margin: 30px 0; padding: 30px 0; list-style: none; border-top: 3px solid #f1f5f9; }
+        .industrial-details-list li { font-weight: 800; color: #475569; margin-bottom: 18px; display: flex; align-items: center; gap: 15px; font-size: 1.1rem; }
+        .industrial-details-list li i { color: var(--emerald); font-size: 1.5rem; }
+        .btn-buy-industrial-heavy { background: var(--bleu-bic); color: #fff; }
+        .btn-activate-industrial-heavy { background: var(--emerald); color: #fff; box-shadow: 0 25px 50px rgba(16, 185, 129, 0.6); }
+        .btn-industrial-heavy-action { width: 100%; padding: 30px; border-radius: 45px; border: none; font-weight: 900; text-transform: uppercase; font-size: 1.4rem; transition: 0.4s; box-shadow: 0 25px 60px rgba(0,0,0,0.3); }
+
+        /* --- TOASTS & SCROLL --- */
+        #titan-toast-industrial-heavy { position: fixed; bottom: 50px; left: 50px; z-index: 9999; background: #ffffff; color: #000; padding: 40px 55px; border-radius: 45px; box-shadow: 0 40px 100px rgba(0,0,0,0.9); display: none; align-items: center; gap: 40px; border-left: 20px solid var(--emerald); }
+        #scrollTopIndustrialHeavy { position: fixed; bottom: 50px; right: 50px; width: 100px; height: 100px; background: var(--gold); color: var(--bleu-bic); border-radius: 50%; border: none; display: none; align-items: center; justify-content: center; font-size: 4rem; z-index: 9500; box-shadow: 0 40px 80px rgba(0,0,0,0.8); }
+
+        /* --- FAQ --- */
+        .industrial-faq-titan { margin: 80px 30px 200px; }
+        .accordion-titan-industrial-item { background: var(--glass-dark) !important; border: 3px solid rgba(255,255,255,0.25) !important; color: #fff !important; margin-bottom: 40px; border-radius: 60px !important; overflow: hidden; }
+        .accordion-titan-industrial-button { background: transparent !important; color: #fff !important; font-weight: 900; padding: 50px; font-size: 1.8rem; }
+        .accordion-titan-industrial-body { padding: 60px; opacity: 1; font-size: 1.4rem; line-height: 2.5; }
+
+        .modal-titan-industrial-heavy { border-radius: 80px !important; border: none; overflow: hidden; }
+        .payment-titan-industrial-heavy-card { background: #f8fafc; padding: 45px; border-radius: 50px; border: 6px solid #e2e8f0; margin-bottom: 35px; transition: 0.5s; }
+        .payment-titan-industrial-heavy-card:hover { border-color: var(--bleu-bic); transform: translateX(30px); }
+
+          /* ============================================================
+             OPTIMISATION MOBILE MAXIMALE - TOUS ÉCRANS < 768px
+             ============================================================ */
+          @media (max-width: 767px) {
+
+              /* NAVBAR */
+              .premium-nav-titan { padding: 10px 12px !important; }
+              .logo-titan-industrial { font-size: 1.2rem !important; letter-spacing: -2px !important; }
+              .nav-info-box-titan { padding: 7px 12px !important; gap: 8px !important; border-radius: 50px !important; }
+              .val-titan-heavy { font-size: 0.85rem !important; }
+              .label-titan-bold { font-size: 0.5rem !important; margin-bottom: 2px !important; }
+              .solde-badge-industrial { padding-right: 10px !important; border-right-width: 2px !important; }
+              .btn-logout-industrial { width: 34px !important; height: 34px !important; flex-shrink: 0; }
+              .btn-logout-industrial i { font-size: 0.85rem !important; }
+
+              /* HERO BANNER */
+              .hero-industrial-banner { padding: 35px 15px 45px !important; border-radius: 0 0 30px 30px !important; margin-bottom: 20px !important; }
+              .hero-title-titan-heavy { font-size: 2.2rem !important; letter-spacing: -2px !important; margin-bottom: 12px !important; line-height: 0.85 !important; }
+              .hero-para-titan-heavy { font-size: 0.85rem !important; line-height: 1.5 !important; margin: 0 0 18px !important; }
+              .user-id-badge-industrial { font-size: 0.6rem !important; padding: 8px 16px !important; margin-bottom: 12px !important; }
+              .hero-industrial-banner .btn { font-size: 0.85rem !important; padding: 12px 22px !important; }
+
+              /* STATS GRID */
+              .stats-industrial-grid { gap: 10px !important; padding: 10px !important; }
+              .stat-industrial-card { padding: 18px 10px !important; border-radius: 18px !important; border-width: 2px !important; }
+              .stat-industrial-icon { font-size: 1.6rem !important; margin-bottom: 8px !important; }
+              .stat-industrial-card .val-titan-heavy { font-size: 0.85rem !important; }
+              .btn-certif-industrial { padding: 10px !important; font-size: 0.6rem !important; margin-top: 10px !important; letter-spacing: 0 !important; border-radius: 10px !important; }
+
+              /* PARRAINAGE */
+              .referral-industrial-container { margin: 15px 10px !important; padding: 22px 14px !important; border-radius: 25px !important; border-width: 3px !important; }
+              .ref-title-industrial { font-size: 1.2rem !important; letter-spacing: 1px !important; margin-bottom: 10px !important; }
+              .referral-industrial-container p.fs-4 { font-size: 0.8rem !important; }
+              .industrial-copy-group { flex-direction: column !important; padding: 10px !important; gap: 8px !important; margin-top: 15px !important; border-radius: 18px !important; }
+              .industrial-copy-group input { font-size: 0.75rem !important; padding-left: 10px !important; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+              .btn-copy-industrial-action { padding: 12px !important; border-radius: 12px !important; font-size: 0.75rem !important; width: 100% !important; letter-spacing: 0 !important; }
+
+              /* TERMINAL MINAGE */
+              .mining-industrial-terminal { margin: 15px 10px !important; padding: 18px 14px !important; border-radius: 22px !important; }
+              .mining-industrial-terminal .d-flex.justify-content-between { flex-wrap: wrap; gap: 5px; }
+              .mining-industrial-terminal h3.fw-900 { font-size: 0.7rem !important; }
+              .mining-industrial-terminal p.label-titan-bold { font-size: 0.55rem !important; }
+              .mining-industrial-terminal .text-success.fw-900.fs-1 { font-size: 1.3rem !important; }
+              .progress-industrial-track { height: 30px !important; margin: 15px 0 !important; border-width: 2px !important; padding: 4px !important; }
+              .btn-withdraw-industrial-heavy { padding: 16px 10px !important; font-size: 0.85rem !important; border-radius: 18px !important; margin-top: 12px !important; letter-spacing: 0.5px !important; box-shadow: 0 8px 25px rgba(244,63,94,0.5) !important; }
+              .mining-industrial-terminal .fw-900.text-warning { font-size: 0.75rem !important; }
+              .mining-industrial-terminal .d-flex.flex-wrap { gap: 10px !important; margin-top: 15px !important; }
+
+              /* SHOP HEADER */
+              .shop-industrial-header { padding: 0 12px !important; margin: 35px 0 18px !important; gap: 10px !important; }
+              .shop-industrial-header > div:first-child { width: 6px !important; height: 35px !important; border-radius: 8px !important; }
+              .shop-industrial-header h2 { font-size: 1.3rem !important; letter-spacing: -0.5px !important; }
+
+              /* FAQ */
+              .industrial-faq-titan { margin: 25px 10px 60px !important; }
+              .accordion-titan-industrial-item { border-radius: 18px !important; margin-bottom: 12px !important; border-width: 2px !important; }
+              .accordion-titan-industrial-button { padding: 16px 14px !important; font-size: 0.85rem !important; }
+              .accordion-titan-industrial-button i { margin-right: 10px !important; font-size: 0.9rem !important; }
+              .accordion-titan-industrial-body { padding: 16px 14px !important; font-size: 0.85rem !important; line-height: 1.7 !important; }
+
+              /* FOOTER */
+              footer h1 { font-size: 2.2rem !important; letter-spacing: -3px !important; }
+              footer p { font-size: 0.7rem !important; }
+
+              /* TOAST */
+              #titan-toast-industrial-heavy { bottom: 10px !important; left: 8px !important; right: 8px !important; padding: 14px 16px !important; border-radius: 18px !important; gap: 12px !important; border-left-width: 6px !important; }
+              #titan-toast-industrial-heavy i { font-size: 1.5rem !important; }
+              #toast-industrial-heavy-msg { font-size: 0.8rem !important; }
+              #titan-toast-industrial-heavy .small { font-size: 0.55rem !important; }
+
+              /* BOUTON SCROLL TOP */
+              #scrollTopIndustrialHeavy { width: 45px !important; height: 45px !important; bottom: 12px !important; right: 12px !important; font-size: 1.3rem !important; }
+
+              /* MODAL PAIEMENT */
+              .modal-dialog { margin: 8px !important; }
+              .modal-titan-industrial-heavy { border-radius: 25px !important; }
+              .modal-body.p-5 { padding: 20px 16px !important; }
+              .modal-body h2.fw-900 { font-size: 1.2rem !important; margin-bottom: 16px !important; }
+              .payment-titan-industrial-heavy-card { padding: 16px !important; border-radius: 18px !important; border-width: 3px !important; margin-bottom: 12px !important; }
+              .payment-titan-industrial-heavy-card small { font-size: 0.7rem !important; }
+              .payment-titan-industrial-heavy-card .fw-900.fs-2 { font-size: 1.1rem !important; }
+              .modal-body .alert { padding: 14px !important; font-size: 0.8rem !important; border-radius: 15px !important; margin: 12px 0 !important; }
+              .modal-body .btn { font-size: 0.85rem !important; padding: 12px !important; }
+          }
+      </style>
+</head>
+<body>
+
+    <div id="titan-toast-industrial-heavy" class="animate__animated animate__slideInLeft">
+        <i class="bi bi-cpu-fill text-success" style="font-size: 4.5rem;"></i>
+        <div>
+            <div class="small opacity-60 fw-900 text-uppercase fs-6">SYSTÈME CASHLINK MASTER RDC</div>
+            <div id="toast-industrial-heavy-msg" class="fw-900 text-dark fs-3">Initialisation du terminal v28.0...</div>
+        </div>
+    </div>
+
+    <button id="scrollTopIndustrialHeavy" onclick="window.scrollTo({top:0, behavior:'smooth'})"><i class="bi bi-arrow-up-circle-fill"></i></button>
+
+    <nav class="premium-nav-titan">
+        <a href="/" class="logo-titan-industrial">CASHLINK</a>
+        <div class="nav-info-box-titan animate__animated animate__zoomIn">
+            <div class="solde-badge-industrial">
+                <span class="label-titan-bold">SOLDE DU TERMINAL</span>
+                <div class="val-titan-heavy"><%= (user.solde || 0).toLocaleString() %> FC</div>
+            </div>
+            <div>
+                <span class="label-titan-bold text-success">PROFITS MINAGE</span>
+                <div class="val-titan-heavy text-success">+<%= (user.bonus || 0).toLocaleString() %> FC</div>
+            </div>
+        </div>
+        <a href="/logout" class="btn-logout-industrial"><i class="bi bi-power fs-1"></i></a>
+    </nav>
+
+    <header class="hero-industrial-banner">
+        <div class="animate__animated animate__fadeIn">
+            <div class="user-id-badge-industrial">SESSION ACTIVE : <%= user.username %> | RÉSEAU : +243 <%= user.phone %></div>
+            <h1 class="hero-title-titan-heavy">MINAGE <span class="text-primary">INDUSTRIEL</span></h1>
+            <p class="hero-para-titan-heavy">Le protocole CASHLINK v28.0 déploie une puissance de calcul décentralisée pour chaque citoyen congolais. Sécurisez votre avenir financier avec le minage Cloud Master.</p>
+            <button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-4 fw-900 shadow-lg fs-2">LANCER MON UNITÉ DE MINAGE</button>
+        </div>
+    </header>
+
+    <div class="stats-industrial-grid">
+        <div class="stat-industrial-card"><i class="bi bi-gpu-card stat-industrial-icon"></i><span class="label-titan-bold">Calcul Hash</span><div class="val-titan-heavy text-white fs-2"><%= (user.pack && user.pack !== 'Aucun') ? '104.2 TH/s' : '0.00 TH/s' %></div></div>
+        <div class="stat-industrial-card">
+            <i class="bi bi-patch-check-fill stat-industrial-icon text-warning"></i><span class="label-titan-bold">Niveau Compte</span><div class="val-titan-heavy text-white fs-2"><%= user.certified ? 'CERTIFIÉ ÉLITE' : 'BASIQUE' %></div>
+            <% if(!user.certified) { %><button onclick="openPaymentModal('CERTIFICATION', <%= content.cert_price || 30000 %>)" class="btn-certif-industrial">CERTIFIER (<%= (parseInt(content.cert_price)||30000).toLocaleString() %> FC)</button><% } %>
+        </div>
+        <div class="stat-industrial-card"><i class="bi bi-currency-exchange stat-industrial-icon text-success"></i><span class="label-titan-bold">Flux Retrait</span><div class="val-titan-heavy text-white fs-2">SÉCURISÉ</div></div>
+        <div class="stat-industrial-card"><i class="bi bi-shield-lock-fill stat-industrial-icon text-info"></i><span class="label-titan-bold">Cryptage</span><div class="val-titan-heavy text-white fs-2">AES-512</div></div>
+    </div>
+
+    <div class="referral-industrial-container animate__animated animate__fadeInUp">
+        <h3 class="ref-title-industrial">Programme de Parrainage Elite</h3>
+        <p class="fs-4 fw-bold">Multipliez vos profits en invitant vos proches. Recevez instantanément 10% cash sur chaque investissement de vos parrainés, crédités sur votre solde bonus.</p>
+        <div class="industrial-copy-group">
+            <input type="text" id="refLinkHeavy" id="refLinkHeavy" value="https://cashlink-rdc.cd/?ref=<%= user.id %>" readonly>
+            <button class="btn-copy-industrial-action" onclick="copyHeavyLink()">COPIER MON LIEN</button>
+        </div>
+    </div>
+
+    <section class="mining-industrial-terminal animate__animated animate__fadeInUp">
+        <div class="d-flex justify-content-between align-items-end mb-2">
+            <div><h3 class="fw-900 mb-0 small text-uppercase">MASTER CLUSTER STATUS</h3><p class="label-titan-bold text-muted mb-0">Unité : <%= user.pack %> industrial_master_v28</p></div>
+            <div class="text-success fw-900 fs-1" style="font-family: 'Space Grotesk';"><%= p || 0 %>%</div>
+        </div>
+        <div class="progress-industrial-track"><div class="bar-industrial-emerald-fill animate__animated animate__pulse animate__infinite"></div></div>
+        <div class="d-flex flex-wrap justify-content-between mt-5 align-items-center gap-5">
+            <div class="fw-900 text-warning fs-3"><i class="bi bi-clock-history me-3"></i>RECHARGE DISPONIBLE DANS : <span id="titan-heavy-timer">--:--:--</span></div>
+            <button onclick="handleWithdrawHeavy()" class="btn-withdraw-industrial-heavy animate__animated animate__pulse animate__infinite">RÉCUPÉRER MES PROFITS (MONEY)</button>
+        </div>
+    </section>
+
+    <div class="shop-industrial-header" id="catalog">
+        <div style="width: 20px; height: 80px; background: var(--gold); border-radius: 25px;"></div>
+        <h2>Unités de Minage 2026-2028</h2>
+    </div>
+
     <div class="industrial-shop-grid-full">
         <% 
         const PACK_LEVELS = { 'Aucun': 0, 'BRONZE': 1, 'SILVER': 2, 'GOLD': 3, 'DIAMOND': 4 };
         const userPackLevel = PACK_LEVELS[user.pack] || 0;
         const heavyPacks = [
-            { id: 'BRONZE', price: parseInt(content.price_BRONZE)||50000, daily: parseInt(content.daily_BRONZE)||5000, bonus: 5000, color: '#10b981' },
-            { id: 'SILVER', price: parseInt(content.price_SILVER)||150000, daily: parseInt(content.daily_SILVER)||15000, bonus: 9000, color: '#4f46e5' },
-            { id: 'GOLD', price: parseInt(content.price_GOLD)||500000, daily: parseInt(content.daily_GOLD)||40000, bonus: 40000, color: '#f59e0b' },
-            { id: 'DIAMOND', price: parseInt(content.price_DIAMOND)||1000000, daily: parseInt(content.daily_DIAMOND)||100000, bonus: 120000, color: '#ef4444' },
-            { id: 'AMÉTHYSTE', price: 2500000, daily: 300000, bonus: 250000, color: '#9333ea', upcoming: true },
-            { id: 'ÉMERAUDE', price: 5000000, daily: 700000, bonus: 600000, color: '#059669', upcoming: true },
-            { id: 'RUBIS', price: 10000000, daily: 1500000, bonus: 1200000, color: '#dc2626', upcoming: true },
-            { id: 'SAPHIR', price: 25000000, daily: 4000000, bonus: 3500000, color: '#2563eb', upcoming: true }
+            { id: 'BRONZE', price: parseInt(content.price_BRONZE)||50000, daily: parseInt(content.daily_BRONZE)||5000, bonus: 5000, color: '#10b981', locked: false },
+            { id: 'SILVER', price: parseInt(content.price_SILVER)||150000, daily: parseInt(content.daily_SILVER)||15000, bonus: 9000, color: '#4f46e5', locked: false },
+            { id: 'GOLD', price: parseInt(content.price_GOLD)||500000, daily: parseInt(content.daily_GOLD)||40000, bonus: 40000, color: '#f59e0b', locked: false },
+            { id: 'DIAMOND', price: parseInt(content.price_DIAMOND)||1000000, daily: parseInt(content.daily_DIAMOND)||100000, bonus: 120000, color: '#ef4444', locked: false },
+            { id: 'AMÉTHYSTE', price: 2500000, daily: 300000, bonus: 250000, color: '#9333ea', locked: true },
+            { id: 'ÉMERAUDE', price: 5000000, daily: 700000, bonus: 600000, color: '#059669', locked: true },
+            { id: 'RUBIS', price: 10000000, daily: 1500000, bonus: 1200000, color: '#dc2626', locked: true },
+            { id: 'SAPHIR', price: 25000000, daily: 4000000, bonus: 3500000, color: '#2563eb', locked: true }
         ];
 
         heavyPacks.forEach(item => {
             const isOwned = (user.pack === item.id);
-            const itemLevel = PACK_LEVELS[item.id] || 99;
-            const isUpgrade = !item.upcoming && (itemLevel > userPackLevel);
-            const isLowerOrSame = !item.upcoming && !isOwned && (itemLevel <= userPackLevel);
+            const itemLevel = PACK_LEVELS[item.id] || 0;
+            const isUpgrade = !item.locked && !isOwned && (itemLevel > userPackLevel) && (userPackLevel > 0);
+            const isLowerOrSame = !item.locked && !isOwned && (itemLevel <= userPackLevel) && (userPackLevel > 0);
+            const canBuyFirst = !item.locked && !isOwned && userPackLevel === 0;
         %>
-        <div class="pack-industrial-heavy-card animate__animated animate__fadeInUp <%= (item.upcoming || isLowerOrSame) ? 'pack-industrial-locked-mode' : '' %> <%= isOwned ? 'pack-industrial-active-border' : '' %>">
-            <% if(item.upcoming) { %><div class="lock-industrial-overlay"><div class="lock-industrial-badge">BIENTÔT 2028</div></div><% } %>
-            <% if(isLowerOrSame) { %><div class="lock-industrial-overlay"><div class="lock-industrial-badge" style="background:#6b7280;">DÉJÀ POSSÉDÉ</div></div><% } %>
+        <div class="pack-industrial-heavy-card animate__animated animate__fadeInUp <%= item.locked ? 'pack-industrial-locked-mode' : '' %> <%= isOwned ? 'pack-industrial-active-border' : '' %>">
+            <% if(item.locked) { %><div class="lock-industrial-overlay"><div class="lock-industrial-badge">VERROUILLÉ 2028</div></div><% } %>
+            <% if(isLowerOrSame) { %><div class="lock-industrial-overlay"><div class="lock-industrial-badge" style="background:#374151;">DÉJÀ POSSÉDÉ</div></div><% } %>
             <div class="p-head-industrial-heavy" style="background: <%= item.color %>;">
                 <%= item.id %> MASTER UNIT
-                <% if(isOwned) { %><span style="background:#fff;color:#111;padding:3px 12px;border-radius:20px;font-size:0.7rem;margin-left:8px;">✅ ACTIF</span><% } %>
+                <% if(isOwned) { %> <span style="background:rgba(255,255,255,0.25);padding:2px 10px;border-radius:20px;font-size:0.7rem;">✅ ACTIF</span><% } %>
             </div>
             <div class="p-body-industrial-heavy">
                 <div>
                     <div class="p-price-industrial-heavy"><%= item.price.toLocaleString() %> FC</div>
                     <div class="p-bonus-industrial-heavy">CADEAU D'ACTIVATION : +<%= item.bonus.toLocaleString() %> FC</div>
                     <div class="p-daily-industrial-heavy">+<%= item.daily.toLocaleString() %> FC / JOUR</div>
-                    
                     <ul class="industrial-details-list">
-                        <li><i class="bi bi-shield-fill-check"></i> Contrat : 30 Jours
-                            <% if(isOwned && user.packActivatedDate) { %>
-                            <span class="badge bg-warning text-dark ms-2"><%= packDaysLeft %> jours restants</span>
-                            <% } %>
-                        </li>
+                        <li><i class="bi bi-shield-fill-check"></i> Contrat : 30 Jours<% if(isOwned && user.packActivatedDate) { %> <span style="background:#f59e0b;color:#000;padding:1px 8px;border-radius:10px;font-size:0.7rem;"><%= packDaysLeft %>j restants</span><% } %></li>
                         <li><i class="bi bi-shield-fill-check"></i> Support Prioritaire : 24h/7j</li>
-                        <li><i class="bi bi-shield-fill-check"></i> Retrait Money : <%= user.certified ? '24h (Certifié)' : '72h (Standard)' %></li>
+                        <li><i class="bi bi-shield-fill-check"></i> Retrait : <%= user.certified ? '✅ 24h (Certifié)' : '72h (Standard)' %></li>
                         <li><i class="bi bi-shield-fill-check"></i> Technologie : Cloud Master v28</li>
                     </ul>
                 </div>
-                
                 <% if(isOwned) { %>
                     <% if(packDaysLeft > 0) { %>
                         <button onclick="submitHeavyPost('/activer-gain', { pack: '<%= item.id %>' })" class="btn-industrial-heavy-action btn-activate-industrial-heavy">ACTIVER MAINTENANT</button>
                     <% } else { %>
-                        <button disabled class="btn-industrial-heavy-action" style="background:#6b7280;cursor:not-allowed;">CONTRAT EXPIRÉ (30J)</button>
+                        <button disabled class="btn-industrial-heavy-action" style="background:#374151;cursor:not-allowed;opacity:0.7;">CONTRAT EXPIRÉ (30 JOURS)</button>
                     <% } %>
                 <% } else if(isUpgrade) { %>
-                    <button onclick="openPaymentModal('<%= item.id %>', <%= item.price %>)" class="btn-industrial-heavy-action btn-buy-industrial-heavy">UPGRADER VERS <%= item.id %></button>
-                <% } else if(!item.upcoming && userPackLevel === 0) { %>
-                    <button onclick="openPaymentModal('<%= item.id %>', <%= item.price %>)" class="btn-industrial-heavy-action btn-buy-industrial-heavy">ACHETER CE PACK</button>
-                <% } else { %>
-                    <button disabled class="btn-industrial-heavy-action" style="background:#6b7280;cursor:not-allowed;">NON DISPONIBLE</button>
+                    <button onclick="openPaymentModal('<%= item.id %>', <%= item.price %>)" class="btn-industrial-heavy-action btn-buy-industrial-heavy">⬆ UPGRADER VERS <%= item.id %></button>
+                <% } else if(canBuyFirst || (!item.locked && !isLowerOrSame && !isOwned)) { %>
+                    <button onclick="openPaymentModal('<%= item.id %>', <%= item.price %>)" class="btn-industrial-heavy-action btn-buy-industrial-heavy">ACHETER VOTRE PACK</button>
                 <% } %>
             </div>
         </div>
@@ -504,21 +659,6 @@
         setInterval(() => {
             if(Math.random() > 0.4) triggerHeavyToast(`${masterNames[Math.floor(Math.random()*masterNames.length)]} ${masterActs[Math.floor(Math.random()*masterActs.length)]}`);
         }, 30000);
-    
-        // TEMPS RÉEL: actualisation auto toutes les 15 secondes
-        const updateBalances = async () => {
-            try {
-                const r = await fetch('/api/me');
-                const d = await r.json();
-                if (d.error) return;
-                const soldeEl = document.querySelector('.solde-badge-industrial .val-titan-heavy');
-                const bonusEl = document.querySelectorAll('.val-titan-heavy.text-success')[0];
-                if (soldeEl) soldeEl.textContent = d.solde.toLocaleString() + ' FC';
-                if (bonusEl) bonusEl.textContent = '+' + d.bonus.toLocaleString() + ' FC';
-            } catch(e) {}
-        };
-        setInterval(updateBalances, 15000);
-
     </script>
 </body>
 </html>
