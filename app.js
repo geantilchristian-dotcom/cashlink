@@ -213,7 +213,8 @@ app.get('/dashboard', authUser, async (req,res) => {
         const packDaysLeft = packStart ? Math.max(0, 30 - Math.floor((Date.now()-packStart.getTime())/(1000*3600*24))) : null;
         const pendingRetrait = await dbFindOne('retraits', {userId: user.id, statut: 'En attente'});
         const refCount = (await dbFind('users',{referredBy:user.id,pack:{$ne:'Aucun'}})).length;
-        res.render('dashboard',{user,content:cfg,p:progress(user),msRemaining:remainMs(user),packDaysLeft,pendingRetrait,refCount});
+        const pendingAnnulation = await dbFindOne('annulations',{userId:user.id, statut:'En attente'});
+        res.render('dashboard',{user,content:cfg,p:progress(user),msRemaining:remainMs(user),packDaysLeft,pendingRetrait,refCount,pendingAnnulation});
     } catch(e) { res.status(500).send('Erreur dashboard: '+e.message); }
 });
 
@@ -364,6 +365,7 @@ app.get('/admin', authAdmin, async (req,res) => {
         const allUsers   = await dbFind('users',{});
         const pending    = await dbFind('transactions',{statut:'EN_ATTENTE'},{createdAt:-1});
         const pendingRet = await dbFind('retraits',{statut:'En attente'},{createdAt:-1});
+        const pendingAnn = await dbFind('annulations',{statut:'En attente'},{createdAt:-1});
         const approved   = await dbFind('transactions',{statut:'APPROUVE'});
         const logs       = await dbFind('logs',{},{createdAt:-1});
 
@@ -380,7 +382,7 @@ app.get('/admin', authAdmin, async (req,res) => {
             packsYear:sum(year),   totalGagne:sum(approved),
             soldeTotalUsers:allUsers.reduce((a,u)=>a+(u.bonus||0),0)
         };
-        res.render('admin',{stats,transactions,retraits:pendingRet,users:allUsers,site:cfg,content:cfg,packs:PACKS,logs:logs.slice(0,50)});
+        res.render('admin',{stats,transactions,retraits:pendingRet,annulations:pendingAnn,users:allUsers,site:cfg,content:cfg,packs:PACKS,logs:logs.slice(0,50)});
     } catch(e) { res.status(500).send('Erreur admin: '+e.message); }
 });
 
@@ -448,6 +450,40 @@ app.post('/admin/approve-retrait', authAdmin, async (req,res) => {
         res.redirect('/admin');
     } catch(e) { res.redirect('/admin'); }
 });
+
+app.post('/annuler-abonnement', authUser, async (req,res) => {
+    try {
+        const user = await dbFindOne('users',{id:req.session.userId});
+        if(!user||user.pack==='Aucun'||!user.investDate) return res.send(alertBack('Vous n\'avez pas d\'abonnement actif à annuler.'));
+        const existing = await dbFindOne('annulations',{userId:user.id,statut:'En attente'});
+        if(existing) return res.send(alertBack('Vous avez déjà une demande d\'annulation en cours de traitement.'));
+        const packPrices = {BRONZE:50000,SILVER:150000,GOLD:500000,DIAMOND:1000000};
+        const prixPack = parseInt(cfg['price_'+user.pack])||packPrices[user.pack]||0;
+        const remboursement = Math.floor(prixPack*0.50);
+        await dbInsert('annulations',{
+            username:user.username, phone:user.phone, userId:user.id,
+            pack:user.pack, prixPack, remboursement,
+            statut:'En attente', date:new Date().toLocaleString('fr-FR'), createdAt:new Date()
+        });
+        await addLog('ANNULATION: '+user.username+' | '+user.pack+' | remb:'+remboursement+' FC');
+        res.redirect('/dashboard?msg=ANNULATION_OK');
+    } catch(e) { res.redirect('/dashboard?err=1'); }
+});
+
+app.post('/admin/process-annulation', authAdmin, async (req,res) => {
+    try {
+        const ann = await dbFindOne('annulations',{_id:req.body.annId});
+        if(ann && ann.statut==='En attente') {
+            await dbUpdate('users',{id:ann.userId},{$inc:{bonus:ann.remboursement},$set:{pack:'Aucun',investDate:null,packActivatedDate:null,solde:0}});
+            await dbUpdate('annulations',{_id:req.body.annId},{$set:{statut:'Remboursé'}});
+            await addLog('ANNULATION APPROUVÉE: '+ann.username+' | '+ann.pack+' | +'+ann.remboursement+' FC');
+            broadcastUpdate(ann.userId);
+            broadcastActivity({type:'paye',username:ann.username,montant:ann.remboursement});
+        }
+        res.redirect('/admin');
+    } catch(e) { res.redirect('/admin'); }
+});
+
 
 app.delete('/admin/delete-user/:id', authAdmin, async (req,res) => {
     try { await dbRemove('users',{_id:req.params.id}); res.json({ok:true}); }
