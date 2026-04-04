@@ -524,7 +524,7 @@
             Achetez un pack pour augmenter votre taux : <strong class="text-warning">SILVER=10% · GOLD=15% · DIAMOND=20%</strong>
             <% } else { %>
             Vous gagnez <strong class="text-success"><%= myRate %></strong> sur chaque investissement de vos filleuls — retirable directement.<br>
-            Atteignez <strong class="text-warning"><%= nextMilestone %> filleuls</strong> pour un bonus spécial de <strong class="text-warning">+100.000 FC</strong> !
+            Atteignez <strong class="text-warning"><%= next+100 FC pour 100 filleuls actifs FC</strong> !
             <% } %>
         </div>
         <% if(progressMilestone > 0) { %>
@@ -627,7 +627,13 @@
                 </div>
                 <% if(isOwned) { %>
                     <% if(packDaysLeft === null || packDaysLeft > 0) { %>
-                        <button onclick="submitHeavyPost('/activer-gain', { pack: '<%= item.id %>' })" class="btn-industrial-heavy-action btn-activate-industrial-heavy">ACTIVER MAINTENANT</button>
+                        <% if(!user.packActivated) { %>
+                            <button onclick="submitHeavyPost('/activer-gain', { pack: '<%= item.id %>' })" class="btn-industrial-heavy-action btn-activate-industrial-heavy">ACTIVER MAINTENANT</button>
+                        <% } else { %>
+                            <div style="background:rgba(16,185,129,0.1);border:2px solid #10b981;border-radius:16px;padding:12px;text-align:center;margin-bottom:10px;">
+                                <i class="bi bi-check-circle-fill text-success me-2"></i><span class="fw-900 text-success" style="font-size:0.85rem;">MINAGE EN COURS</span>
+                            </div>
+                        <% } %>
                         <button onclick="confirmerAnnulation('<%= item.id %>', <%= item.price %>)" class="btn-industrial-heavy-action" style="background:transparent;border:2px solid rgba(239,68,68,0.5);color:#ef4444;font-size:0.7rem;padding:10px;margin-top:8px;box-shadow:none;">
                             <i class="bi bi-x-circle me-1"></i>ANNULER MON ABONNEMENT
                         </button>
@@ -807,7 +813,11 @@
                         <div class="mt-2 text-warning fw-900">Remboursement estimé : <span id="annulRemboursement">0</span> FC</div>
                         <div class="mt-2 text-muted" style="font-size:0.8rem;">Traitement sous <strong>72 heures</strong> par l'admin</div>
                     </div>
-                    <div class="d-flex gap-3 mt-4">
+                    <div class="mt-4 text-start">
+                        <label class="fw-900 text-warning mb-2" style="font-size:0.78rem;"><i class="bi bi-lock-fill me-2"></i>CONFIRMEZ AVEC VOTRE MOT DE PASSE</label>
+                        <input type="password" id="annulPassword" class="form-control bg-dark text-white border-danger rounded-pill px-4 py-3" placeholder="Votre mot de passe..." style="font-weight:700;">
+                    </div>
+                    <div class="d-flex gap-3 mt-3">
                         <button onclick="document.getElementById('annulModal').querySelector('.btn-close-modal').click()" class="btn btn-secondary w-50 py-3 rounded-pill fw-900">NON, GARDER</button>
                         <button onclick="confirmerAnnulationFinal()" class="btn btn-danger w-50 py-3 rounded-pill fw-900">OUI, ANNULER</button>
                     </div>
@@ -915,8 +925,10 @@
             annulModalEl.show();
         }
         function confirmerAnnulationFinal() {
+            const pwd = document.getElementById('annulPassword').value;
+            if(!pwd) { alert('Veuillez entrer votre mot de passe pour confirmer.'); return; }
             annulModalEl.hide();
-            submitHeavyPost('/annuler-abonnement', { pack: annulPack });
+            submitHeavyPost('/annuler-abonnement', { pack: annulPack, password: pwd });
         }
 
     </script>
