@@ -109,7 +109,7 @@ app.use((req, res, next) => {
     `);
 });
 
-/* ==========================================================================
+
 
 /* ── TEMPS RÉEL : SSE + BROADCAST ───────────────────────────────────────── */
 const sseClients = new Map(); // userId => Set of res objects
@@ -120,9 +120,9 @@ const broadcastUpdate = async (userId) => {
         const user = await dbFindOne('users', {id: userId});
         if (!user) return;
         const data = JSON.stringify({ solde: user.solde||0, bonus: user.bonus||0, pack: user.pack, p: progress(user) });
-        clients.forEach(res => { try { res.write('data: ' + data + '
+        clients.forEach(res => { try { res.write('data: ' + data + '\n\n'); } catch(e) {} });
 
-'); } catch(e) {} });
+
     } catch(e) {}
 };
 
@@ -138,9 +138,9 @@ app.get('/stream', authUser, (req,res) => {
     res.setHeader('Content-Type','text/event-stream');
     res.setHeader('Cache-Control','no-cache');
     res.setHeader('Connection','keep-alive');
-    res.write('data: {"type":"connected"}
+    res.write('data: {"type":"connected"}\n\n');
 
-');
+
     const uid = req.session.userId;
     if (!sseClients.has(uid)) sseClients.set(uid, new Set());
     sseClients.get(uid).add(res);
@@ -148,9 +148,9 @@ app.get('/stream', authUser, (req,res) => {
 });
 
 
+/* ==========================================================================
    ROUTES PUBLIQUES
    ========================================================================== */
-app.get('/', (req,res) => req.session.userId ? res.redirect('/dashboard') : res.render('login'));
 
 app.post('/register', async (req,res) => {
     try {
@@ -317,7 +317,7 @@ app.post('/retrait', authUser, async (req,res) => {
             const h = Math.ceil((waitMs-(Date.now()-new Date(user.lastRetrait).getTime()))/3600000);
             return res.send(alertBack('Prochain retrait possible dans '+h+'h. Fréquence : '+waitLabel));
         }
-        await dbUpdate('users',{id:user.id},{:{bonus:-m},:{lastRetrait:new Date()}});
+        await dbUpdate('users',{id:user.id},{$inc:{bonus:-m},$set:{lastRetrait:new Date()}});
         await dbInsert('retraits',{
             username:user.username, phone:user.phone,
             userId:user.id, montant:m, statut:'En attente',
@@ -374,15 +374,15 @@ app.post('/valider-depot', authAdmin, async (req,res) => {
         const tx = await dbFindOne('transactions',{_id:req.body.txId});
         if (!tx) return res.redirect('/admin');
         if (tx.pack === 'CERTIFICATION') {
-            await dbUpdate('users',{id:tx.userId},{:{certified:true,solde:0}});
+            await dbUpdate('users',{id:tx.userId},{$set:{certified:true,solde:0}});
             await addLog('CERTIFIÉ: '+tx.utilisateur);
-            await dbUpdate('transactions',{_id:tx._id},{:{statut:'APPROUVE'}});
+            await dbUpdate('transactions',{_id:tx._id},{$set:{statut:'APPROUVE'}});
             broadcastUpdate(tx.userId);
             return res.redirect('/admin');
         }
         const bonuses = {BRONZE:5000,SILVER:9000,GOLD:40000,DIAMOND:120000};
         /* Solde → 0 + bonus initial + date activation pack */
-        await dbUpdate('users',{id:tx.userId},{:{pack:tx.pack,investDate:new Date(),packActivatedDate:new Date(),solde:0},:{bonus:bonuses[tx.pack]||0}});
+        await dbUpdate('users',{id:tx.userId},{$set:{pack:tx.pack,investDate:new Date(),packActivatedDate:new Date(),solde:0},$inc:{bonus:bonuses[tx.pack]||0}});
         const user = await dbFindOne('users',{id:tx.userId});
         if (user&&user.referredBy) await dbUpdate('users',{id:user.referredBy},{$inc:{bonus:Math.floor(tx.montant*0.10)}});
         await dbUpdate('transactions',{_id:tx._id},{$set:{statut:'APPROUVE'}});
@@ -431,14 +431,16 @@ setInterval(async () => {
     if (!dbConnected) return;
     try {
         const active = await dbFind('users',{pack:{$ne:'Aucun'}});
+        for (const u of active) {
             if (!u.investDate) continue;
             const packStart = u.packActivatedDate ? new Date(u.packActivatedDate) : new Date(u.investDate);
             const daysSince = (Date.now()-packStart.getTime())/(24*3600000);
             if (daysSince > 30) { await addLog('Contrat expiré: '+u.username); continue; }
             if (Date.now()-new Date(u.investDate).getTime()>=86400000) {
-                await dbUpdate('users',{id:u.id},{:{bonus:cfg['daily_'+u.pack]||0},:{investDate:new Date()}});
+                await dbUpdate('users',{id:u.id},{$inc:{bonus:cfg['daily_'+u.pack]||0},$set:{investDate:new Date()}});
                 broadcastUpdate(u.id);
             }
+        }
     } catch(e) { console.error('[CRON]',e.message); }
 }, 30*60*1000);
 
