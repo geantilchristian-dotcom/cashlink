@@ -515,6 +515,15 @@ app.post('/admin/change-password', authAdmin, async (req,res) => {
         res.redirect('/admin?tab=security&ok=1');
     } catch(e) { res.redirect('/admin?tab=security&err=1'); }
 });
+app.get('/api/admin-notifications', authAdmin, async (req,res) => {
+    try {
+        const pending    = await dbFind('transactions',{statut:'EN_ATTENTE'},{createdAt:-1});
+        const pendingRet = await dbFind('retraits',{statut:'En attente'},{createdAt:-1});
+        const pendingAnn = await dbFind('annulations',{statut:'En attente'},{createdAt:-1});
+        res.json({ tid: pending.length, retraits: pendingRet.length, annulations: pendingAnn.length });
+    } catch(e) { res.json({ tid:0, retraits:0, annulations:0 }); }
+});
+
 app.get('/admin/user-activity/:userId', authAdmin, async (req,res) => {
     try {
         const user = await dbFindOne('users',{id:req.params.userId});
