@@ -61,11 +61,14 @@ const dbRemove  = (colName, q, o={})   => o.multi ? col(colName).deleteMany(q)  
 
 /* ── CONFIG ──────────────────────────────────────────────────────────────── */
 let cfg = {
-    brand_name:'CASH LINK', admin_voda:'810000000', admin_airtel:'970000000',
+    brand_name:'CASHLINK', admin_voda:'810000000', admin_airtel:'970000000',
     admin_orange:'890000000', contact_phone:'820000000',
     contact_address:'Gombe, Kinshasa, RDC', contact_email:'support@cashlink.cd',
     puissance_hash:'104.2 TH/s', cover_url:'', main_title:'MINAGE INDUSTRIEL',
     cert_price:30000,
+    hero_title:'MINAGE INDUSTRIEL',
+    hero_subtitle:'Le protocole CASHLINK v28.0 déploie une puissance de calcul décentralisée pour chaque citoyen congolais.',
+    tagline:'', welcome_msg:'', alert_msg:'',
     about_text:'CashLink est le leader du minage numérique décentralisé en RDC.',
     rules_text:'1. Un seul pack par utilisateur.\n2. Parrainage 10% cash.\n3. Retraits 1.000 FC min.',
     price_BRONZE:50000,  daily_BRONZE:5000,
