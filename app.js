@@ -3,6 +3,7 @@
  */
 const express    = require('express');
 const session    = require('express-session');
+const MongoStore = require('connect-mongo');
 const bodyParser = require('body-parser');
 const path       = require('path');
 const { MongoClient } = require('mongodb');
@@ -17,6 +18,12 @@ app.use(session({
     secret: process.env.SESSION_SECRET || 'cashlink_titan_2026',
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI || '',
+        dbName: 'CashlinkDB',
+        collectionName: 'sessions',
+        ttl: 7 * 24 * 60 * 60
+    }),
     cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 }
 }));
 
@@ -97,6 +104,44 @@ app.use((req, res, next) => {
 });
 
 /* ==========================================================================
+
+/* ── TEMPS RÉEL : SSE + BROADCAST ───────────────────────────────────────── */
+const sseClients = new Map(); // userId => Set of res objects
+const broadcastUpdate = async (userId) => {
+    const clients = sseClients.get(userId);
+    if (!clients || clients.size === 0) return;
+    try {
+        const user = await dbFindOne('users', {id: userId});
+        if (!user) return;
+        const data = JSON.stringify({ solde: user.solde||0, bonus: user.bonus||0, pack: user.pack, p: progress(user) });
+        clients.forEach(res => { try { res.write('data: ' + data + '
+
+'); } catch(e) {} });
+    } catch(e) {}
+};
+
+app.get('/api/me', authUser, async (req,res) => {
+    try {
+        const user = await dbFindOne('users',{id:req.session.userId});
+        if (!user) return res.json({error:'not found'});
+        res.json({ solde:user.solde||0, bonus:user.bonus||0, pack:user.pack, p:progress(user), msRemaining:remainMs(user) });
+    } catch(e) { res.json({error:e.message}); }
+});
+
+app.get('/stream', authUser, (req,res) => {
+    res.setHeader('Content-Type','text/event-stream');
+    res.setHeader('Cache-Control','no-cache');
+    res.setHeader('Connection','keep-alive');
+    res.write('data: {"type":"connected"}
+
+');
+    const uid = req.session.userId;
+    if (!sseClients.has(uid)) sseClients.set(uid, new Set());
+    sseClients.get(uid).add(res);
+    req.on('close', () => { const s = sseClients.get(uid); if(s) s.delete(res); });
+});
+
+
    ROUTES PUBLIQUES
    ========================================================================== */
 app.get('/', (req,res) => req.session.userId ? res.redirect('/dashboard') : res.render('login'));
@@ -233,10 +278,14 @@ app.post('/confirmer-envoi', authUser, async (req,res) => {
 app.post('/activer-gain', authUser, async (req,res) => {
     try {
         const user = await dbFindOne('users',{id:req.session.userId});
-        if (user.pack!=='Aucun' && progress(user)>=100) {
+        if (user.pack!=='Aucun') {
             const gain = cfg['daily_'+user.pack]||0;
-            await dbUpdate('users',{id:user.id},{$inc:{bonus:gain},$set:{investDate:new Date()}});
+            const upd = { $set:{investDate:new Date(),solde:0} };
+            if (progress(user)>=100) upd['$inc'] = {bonus:gain};
+            await dbUpdate('users',{id:user.id},upd);
+            await addLog('Gain activé: '+user.username+' | '+user.pack);
         }
+        broadcastUpdate(req.session.userId);
         res.redirect('/dashboard');
     } catch(e) { res.redirect('/dashboard'); }
 });
@@ -317,6 +366,7 @@ app.post('/valider-depot', authAdmin, async (req,res) => {
         if (user&&user.referredBy) await dbUpdate('users',{id:user.referredBy},{$inc:{bonus:Math.floor(tx.montant*0.10)}});
         await dbUpdate('transactions',{_id:tx._id},{$set:{statut:'APPROUVE'}});
         await addLog('VALIDÉ: '+tx.utilisateur+' | '+tx.pack+' | '+tx.montant+' FC');
+        broadcastUpdate(tx.userId);
         res.redirect('/admin');
     } catch(e) { console.error('[VALIDER]',e.message); res.redirect('/admin'); }
 });
