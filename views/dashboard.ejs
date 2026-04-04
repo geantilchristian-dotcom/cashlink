@@ -848,19 +848,103 @@
         <p class="small fw-bold text-uppercase fs-4">Protocole Cloud Mining v28.0 | RDC 2026</p>
     </footer>
 
+        <!-- ═══════════════ MODAL PAIEMENT REDESIGNÉ ═══════════════ -->
     <div class="modal fade" id="payHeavyModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered mx-3">
-            <div class="modal-content modal-titan-industrial-heavy text-dark shadow-lg">
-                <div class="modal-body p-5 text-center">
-                    <h2 class="fw-900 mb-5 fs-1">RECHARGE DU COMPTE</h2>
-                    <div class="payment-titan-industrial-heavy-card text-start"><small class="text-primary fw-900 fs-5">VODACOM (M-PESA)</small><div class="fw-900 fs-2"><%= content.admin_voda %></div></div>
-                    <div class="payment-titan-industrial-heavy-card text-start"><small class="text-danger fw-900 fs-5">AIRTEL MONEY</small><div class="fw-900 fs-2 text-danger"><%= content.admin_airtel %></div></div>
-                    <div class="payment-titan-industrial-heavy-card text-start"><small class="text-warning fw-900 fs-5">ORANGE MONEY</small><div class="fw-900 fs-2 text-warning"><%= content.admin_orange %></div></div>
-                    <div class="alert alert-danger rounded-5 fw-900 p-5 my-5 fs-4">SAISISSEZ LE TID SMS APRÈS LE TRANSFERT POUR VALIDATION.</div>
-                    <button onclick="commitHeavyTID()" class="btn btn-primary w-100 py-4 rounded-pill fw-900 shadow-lg fs-2">J'AI ENVOYÉ LE PAIEMENT</button>
+        <div class="modal-dialog modal-dialog-centered" style="max-width:540px;margin:12px auto;">
+            <div class="modal-content border-0" style="background:#0f1629;border-radius:32px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.9);">
+
+                <!-- Header -->
+                <div style="background:linear-gradient(135deg,#0033cc,#00d9ff);padding:28px 30px 20px;position:relative;">
+                    <button type="button" data-bs-dismiss="modal" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.15);border:none;color:#fff;width:34px;height:34px;border-radius:50%;font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;">&#x2715;</button>
+                    <div style="display:flex;align-items:center;gap:14px;">
+                        <div style="background:rgba(255,255,255,0.2);width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i class="bi bi-credit-card-2-front-fill" style="font-size:1.6rem;color:#fff;"></i>
+                        </div>
+                        <div>
+                            <div style="color:rgba(255,255,255,0.7);font-size:0.7rem;font-weight:800;letter-spacing:2px;text-transform:uppercase;">RECHARGE DU COMPTE</div>
+                            <div id="modalPackTitle" style="color:#fff;font-weight:900;font-size:1.3rem;letter-spacing:-0.5px;line-height:1.2;">Pack</div>
+                        </div>
+                    </div>
+                    <div style="background:rgba(0,0,0,0.25);border-radius:12px;padding:10px 16px;margin-top:16px;display:flex;justify-content:space-between;align-items:center;">
+                        <span style="color:rgba(255,255,255,0.7);font-size:0.72rem;font-weight:700;">MONTANT A ENVOYER</span>
+                        <span id="modalPriceDisplay" style="color:#fff;font-weight:900;font-size:1.4rem;font-family:'Space Grotesk',sans-serif;">0 FC</span>
+                    </div>
+                </div>
+
+                <div style="padding:24px 26px;">
+                    <!-- ETAPE 1 : Choisir operateur -->
+                    <div id="payStep1">
+                        <div style="font-size:0.7rem;font-weight:900;color:#64748b;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;">
+                            <span style="display:inline-flex;align-items:center;gap:6px;background:#1e293b;padding:4px 12px;border-radius:20px;">
+                                <span style="background:#3b82f6;color:#fff;width:18px;height:18px;border-radius:50%;font-size:0.6rem;display:inline-flex;align-items:center;justify-content:center;font-weight:900;">1</span>
+                                CHOISISSEZ UN OPERATEUR ET ENVOYEZ
+                            </span>
+                        </div>
+
+                        <div class="pay-op-card" onclick="selectOperator(this,'+243 <%= content.admin_voda %>','VODACOM')" style="background:#1e293b;border:2px solid rgba(59,130,246,0.3);border-radius:18px;padding:16px 20px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:0.2s;">
+                            <div style="width:44px;height:44px;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bi bi-phone-fill" style="color:#fff;font-size:1.1rem;"></i></div>
+                            <div style="flex:1;"><div style="font-weight:900;font-size:0.7rem;color:#60a5fa;letter-spacing:1px;text-transform:uppercase;">VODACOM M-PESA</div><div style="font-weight:900;font-size:1.3rem;color:#fff;letter-spacing:-0.5px;">+243 <%= content.admin_voda %></div></div>
+                            <div style="background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);color:#60a5fa;border-radius:10px;padding:5px 10px;font-size:0.65rem;font-weight:900;letter-spacing:1px;flex-shrink:0;">COPIER</div>
+                        </div>
+
+                        <div class="pay-op-card" onclick="selectOperator(this,'+243 <%= content.admin_airtel %>','AIRTEL')" style="background:#1e293b;border:2px solid rgba(239,68,68,0.3);border-radius:18px;padding:16px 20px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:0.2s;">
+                            <div style="width:44px;height:44px;background:linear-gradient(135deg,#b91c1c,#ef4444);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bi bi-phone-fill" style="color:#fff;font-size:1.1rem;"></i></div>
+                            <div style="flex:1;"><div style="font-weight:900;font-size:0.7rem;color:#f87171;letter-spacing:1px;text-transform:uppercase;">AIRTEL MONEY</div><div style="font-weight:900;font-size:1.3rem;color:#fff;letter-spacing:-0.5px;">+243 <%= content.admin_airtel %></div></div>
+                            <div style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#f87171;border-radius:10px;padding:5px 10px;font-size:0.65rem;font-weight:900;letter-spacing:1px;flex-shrink:0;">COPIER</div>
+                        </div>
+
+                        <div class="pay-op-card" onclick="selectOperator(this,'+243 <%= content.admin_orange %>','ORANGE')" style="background:#1e293b;border:2px solid rgba(251,146,60,0.3);border-radius:18px;padding:16px 20px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:0.2s;">
+                            <div style="width:44px;height:44px;background:linear-gradient(135deg,#c2410c,#fb923c);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i class="bi bi-phone-fill" style="color:#fff;font-size:1.1rem;"></i></div>
+                            <div style="flex:1;"><div style="font-weight:900;font-size:0.7rem;color:#fb923c;letter-spacing:1px;text-transform:uppercase;">ORANGE MONEY</div><div style="font-weight:900;font-size:1.3rem;color:#fff;letter-spacing:-0.5px;">+243 <%= content.admin_orange %></div></div>
+                            <div style="background:rgba(251,146,60,0.1);border:1px solid rgba(251,146,60,0.3);color:#fb923c;border-radius:10px;padding:5px 10px;font-size:0.65rem;font-weight:900;letter-spacing:1px;flex-shrink:0;">COPIER</div>
+                        </div>
+
+                        <div id="copiedBadge" style="display:none;background:rgba(16,185,129,0.1);border:1px solid #10b981;border-radius:12px;padding:10px 14px;text-align:center;margin-top:8px;">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i><span id="copiedNumText" style="color:#10b981;font-weight:900;font-size:0.85rem;"></span>
+                        </div>
+                        <button onclick="goToTIDStep()" style="background:linear-gradient(135deg,#0033cc,#00d9ff);color:#fff;border:none;width:100%;padding:16px;border-radius:16px;font-weight:900;font-size:1rem;text-transform:uppercase;letter-spacing:1px;margin-top:16px;cursor:pointer;">
+                            J'AI ENVOYE &rarr; SAISIR LE TID
+                        </button>
+                    </div>
+
+                    <!-- ETAPE 2 : Saisir le TID -->
+                    <div id="payStep2" style="display:none;">
+                        <div style="font-size:0.7rem;font-weight:900;color:#64748b;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;">
+                            <span style="display:inline-flex;align-items:center;gap:6px;background:#1e293b;padding:4px 12px;border-radius:20px;">
+                                <span style="background:#10b981;color:#fff;width:18px;height:18px;border-radius:50%;font-size:0.6rem;display:inline-flex;align-items:center;justify-content:center;font-weight:900;">2</span>
+                                SAISISSEZ VOTRE REFERENCE TID
+                            </span>
+                        </div>
+                        <div style="background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(251,146,60,0.05));border:2px solid rgba(245,158,11,0.4);border-radius:16px;padding:14px 18px;margin-bottom:18px;">
+                            <div style="display:flex;align-items:flex-start;gap:12px;">
+                                <i class="bi bi-exclamation-triangle-fill" style="color:#f59e0b;font-size:1.3rem;margin-top:2px;flex-shrink:0;"></i>
+                                <div>
+                                    <div style="color:#f59e0b;font-weight:900;font-size:0.85rem;margin-bottom:6px;">RAPPEL IMPORTANT</div>
+                                    <div style="color:#cbd5e1;font-size:0.8rem;font-weight:700;line-height:1.6;">
+                                        Le numero de reference TID doit commencer par <span style="background:#f59e0b;color:#000;padding:1px 8px;border-radius:6px;font-weight:900;">TID:</span> suivi des chiffres.
+                                        <br>Exemple : <code style="background:#1e293b;color:#00d9ff;padding:2px 8px;border-radius:6px;font-size:0.8rem;">TID: 12345678</code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <label style="font-size:0.7rem;font-weight:900;color:#94a3b8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;display:block;">REFERENCE TID (du SMS de confirmation)</label>
+                        <input type="text" id="tidInputHeavy" placeholder="TID: 12345678" autocomplete="off"
+                            style="background:#1e293b;border:2px solid rgba(0,217,255,0.3);border-radius:14px;padding:16px 18px;color:#fff;font-weight:900;font-size:1.1rem;width:100%;font-family:monospace;letter-spacing:1px;margin-bottom:8px;"
+                            oninput="validateTIDInput(this)"
+                            onfocus="this.style.borderColor='#00d9ff';this.style.boxShadow='0 0 0 3px rgba(0,217,255,0.15)';"
+                            onblur="this.style.boxShadow='';">
+                        <div id="tidStatus" style="font-size:0.72rem;font-weight:800;margin-bottom:14px;padding:0 4px;min-height:18px;"></div>
+                        <div style="display:flex;gap:10px;">
+                            <button onclick="goBackStep1()" style="background:#1e293b;color:#94a3b8;border:1px solid #334155;flex:0 0 auto;padding:14px 20px;border-radius:14px;font-weight:900;font-size:0.85rem;cursor:pointer;">&#8592; RETOUR</button>
+                            <button onclick="commitHeavyTID()" id="btnSubmitTID" style="background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;flex:1;padding:14px;border-radius:14px;font-weight:900;font-size:1rem;text-transform:uppercase;letter-spacing:1px;cursor:pointer;opacity:0.45;pointer-events:none;">
+                                <i class="bi bi-check2-circle me-2"></i>VALIDER MON PAIEMENT
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+    </div>
 
     <div class="modal fade" id="annulModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered mx-3">
@@ -911,14 +995,66 @@
             document.execCommand('copy'); triggerHeavyToast("Lien de parrainage copié avec succès !");
         }
 
-        function openPaymentModal(id, price) { heavyPack = id; heavyPrice = price; heavyModal.show(); }
+        function openPaymentModal(id, price) {
+            heavyPack = id; heavyPrice = price;
+            document.getElementById('modalPackTitle').textContent = 'Pack ' + id;
+            document.getElementById('modalPriceDisplay').textContent = price.toLocaleString('fr-FR') + ' FC';
+            document.getElementById('payStep1').style.display = 'block';
+            document.getElementById('payStep2').style.display = 'none';
+            document.getElementById('tidInputHeavy').value = '';
+            document.getElementById('tidStatus').textContent = '';
+            document.getElementById('btnSubmitTID').style.opacity = '0.45';
+            document.getElementById('btnSubmitTID').style.pointerEvents = 'none';
+            document.getElementById('copiedBadge').style.display = 'none';
+            document.querySelectorAll('.pay-op-card').forEach(c => { c.style.transform=''; c.style.opacity='1'; });
+            heavyModal.show();
+        }
+
+        function selectOperator(el, number, name) {
+            try { navigator.clipboard.writeText(number); } catch(e) {}
+            document.querySelectorAll('.pay-op-card').forEach(c => { c.style.transform=''; c.style.opacity='0.5'; });
+            el.style.transform = 'scale(1.02)'; el.style.opacity = '1';
+            document.getElementById('copiedNumText').textContent = number + ' copié ! (' + name + ')';
+            document.getElementById('copiedBadge').style.display = 'block';
+        }
+
+        function goToTIDStep() {
+            document.getElementById('payStep1').style.display = 'none';
+            document.getElementById('payStep2').style.display = 'block';
+            setTimeout(() => document.getElementById('tidInputHeavy').focus(), 100);
+        }
+
+        function goBackStep1() {
+            document.getElementById('payStep2').style.display = 'none';
+            document.getElementById('payStep1').style.display = 'block';
+        }
+
+        function validateTIDInput(el) {
+            const val = el.value.trim();
+            const status = document.getElementById('tidStatus');
+            const btn = document.getElementById('btnSubmitTID');
+            if (!val) { status.textContent = ''; btn.style.opacity='0.45'; btn.style.pointerEvents='none'; return; }
+            const ok = /^TID\s*:/i.test(val) && val.length >= 6;
+            if (ok) {
+                status.textContent = '\u2713 Format TID valide'; status.style.color = '#10b981';
+                el.style.borderColor = '#10b981';
+                btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
+            } else {
+                status.textContent = '\u26a0 Le TID doit commencer par "TID:" (ex: TID: 12345678)'; status.style.color = '#f59e0b';
+                el.style.borderColor = '#f59e0b';
+                btn.style.opacity = '0.45'; btn.style.pointerEvents = 'none';
+            }
+        }
 
         function commitHeavyTID() {
+            const tid = document.getElementById('tidInputHeavy').value.trim();
+            if(!tid || !/^TID\s*:/i.test(tid) || tid.length < 6) {
+                document.getElementById('tidStatus').textContent = '\u26a0 Saisissez un TID valide commençant par "TID:"';
+                document.getElementById('tidStatus').style.color = '#ef4444';
+                return;
+            }
             heavyModal.hide();
-            const tid = prompt("Veuillez saisir la référence (TID) SMS :");
-            if(tid && tid.length > 5) submitHeavyPost('/souscrire-pack', { packName: heavyPack, prix: heavyPrice, reference: tid });
-            else alert("ID invalide.");
-        }
+            submitHeavyPost('/souscrire-pack', { packName: heavyPack, prix: heavyPrice, reference: tid });       }
 
         function handleWithdrawHeavy() {
             const m = prompt("Montant du retrait (Min 1.000 FC) :");
