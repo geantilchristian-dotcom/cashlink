@@ -106,6 +106,7 @@
             <div class="nav-item-custom" onclick="openTab('clients', this)"><i class="bi bi-people"></i> Gestion Membres</div>
             <div class="nav-item-custom" onclick="openTab('interface', this)"><i class="bi bi-palette"></i> Design & Pubs</div>
             <div class="nav-item-custom" onclick="openTab('packs', this)"><i class="bi bi-box-seam"></i> Config Machines</div>
+            <div class="nav-item-custom" onclick="openTab('messages', this)"><i class="bi bi-chat-dots"></i> Messages Clients</div>
             <div class="nav-item-custom" onclick="openTab('retraits', this)"><i class="bi bi-cash-coin"></i> Retraits <% if(retraits && retraits.length > 0){ %><span class="badge bg-warning text-dark ms-auto"><%= retraits.length %></span><% } %></div>
             <div class="nav-item-custom" onclick="openTab('logs', this)"><i class="bi bi-journal-text"></i> Journal Activité</div>
             <div class="nav-item-custom" onclick="openTab('security', this)"><i class="bi bi-lock"></i> Accès & Sécurité</div>
@@ -242,6 +243,55 @@
                         <% }) %>
                     </div>
                     <button type="submit" class="btn-update mt-5">METTRE À JOUR LES PACKS</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="messages" class="section-panel">
+            <div class="glass-card">
+                <h4 class="fw-900 text-info mb-4"><i class="bi bi-chat-quote-fill me-3"></i>Messages &amp; Infos Personnalisées</h4>
+                <form action="/admin/update-content" method="POST">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">MESSAGE D'ACCUEIL (affiché sur le site)</label>
+                        <textarea name="welcome_msg" class="form-control bg-dark text-white border-secondary" rows="4" style="border-radius:12px;" placeholder="Ex: Bienvenue sur CashLink..."><%= content.welcome_msg || '' %></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">MESSAGE D'ALERTE (barre d'info en rouge)</label>
+                        <textarea name="alert_msg" class="form-control bg-dark text-white border-secondary" rows="4" style="border-radius:12px;" placeholder="Ex: Maintenance prévue le..."><%= content.alert_msg || '' %></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">NUMÉRO WHATSAPP SUPPORT</label>
+                        <input type="text" name="contact_phone" class="form-control bg-dark text-white border-secondary" style="border-radius:12px;" value="<%= content.contact_phone || '' %>">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">ADRESSE / LOCALISATION</label>
+                        <input type="text" name="contact_address" class="form-control bg-dark text-white border-secondary" style="border-radius:12px;" value="<%= content.contact_address || '' %>">
+                    </div>
+                    <div class="col-12">
+                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">TEXTE DE PRÉSENTATION (À PROPOS)</label>
+                        <textarea name="about_text" class="form-control bg-dark text-white border-secondary" rows="5" style="border-radius:12px;"><%= content.about_text || '' %></textarea>
+                    </div>
+                    <div class="col-12">
+                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">RÈGLES DE RETRAIT (texte complet)</label>
+                        <textarea name="rules_text" class="form-control bg-dark text-white border-secondary" rows="5" style="border-radius:12px;"><%= content.rules_text || '' %></textarea>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">PRIX CERTIFICATION (FC)</label>
+                        <input type="number" name="cert_price" class="form-control bg-dark text-white border-secondary" style="border-radius:12px;" value="<%= content.cert_price || 30000 %>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">NOM DU SITE</label>
+                        <input type="text" name="site_name" class="form-control bg-dark text-white border-secondary" style="border-radius:12px;" value="<%= content.site_name || 'CashLink' %>">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">SLOGAN / TAGLINE</label>
+                        <input type="text" name="tagline" class="form-control bg-dark text-white border-secondary" style="border-radius:12px;" value="<%= content.tagline || '' %>">
+                    </div>
+                    <div class="col-12 text-end">
+                        <button type="submit" class="btn btn-info fw-900 px-5 py-3 rounded-pill"><i class="bi bi-save me-2"></i>ENREGISTRER LES MODIFICATIONS</button>
+                    </div>
+                </div>
                 </form>
             </div>
         </div>
