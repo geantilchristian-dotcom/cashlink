@@ -106,6 +106,7 @@
             <div class="nav-item-custom" onclick="openTab('clients', this)"><i class="bi bi-people"></i> Gestion Membres</div>
             <div class="nav-item-custom" onclick="openTab('interface', this)"><i class="bi bi-palette"></i> Design & Pubs</div>
             <div class="nav-item-custom" onclick="openTab('packs', this)"><i class="bi bi-box-seam"></i> Config Machines</div>
+            <div class="nav-item-custom" onclick="openTab('retraits', this)"><i class="bi bi-cash-coin"></i> Retraits <% if(retraits && retraits.length > 0){ %><span class="badge bg-warning text-dark ms-auto"><%= retraits.length %></span><% } %></div>
             <div class="nav-item-custom" onclick="openTab('logs', this)"><i class="bi bi-journal-text"></i> Journal Activité</div>
             <div class="nav-item-custom" onclick="openTab('security', this)"><i class="bi bi-lock"></i> Accès & Sécurité</div>
         </div>
@@ -154,7 +155,7 @@
                             <tr><th>Client</th><th>Opération</th><th>Référence / TID</th><th>Montant</th><th>Action</th></tr>
                         </thead>
                         <tbody>
-                            <% (typeof transactions !== 'undefined' ? transactions : []).filter(t => t.statut === 'En attente').forEach(tx => { %>
+                            <% (typeof transactions !== 'undefined' ? transactions : []).filter(t => t.statut === "EN_ATTENTE").forEach(tx => { %>
                             <tr>
                                 <td><b><%= tx.utilisateur %></b><br><small class="opacity-50"><%= tx.phone %></small></td>
                                 <td><span class="badge bg-info text-dark"><%= tx.type %></span></td>
@@ -228,10 +229,10 @@
                 <h4 class="fw-900 mb-4 text-info">Config Machines</h4>
                 <form action="/admin/update-packs-config" method="POST">
                     <div class="row g-4">
-                        <% ['bronze', 'silver', 'gold', 'diamond'].forEach(p => { %>
+                        <% ['BRONZE', 'SILVER', 'GOLD', 'DIAMOND'].forEach(p => { %>
                         <div class="col-md-6">
                             <div class="p-4 border border-secondary rounded-4" style="background: rgba(0,0,0,0.2);">
-                                <h6 class="fw-900 text-uppercase mb-3">Pack <%= p %></h6>
+                                <h6 class="fw-900 text-uppercase mb-3">Pack <%= p.charAt(0)+p.slice(1).toLowerCase() %></h6>
                                 <div class="row">
                                     <div class="col-6"><label class="admin-label">Achat (FC)</label><input type="number" name="price_<%= p %>" class="admin-input" value="<%= (typeof content !== 'undefined' ? content['price_'+p] : 0) %>"></div>
                                     <div class="col-6"><label class="admin-label">Gain / 24h (FC)</label><input type="number" name="daily_<%= p %>" class="admin-input" value="<%= (typeof content !== 'undefined' ? content['daily_'+p] : 0) %>"></div>
@@ -245,13 +246,67 @@
             </div>
         </div>
 
+        <div id="retraits" class="section-panel">
+            <div class="glass-card">
+                <h4 class="fw-900 text-warning mb-4">Demandes de Retrait en attente</h4>
+                <div class="table-responsive">
+                    <table class="premium-table">
+                        <thead>
+                            <tr><th>Membre</th><th>Téléphone</th><th>Montant</th><th>Date</th><th>Action</th></tr>
+                        </thead>
+                        <tbody>
+                            <% (typeof retraits !== 'undefined' ? retraits : []).forEach(ret => { %>
+                            <tr>
+                                <td><b><%= ret.username %></b></td>
+                                <td><%= ret.phone %></td>
+                                <td class="text-warning fw-900"><%= (ret.montant || 0).toLocaleString() %> FC</td>
+                                <td class="small opacity-50"><%= ret.date %></td>
+                                <td>
+                                    <form action="/admin/approve-retrait" method="POST">
+                                        <input type="hidden" name="retId" value="<%= ret._id %>">
+                                        <button class="btn btn-warning rounded-pill px-3 fw-bold text-dark btn-sm">APPROUVER</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <% }) %>
+                            <% if(!retraits || retraits.length === 0) { %>
+                            <tr><td colspan="5" class="text-center py-4 opacity-50">Aucune demande en attente</td></tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div id="security" class="section-panel">
+            <div class="glass-card">
+                <h4 class="fw-900 text-info mb-4">Accès &amp; Sécurité</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="p-4" style="background:rgba(255,255,255,0.03);border-radius:20px;border:1px solid rgba(255,255,255,0.08);">
+                            <h6 class="fw-800 text-warning mb-3">Accès Administrateur</h6>
+                            <p class="small opacity-50">Mot de passe admin défini via variable d'environnement <code>ADMIN_PASS</code>.</p>
+                            <p class="small opacity-50 mb-0">Chemin de connexion : <code>/admin-login</code></p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-4" style="background:rgba(255,255,255,0.03);border-radius:20px;border:1px solid rgba(255,255,255,0.08);">
+                            <h6 class="fw-800 text-info mb-3">Base de données</h6>
+                            <p class="small opacity-50">Stockage dans <code>/tmp/cashlink-data</code>. Les données sont effacées à chaque redémarrage du serveur.</p>
+                            <a href="/admin-logout" class="btn btn-sm btn-outline-danger mt-2">Déconnexion Admin</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="logs" class="section-panel">
             <div class="glass-card">
                 <h4 class="fw-900 mb-4">Journal d'Activité</h4>
                 <div class="table-responsive">
                     <table class="premium-table">
                         <tbody>
-                            <% (typeof messages !== 'undefined' ? messages : []).forEach(log => { %>
+                            <% (typeof logs !== 'undefined' ? logs : []).forEach(log => { %>
                             <tr><td class="small opacity-50"><%= log.date %></td><td class="text-white small fw-bold"><%= log.text %></td></tr>
                             <% }) %>
                         </tbody>
@@ -270,7 +325,17 @@
             btn.classList.add('active');
         }
         function previewImg() { document.getElementById('preview').src = document.getElementById('cover_input').value; }
-        function deleteUser(id) { if(confirm("Supprimer cet utilisateur ?")) { /* fetch... */ } }
+        function deleteUser(id) {
+            if(confirm('Supprimer cet utilisateur définitivement ?')) {
+                fetch('/admin/delete-user/' + id, { method: 'DELETE' })
+                    .then(r => r.json())
+                    .then(d => {
+                        if(d.ok) { const row = document.getElementById('row-' + id); if(row) row.remove(); }
+                        else { alert('Erreur: ' + d.error); }
+                    })
+                    .catch(() => alert('Erreur réseau.'));
+            }
+        }
     </script>
 </body>
 </html>
