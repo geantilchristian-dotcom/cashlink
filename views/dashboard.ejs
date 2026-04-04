@@ -487,8 +487,6 @@
     <div class="referral-industrial-container animate__animated animate__fadeInUp">
         <h3 class="ref-title-industrial">Programme de Parrainage Elite</h3>
         <%
-        const refRates = {"Aucun":"5%","BRONZE":"5%","SILVER":"10%","GOLD":"15%","DIAMOND":"20%"};
-        const myRate = refRates[user.pack] || "5%";
         const nextMilestone = Math.ceil((refCount + 1) / 100) * 100;
         const progressMilestone = refCount % 100;
         %>
@@ -501,8 +499,8 @@
             </div>
             <div class="col-6 col-md-3">
                 <div style="background:rgba(255,255,255,0.08);border-radius:16px;padding:16px;text-align:center;">
-                    <div class="fw-900 text-warning fs-2"><%= myRate %></div>
-                    <div style="font-size:0.7rem;color:#94a3b8;font-weight:800;">VOTRE TAUX (pack <%= user.pack %>)</div>
+                    <div class="fw-900 text-warning fs-2">10%</div>
+                    <div style="font-size:0.7rem;color:#94a3b8;font-weight:800;">COMMISSION PAR FILLEUL</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
@@ -520,12 +518,8 @@
         </div>
         <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:0.82rem;color:#cbd5e1;">
             <i class="bi bi-info-circle-fill text-info me-2"></i>
-            <% if(user.pack === "Aucun" || !user.pack) { %>
-            Achetez un pack pour augmenter votre taux : <strong class="text-warning">SILVER=10% · GOLD=15% · DIAMOND=20%</strong>
-            <% } else { %>
-            Vous gagnez <strong class="text-success"><%= myRate %></strong> sur chaque investissement de vos filleuls — retirable directement.<br>
-            Atteignez <strong class="text-warning"><%= next+100 FC pour 100 filleuls actifs FC</strong> !
-            <% } %>
+            Chaque ami qui investit via votre lien vous rapporte <strong class="text-success">10% de son pack</strong> — retirable directement.<br>
+            Atteignez <strong class="text-warning"><%= nextMilestone %> filleuls</strong> pour gagner <strong class="text-warning">+100.000 FC</strong> supplémentaires !
         </div>
         <% if(progressMilestone > 0) { %>
         <div style="margin-bottom:16px;">
