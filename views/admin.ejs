@@ -109,6 +109,7 @@
             <div class="nav-item-custom" onclick="openTab('messages', this)"><i class="bi bi-chat-dots"></i> Messages Clients</div>
             <div class="nav-item-custom" onclick="openTab('retraits', this)"><i class="bi bi-cash-coin"></i> Retraits <% if(retraits && retraits.length > 0){ %><span class="badge bg-warning text-dark ms-auto"><%= retraits.length %></span><% } %></div>
             <div class="nav-item-custom" onclick="openTab('logs', this)"><i class="bi bi-journal-text"></i> Journal Activité</div>
+            <div class="nav-item-custom" onclick="openTab('annulations', this)"><i class="bi bi-x-octagon"></i> Annulations</div>
             <div class="nav-item-custom" onclick="openTab('security', this)"><i class="bi bi-lock"></i> Accès & Sécurité</div>
         </div>
 
@@ -363,6 +364,43 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div id="annulations" class="section-panel">
+            <div class="glass-card">
+                <h4 class="fw-900 text-danger mb-4"><i class="bi bi-x-octagon-fill me-3"></i>Demandes d'Annulation d'Abonnement</h4>
+                <% if(!annulations || annulations.length === 0) { %>
+                    <div class="text-center text-muted py-5"><i class="bi bi-check-circle-fill text-success fs-1"></i><br>Aucune demande d'annulation en attente</div>
+                <% } else { %>
+                <div class="table-responsive">
+                    <table class="premium-table">
+                        <thead><tr>
+                            <th>CLIENT</th><th>TÉLÉPHONE</th><th>PACK</th><th>INVESTISSEMENT</th><th>REMBOURSEMENT (50%)</th><th>DATE</th><th>ACTION</th>
+                        </tr></thead>
+                        <tbody>
+                        <% annulations.forEach(a => { %>
+                        <tr>
+                            <td class="fw-900"><%= a.username %></td>
+                            <td><%= a.phone %></td>
+                            <td><span style="font-weight:900;color:#ef4444;"><%= a.pack %></span></td>
+                            <td class="fw-900"><%= (a.prixPack||0).toLocaleString() %> FC</td>
+                            <td class="fw-900 text-warning"><%= (a.remboursement||0).toLocaleString() %> FC</td>
+                            <td style="font-size:0.8rem;"><%= a.date %></td>
+                            <td>
+                                <form action="/admin/process-annulation" method="POST" style="display:inline;">
+                                    <input type="hidden" name="annId" value="<%= a._id %>">
+                                    <button type="submit" class="btn btn-danger btn-sm fw-900" onclick="return confirm('Confirmer le remboursement de '+<%= a.remboursement %>+' FC et annuler le pack ?')">
+                                        <i class="bi bi-check-lg me-1"></i>REMBOURSER & ANNULER
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                <% } %>
             </div>
         </div>
 
