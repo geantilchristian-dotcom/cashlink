@@ -17,6 +17,8 @@
             --bg-dark: #000510;
         }
 
+        * { box-sizing: border-box; }
+
         body {
             background-color: var(--bg-dark);
             background-image: 
@@ -24,17 +26,25 @@
                 linear-gradient(90deg, rgba(0, 217, 255, 0.05) 1px, transparent 1px);
             background-size: 30px 30px;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-            margin: 0; color: white; overflow: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            color: white;
+            padding: 20px;
         }
 
         .admin-login-card {
-            width: 100%; max-width: 400px;
+            width: 100%;
+            max-width: 420px;
             background: rgba(0, 12, 36, 0.95);
             border: 2px solid var(--admin-neon);
-            border-radius: 30px; padding: 45px;
+            border-radius: 30px;
+            padding: 45px;
             box-shadow: 0 0 50px rgba(0, 217, 255, 0.2);
-            position: relative; z-index: 10;
+            position: relative;
+            z-index: 10;
         }
 
         .admin-login-card::before {
@@ -43,6 +53,7 @@
             background: var(--admin-neon); color: black;
             padding: 2px 15px; font-size: 0.65rem; font-weight: 900;
             border-radius: 5px; letter-spacing: 2px;
+            white-space: nowrap;
         }
 
         .admin-brand-icon {
@@ -50,6 +61,7 @@
             color: black; border-radius: 20px; display: flex;
             align-items: center; justify-content: center; margin: 0 auto 30px;
             box-shadow: 0 0 30px var(--admin-neon);
+            flex-shrink: 0;
         }
 
         .admin-label {
@@ -67,24 +79,44 @@
         .admin-input-box input {
             background: transparent; border: none; color: white; width: 100%;
             font-weight: 700; padding-left: 10px; font-size: 1rem;
+            outline: none; min-width: 0;
         }
 
         .btn-admin-login {
             background: var(--admin-neon); color: black; border: none;
             width: 100%; padding: 18px; border-radius: 15px;
             font-weight: 900; text-transform: uppercase; letter-spacing: 1px;
-            transition: 0.3s; margin-top: 10px;
+            transition: 0.3s; margin-top: 10px; cursor: pointer;
+            font-size: 1rem;
         }
         .btn-admin-login:hover { background: white; transform: scale(1.02); }
 
         .scan-line {
-            position: absolute; width: 100%; height: 2px;
+            position: fixed; width: 100%; height: 2px;
             background: var(--admin-neon); opacity: 0.3;
             top: 0; left: 0; animation: scan 4s linear infinite;
+            pointer-events: none;
         }
         @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
 
         .error-msg { color: var(--admin-red); font-size: 0.75rem; font-weight: 800; text-align: center; margin-bottom: 20px; }
+
+        /* ── MOBILE ── */
+        @media (max-width: 480px) {
+            body { padding: 16px; align-items: flex-start; padding-top: 40px; }
+            .admin-login-card { padding: 32px 20px; border-radius: 22px; }
+            .admin-brand-icon { width: 55px; height: 55px; border-radius: 16px; margin-bottom: 20px; }
+            .admin-brand-icon i { font-size: 1.5rem !important; }
+            h4.fw-900 { font-size: 1.1rem !important; }
+            .admin-input-box { padding: 12px; border-radius: 12px; }
+            .admin-input-box input { font-size: 0.9rem; }
+            .btn-admin-login { padding: 14px; font-size: 0.85rem; letter-spacing: 0.5px; border-radius: 12px; }
+        }
+
+        @media (max-width: 360px) {
+            .admin-login-card { padding: 24px 14px; border-radius: 18px; }
+            .admin-brand-icon { width: 48px; height: 48px; }
+        }
     </style>
 </head>
 <body>
@@ -96,9 +128,9 @@
             <i class="bi bi-cpu-fill fs-1"></i>
         </div>
 
-        <div class="text-center mb-5">
+        <div class="text-center mb-4">
             <h4 class="fw-900 mb-1">COMMAND CENTER</h4>
-            <small class="opacity-50 fw-bold">CASH LINK v5.5</small>
+            <small class="opacity-50 fw-bold">CASHLINK v5.5</small>
         </div>
 
         <% if(locals.error) { %>
@@ -108,19 +140,20 @@
         <% } %>
 
         <form action="/admin-login" method="POST">
-            </div>
             <label class="admin-label">Clé de Cryptage (Password)</label>
             <div class="admin-input-box">
                 <i class="bi bi-key-fill text-info"></i>
                 <input type="password" name="password" id="admin-pass" required placeholder="****">
-                <i class="bi bi-eye-fill opacity-50" style="cursor:pointer" onclick="togglePass()"></i>
+                <i class="bi bi-eye-fill opacity-50" style="cursor:pointer;flex-shrink:0;" onclick="togglePass()"></i>
             </div>
 
             <button type="submit" class="btn-admin-login">DÉVERROUILLER LE SYSTÈME</button>
         </form>
 
-        <div class="text-center mt-5">
-            <a href="/" class="text-info small fw-bold text-decoration-none opacity-50"><i class="bi bi-arrow-left"></i> Retour au site public</a>
+        <div class="text-center mt-4">
+            <a href="/" class="text-info small fw-bold text-decoration-none opacity-50">
+                <i class="bi bi-arrow-left"></i> Retour au site public
+            </a>
         </div>
     </div>
 
@@ -129,8 +162,6 @@
             const p = document.getElementById('admin-pass');
             p.type = p.type === 'password' ? 'text' : 'password';
         }
-
-        // Bloquer l'inspection pour faire plus "pro"
         document.onkeydown = function(e) {
             if(e.keyCode == 123) return false;
             if(e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) return false;
