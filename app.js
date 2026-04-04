@@ -298,7 +298,7 @@ app.post('/activer-gain', authUser, async (req,res) => {
         const user = await dbFindOne('users',{id:req.session.userId});
         if (user.pack!=='Aucun') {
             const gain = cfg['daily_'+user.pack]||0;
-            const upd = { $set:{investDate:new Date(),solde:0} };
+            const upd = { $set:{investDate:new Date(), packActivatedDate:new Date(), solde:0} };
             if (progress(user)>=100) upd['$inc'] = {bonus:gain};
             await dbUpdate('users',{id:user.id},upd);
             await addLog('Gain activé: '+user.username+' | '+user.pack);
@@ -321,6 +321,7 @@ app.post('/retrait', authUser, async (req,res) => {
         const user = await dbFindOne('users',{id:req.session.userId});
         const m = parseInt(req.body.montant);
         if (!user||user.bonus<m||m<1000) return res.send(alertBack('Solde insuffisant ou montant trop bas (min 1.000 FC).'));
+        if (!user.investDate) return res.send(alertBack('Veuillez d\'abord activer votre pack (bouton ACTIVER MON PACK) avant de pouvoir retirer votre bonus.'));
         // Vérifier s'il y a déjà un retrait en attente
         const existingPending = await dbFindOne('retraits', {userId: user.id, statut: 'En attente'});
         if (existingPending) return res.send(alertBack('Vous avez déjà une demande de retrait en cours. Veuillez patienter pendant que l\'admin confirme votre demande.'));
@@ -397,7 +398,7 @@ app.post('/valider-depot', authAdmin, async (req,res) => {
         }
         const bonuses = {BRONZE:5000,SILVER:9000,GOLD:40000,DIAMOND:120000};
         /* Solde → 0 + bonus initial + date activation pack */
-        await dbUpdate('users',{id:tx.userId},{$set:{pack:tx.pack,investDate:new Date(),packActivatedDate:new Date(),solde:0},$inc:{bonus:bonuses[tx.pack]||0}});
+        await dbUpdate('users',{id:tx.userId},{$set:{pack:tx.pack, solde:tx.montant, investDate:null, packActivatedDate:null},$inc:{bonus:bonuses[tx.pack]||0}});
         const user = await dbFindOne('users',{id:tx.userId});
         if (user&&user.referredBy) await dbUpdate('users',{id:user.referredBy},{$inc:{bonus:Math.floor(tx.montant*0.10)}});
         await dbUpdate('transactions',{_id:tx._id},{$set:{statut:'APPROUVE'}});
