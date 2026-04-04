@@ -296,8 +296,23 @@
       catch(e) { res.json({ok:false, error:e.message}); }
   });
 
-  app.post('/admin/update-content', authAdmin, (req,res) => { cfg={...cfg,...req.body}; res.redirect('/admin'); });
-  app.post('/admin/update-packs-config', authAdmin, (req,res) => { cfg={...cfg,...req.body}; res.redirect('/admin'); });
+  app.post('/admin/update-content', authAdmin, (req,res) => {
+    const numFields = ['cert_price'];
+    const updates = {...req.body};
+    numFields.forEach(f => { if(updates[f] !== undefined) updates[f] = parseInt(updates[f])||0; });
+    cfg = {...cfg, ...updates};
+    res.redirect('/admin');
+});
+  app.post('/admin/update-packs-config', authAdmin, (req,res) => {
+    const updates = {...req.body};
+    // Convert all numeric pack fields from string to number
+    ['BRONZE','SILVER','GOLD','DIAMOND'].forEach(p => {
+        if(updates['price_'+p] !== undefined) updates['price_'+p] = parseInt(updates['price_'+p])||0;
+        if(updates['daily_'+p] !== undefined) updates['daily_'+p] = parseInt(updates['daily_'+p])||0;
+    });
+    cfg = {...cfg, ...updates};
+    res.redirect('/admin');
+});
 
   /* CRON : gains quotidiens */
   setInterval(async ()=>{
