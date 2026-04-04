@@ -172,7 +172,7 @@
                 </div>
                 <h2 style="font-weight: 900; letter-spacing: -1px;">Retrait de Fonds</h2>
                 <div class="balance-badge">
-                    DISPONIBLE : <%= user.solde.toLocaleString() %> FC
+                    DISPONIBLE : <%= (user.bonus || 0).toLocaleString() %> FC
                 </div>
             </div>
 
