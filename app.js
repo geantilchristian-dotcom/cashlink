@@ -372,7 +372,7 @@ async function start() {
         console.log('[DB] Connexion à MongoDB Atlas...');
         const client = new MongoClient(MONGO_URI);
         await client.connect();
-        _db = client.db('cashlink');
+        _db = client.db(); // Utilise le nom de DB depuis l'URI (CashlinkDB)
 
         /* Index uniques pour éviter les doublons */
         await _db.collection('users').createIndex({ username: 1 }, { unique: true });
