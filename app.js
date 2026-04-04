@@ -210,6 +210,7 @@ app.get('/dashboard', authUser, async (req,res) => {
         const user = await dbFindOne('users',{id:req.session.userId});
         if (!user) { req.session.destroy(); return res.redirect('/'); }
         const packStart = user.packActivatedDate ? new Date(user.packActivatedDate) : null;
+        const packDaysLeft = packStart ? Math.max(0, 30 - Math.floor((Date.now()-packStart.getTime())/(1000*3600*24))) : null;
         const pendingRetrait = await dbFindOne('retraits', {userId: user.id, statut: 'En attente'});
         res.render('dashboard',{user,content:cfg,p:progress(user),msRemaining:remainMs(user),packDaysLeft,pendingRetrait});
     } catch(e) { res.status(500).send('Erreur dashboard: '+e.message); }
