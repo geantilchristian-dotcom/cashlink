@@ -212,7 +212,8 @@ app.get('/dashboard', authUser, async (req,res) => {
         const packStart = user.packActivatedDate ? new Date(user.packActivatedDate) : null;
         const packDaysLeft = packStart ? Math.max(0, 30 - Math.floor((Date.now()-packStart.getTime())/(1000*3600*24))) : null;
         const pendingRetrait = await dbFindOne('retraits', {userId: user.id, statut: 'En attente'});
-        res.render('dashboard',{user,content:cfg,p:progress(user),msRemaining:remainMs(user),packDaysLeft,pendingRetrait});
+        const refCount = (await dbFind('users',{referredBy:user.id,pack:{$ne:'Aucun'}})).length;
+        res.render('dashboard',{user,content:cfg,p:progress(user),msRemaining:remainMs(user),packDaysLeft,pendingRetrait,refCount});
     } catch(e) { res.status(500).send('Erreur dashboard: '+e.message); }
 });
 
@@ -321,7 +322,6 @@ app.post('/retrait', authUser, async (req,res) => {
         const user = await dbFindOne('users',{id:req.session.userId});
         const m = parseInt(req.body.montant);
         if (!user||user.bonus<m||m<1000) return res.send(alertBack('Solde insuffisant ou montant trop bas (min 1.000 FC).'));
-        if (!user.investDate) return res.send(alertBack('Veuillez d\'abord activer votre pack (bouton ACTIVER MON PACK) avant de pouvoir retirer votre bonus.'));
         // Vérifier s'il y a déjà un retrait en attente
         const existingPending = await dbFindOne('retraits', {userId: user.id, statut: 'En attente'});
         if (existingPending) return res.send(alertBack('Vous avez déjà une demande de retrait en cours. Veuillez patienter pendant que l\'admin confirme votre demande.'));
@@ -400,7 +400,28 @@ app.post('/valider-depot', authAdmin, async (req,res) => {
         /* Solde → 0 + bonus initial + date activation pack */
         await dbUpdate('users',{id:tx.userId},{$set:{pack:tx.pack, solde:tx.montant, investDate:null, packActivatedDate:null},$inc:{bonus:bonuses[tx.pack]||0}});
         const user = await dbFindOne('users',{id:tx.userId});
-        if (user&&user.referredBy) await dbUpdate('users',{id:user.referredBy},{$inc:{bonus:Math.floor(tx.montant*0.10)}});
+        if (user && user.referredBy) {
+            const referrer = await dbFindOne('users', {id: user.referredBy});
+            if (referrer) {
+                // Taux selon le pack du parrain
+                const refRates = {'Aucun':0.05,'BRONZE':0.05,'SILVER':0.10,'GOLD':0.15,'DIAMOND':0.20};
+                const rate = refRates[referrer.pack] || 0.10;
+                const commission = Math.floor(tx.montant * rate);
+                await dbUpdate('users',{id:referrer.id},{$inc:{bonus:commission}});
+                broadcastUpdate(referrer.id);
+                await addLog('PARRAINAGE: '+referrer.username+' +'+commission+' FC ('+Math.round(rate*100)+'%) via '+tx.utilisateur);
+                // Vérifier paliers de 100 filleuls → +100.000 FC
+                const allReferrals = await dbFind('users',{referredBy:referrer.id,pack:{$ne:'Aucun'}});
+                const count = allReferrals.length;
+                const prevCount = count - 1;
+                if (count > 0 && Math.floor(count/100) > Math.floor(prevCount/100)) {
+                    const milestone = Math.floor(count/100) * 100000;
+                    await dbUpdate('users',{id:referrer.id},{$inc:{bonus:milestone}});
+                    await addLog('MILESTONE PARRAINAGE: '+referrer.username+' | '+count+' filleuls | +'+milestone+' FC');
+                    broadcastActivity({type:'pack', username:referrer.username+' (MILESTONE '+count+' filleuls)', pack:'BONUS'});
+                }
+            }
+        }
         await dbUpdate('transactions',{_id:tx._id},{$set:{statut:'APPROUVE'}});
         await addLog('VALIDÉ: '+tx.utilisateur+' | '+tx.pack+' | '+tx.montant+' FC');
         broadcastUpdate(tx.userId);
