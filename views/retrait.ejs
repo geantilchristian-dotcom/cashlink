@@ -176,7 +176,17 @@
                 </div>
             </div>
 
-            <form action="/retrait" method="POST">
+            <div class="alert" style="background:#1e293b;border:2px solid #3b82f6;color:#fff;border-radius:12px;padding:16px;margin-bottom:20px;">
+    <i class="bi bi-clock-fill me-2 text-info"></i>
+    <strong>Fréquence retrait :</strong> 
+    <% if(user.certified) { %>
+        <span class="text-success fw-bold">Toutes les 24h (Compte Certifié ✅)</span>
+    <% } else { %>
+        <span class="text-warning fw-bold">Toutes les 72h (Compte Standard)</span>
+        <br><small class="text-muted">Certifiez votre compte pour retirer chaque 24h</small>
+    <% } %>
+</div>
+<form action="/retrait" method="POST">
                 <div class="mb-4">
                     <label class="form-label">Montant à retirer</label>
                     <div class="input-group">
