@@ -484,7 +484,7 @@
         <h3 class="ref-title-industrial">Programme de Parrainage Elite</h3>
         <p class="fs-4 fw-bold">Multipliez vos profits en invitant vos proches. Recevez instantanément 10% cash sur chaque investissement de vos parrainés, crédités sur votre solde bonus.</p>
         <div class="industrial-copy-group">
-            <input type="text" id="refLinkHeavy" id="refLinkHeavy" value="https://cashlink-rdc.cd/?ref=<%= user.id %>" readonly>
+            <input type="text" id="refLinkHeavy" readonly style="font-size:0.8rem;">
             <button class="btn-copy-industrial-action" onclick="copyHeavyLink()">COPIER MON LIEN</button>
         </div>
     </div>
@@ -631,6 +631,12 @@
             const btn = document.getElementById('scrollTopIndustrialHeavy');
             btn.style.display = (document.body.scrollTop > 600 || document.documentElement.scrollTop > 600) ? "flex" : "none";
         };
+
+        // Set referral link dynamically from actual domain
+        document.addEventListener('DOMContentLoaded', function() {
+            const inp = document.getElementById('refLinkHeavy');
+            if(inp) inp.value = window.location.origin + '/?ref=<%= user.id %>';
+        });
 
         function copyHeavyLink() {
             const i = document.getElementById('refLinkHeavy'); i.select();
