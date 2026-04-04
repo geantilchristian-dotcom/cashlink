@@ -195,59 +195,18 @@
                     </div>
                 </div>
 
-                <div class="mb-4">
-                    <label class="form-label">Coordonnées de paiement (M-Pesa / Airtel)</label>
-                    <input type="text" name="numero" class="form-control neon-input" placeholder="081 234 5678" required>
-                    <small class="text-dim mt-2 d-block" style="font-size: 0.7rem;">
-                        <i class="bi bi-shield-check me-1"></i> Vérifiez bien votre numéro avant de confirmer.
+                                <div class="mb-4">
+                    <label class="form-label">Numéro de paiement (M-Pesa / Airtel)</label>
+                    <div class="neon-input d-flex align-items-center gap-3" style="background:#1f2937;border:2px solid #10b981;border-radius:12px;padding:14px 18px;pointer-events:none;">
+                        <i class="bi bi-phone-fill text-success fs-5"></i>
+                        <span class="fw-900 text-white fs-5">+243 <%= user.phone %></span>
+                        <span class="ms-auto" style="font-size:0.7rem;background:#10b981;color:#fff;padding:3px 10px;border-radius:20px;font-weight:900;"><i class="bi bi-lock-fill me-1"></i>COMPTE VÉRIFIÉ</span>
+                    </div>
+                    <small class="text-dim mt-2 d-block" style="font-size: 0.72rem;">
+                        <i class="bi bi-info-circle me-1 text-warning"></i> Le paiement sera effectué <strong>uniquement</strong> sur le numéro enregistré dans votre compte.
                     </small>
                 </div>
-
-                <button type="submit" class="btn-withdraw-neon">
-                    DEMANDER LE RETRAIT
-                </button>
-            </form>
-        </div>
-
-        <div class="history-box">
-            <div class="p-4 d-flex justify-content-between align-items-center" style="background: rgba(0,0,0,0.1);">
-                <h5 class="m-0 fw-bold"><i class="bi bi-clock-history me-2 text-accent"></i>Historique</h5>
-                <span class="badge bg-dark"><%= transactions ? transactions.length : 0 %> Opérations</span>
-            </div>
-            <div class="table-responsive">
-                <table class="table table-dark">
-                    <thead>
-                        <tr>
-                            <th>DATE</th>
-                            <th>MONTANT</th>
-                            <th>STATUT</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (transactions && transactions.length > 0) { %>
-                            <% transactions.forEach(tx => { %>
-                                <tr>
-                                    <td class="text-dim small"><%= tx.date %></td>
-                                    <td style="color: var(--danger);"><%= tx.montant.toLocaleString() %> FC</td>
-                                    <td>
-                                        <span class="status-pill <%= tx.statut === 'En attente' ? 'pending' : 'confirmed' %>">
-                                            <%= tx.statut %>
-                                        </span>
-                                    </td>
-                                </tr>
-                            <% }) %>
-                        <% } else { %>
-                            <tr>
-                                <td colspan="3" class="text-center py-5 text-muted">
-                                    <i class="bi bi-inbox h2 d-block opacity-20"></i>
-                                    Aucune demande de retrait pour le moment.
-                                </td>
-                            </tr>
-                        <% } %>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                </div>
     </div>
 
 </body>
