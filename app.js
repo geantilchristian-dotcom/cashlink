@@ -22,9 +22,12 @@ app.use(session({
 
 /* ── BASE DE DONNÉES MONGODB ──────────────────────────────────────────────── */
 const MONGO_URI = process.env.MONGODB_URI;
+console.log('[DB] MONGODB_URI présent:', !!MONGO_URI);
 if (!MONGO_URI) {
-    console.error('[DB] ERREUR: La variable MONGODB_URI est manquante !');
-    console.error('[DB] Configurez MONGODB_URI dans les variables d\'environnement Render.');
+    console.error('========================================');
+    console.error('[FATAL] MONGODB_URI non défini !');
+    console.error('Ajoutez MONGODB_URI dans Render > Environment');
+    console.error('========================================');
     process.exit(1);
 }
 
@@ -370,7 +373,11 @@ app.use((err, req, res, next) => {
 async function start() {
     try {
         console.log('[DB] Connexion à MongoDB Atlas...');
-        const client = new MongoClient(MONGO_URI);
+        console.log('[DB] Hôte:', MONGO_URI.split('@')[1] || 'inconnu');
+        const client = new MongoClient(MONGO_URI, {
+            serverSelectionTimeoutMS: 10000,
+            connectTimeoutMS: 10000
+        });
         await client.connect();
         _db = client.db(); // Utilise le nom de DB depuis l'URI (CashlinkDB)
 
@@ -383,7 +390,10 @@ async function start() {
         const PORT = process.env.PORT || 3000;
         app.listen(PORT, () => console.log('[CASHLINK v21.0] Port ' + PORT + ' | MongoDB Atlas OK'));
     } catch (e) {
-        console.error('[DB] Impossible de se connecter à MongoDB:', e.message);
+        console.error('========================================');
+        console.error('[FATAL] Connexion MongoDB échouée:', e.message);
+        console.error('Vérifiez: 1) MONGODB_URI correct 2) Network Access Atlas (0.0.0.0/0)');
+        console.error('========================================');
         process.exit(1);
     }
 }
