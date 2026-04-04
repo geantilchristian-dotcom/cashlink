@@ -298,12 +298,11 @@ app.post('/confirmer-envoi', authUser, async (req,res) => {
 app.post('/activer-gain', authUser, async (req,res) => {
     try {
         const user = await dbFindOne('users',{id:req.session.userId});
-        if (user.pack!=='Aucun') {
-            const gain = cfg['daily_'+user.pack]||0;
-            const upd = { $set:{investDate:new Date(), packActivatedDate:new Date(), solde:0} };
-            if (progress(user)>=100) upd['$inc'] = {bonus:gain};
-            await dbUpdate('users',{id:user.id},upd);
-            await addLog('Gain activé: '+user.username+' | '+user.pack);
+        if (user.pack!=='Aucun' && !user.packActivated) {
+            const bonuses = {BRONZE:5000,SILVER:9000,GOLD:40000,DIAMOND:120000};
+            const bonusActivation = bonuses[user.pack]||0;
+            await dbUpdate('users',{id:user.id},{$set:{investDate:new Date(), packActivatedDate:new Date(), packActivated:true, solde:0},$inc:{bonus:bonusActivation}});
+            await addLog('ACTIVATION: '+user.username+' | '+user.pack+' | bonus +'+bonusActivation+' FC');
         }
         broadcastUpdate(req.session.userId);
         res.redirect('/dashboard');
@@ -398,29 +397,21 @@ app.post('/valider-depot', authAdmin, async (req,res) => {
             broadcastActivity({type:'certif', username: tx.utilisateur});
             return res.redirect('/admin');
         }
-        const bonuses = {BRONZE:5000,SILVER:9000,GOLD:40000,DIAMOND:120000};
-        /* Solde → 0 + bonus initial + date activation pack */
-        await dbUpdate('users',{id:tx.userId},{$set:{pack:tx.pack, solde:tx.montant, investDate:null, packActivatedDate:null},$inc:{bonus:bonuses[tx.pack]||0}});
+        /* Admin confirme → pack assigné, solde=0, packActivated=false, bonus ajouté à l'activation */
+        await dbUpdate('users',{id:tx.userId},{$set:{pack:tx.pack, solde:0, investDate:null, packActivatedDate:null, packActivated:false}});
         const user = await dbFindOne('users',{id:tx.userId});
         if (user && user.referredBy) {
             const referrer = await dbFindOne('users', {id: user.referredBy});
             if (referrer) {
-                // Taux selon le pack du parrain
-                const refRates = {'Aucun':0.05,'BRONZE':0.05,'SILVER':0.10,'GOLD':0.15,'DIAMOND':0.20};
-                const rate = refRates[referrer.pack] || 0.10;
-                const commission = Math.floor(tx.montant * rate);
-                await dbUpdate('users',{id:referrer.id},{$inc:{bonus:commission}});
-                broadcastUpdate(referrer.id);
-                await addLog('PARRAINAGE: '+referrer.username+' +'+commission+' FC ('+Math.round(rate*100)+'%) via '+tx.utilisateur);
-                // Vérifier paliers de 100 filleuls → +100.000 FC
+                // Palier : 100 filleuls actifs = +100 FC
                 const allReferrals = await dbFind('users',{referredBy:referrer.id,pack:{$ne:'Aucun'}});
                 const count = allReferrals.length;
                 const prevCount = count - 1;
                 if (count > 0 && Math.floor(count/100) > Math.floor(prevCount/100)) {
-                    const milestone = Math.floor(count/100) * 100000;
-                    await dbUpdate('users',{id:referrer.id},{$inc:{bonus:milestone}});
-                    await addLog('MILESTONE PARRAINAGE: '+referrer.username+' | '+count+' filleuls | +'+milestone+' FC');
-                    broadcastActivity({type:'pack', username:referrer.username+' (MILESTONE '+count+' filleuls)', pack:'BONUS'});
+                    await dbUpdate('users',{id:referrer.id},{$inc:{bonus:100}});
+                    broadcastUpdate(referrer.id);
+                    await addLog('MILESTONE PARRAINAGE: '+referrer.username+' | '+count+' filleuls | +100 FC');
+                    broadcastActivity({type:'pack', username:referrer.username+' ('+count+' filleuls)', pack:'BONUS'});
                 }
             }
         }
@@ -454,7 +445,8 @@ app.post('/admin/approve-retrait', authAdmin, async (req,res) => {
 app.post('/annuler-abonnement', authUser, async (req,res) => {
     try {
         const user = await dbFindOne('users',{id:req.session.userId});
-        if(!user||user.pack==='Aucun'||!user.investDate) return res.send(alertBack('Vous n\'avez pas d\'abonnement actif à annuler.'));
+        if(!user||user.pack==='Aucun') return res.send(alertBack('Vous n\'avez pas d\'abonnement actif à annuler.'));
+        if(!req.body.password || req.body.password !== user.password) return res.send(alertBack('Mot de passe incorrect. Annulation refusée.'));
         const existing = await dbFindOne('annulations',{userId:user.id,statut:'En attente'});
         if(existing) return res.send(alertBack('Vous avez déjà une demande d\'annulation en cours de traitement.'));
         const packPrices = {BRONZE:50000,SILVER:150000,GOLD:500000,DIAMOND:1000000};
