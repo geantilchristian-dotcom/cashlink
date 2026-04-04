@@ -434,7 +434,53 @@
               .modal-body .alert { padding: 14px !important; font-size: 0.8rem !important; border-radius: 15px !important; margin: 12px 0 !important; }
               .modal-body .btn { font-size: 0.85rem !important; padding: 12px !important; }
           }
-      </style>
+      
+        /* ============================================================
+           TABLETTE (576px – 991px) : ajustements intermédiaires
+           ============================================================ */
+        @media (min-width: 576px) and (max-width: 991px) {
+            .premium-nav-titan { padding: 14px 20px !important; }
+            .logo-titan-industrial { font-size: 1.5rem !important; }
+            .nav-info-box-titan { padding: 9px 18px !important; gap: 12px !important; }
+            .val-titan-heavy { font-size: 1rem !important; }
+
+            .hero-industrial-banner { padding: 55px 25px 65px !important; border-radius: 0 0 45px 45px !important; }
+            .hero-title-titan-heavy { font-size: clamp(2.5rem, 10vw, 4.5rem) !important; margin-bottom: 18px !important; }
+            .hero-para-titan-heavy { font-size: 1rem !important; margin-bottom: 25px !important; }
+
+            .stats-industrial-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 16px !important; padding: 15px 20px !important; }
+            .stat-industrial-card { padding: 28px 20px !important; border-radius: 30px !important; }
+            .stat-industrial-icon { font-size: 2.2rem !important; margin-bottom: 12px !important; }
+
+            .referral-industrial-container { margin: 25px 18px !important; padding: 35px 25px !important; border-radius: 40px !important; border-width: 4px !important; }
+            .ref-title-industrial { font-size: 1.8rem !important; letter-spacing: 2px !important; }
+            .industrial-copy-group { gap: 12px !important; margin-top: 22px !important; }
+
+            .mining-industrial-terminal { margin: 25px 18px !important; padding: 35px 25px !important; border-radius: 40px !important; }
+            .btn-withdraw-industrial-heavy { padding: 22px 15px !important; font-size: 1.4rem !important; border-radius: 30px !important; }
+
+            .shop-industrial-header { padding: 0 20px !important; margin: 50px 0 28px !important; gap: 18px !important; }
+            .shop-industrial-header h2 { font-size: 2.2rem !important; }
+            .industrial-shop-grid-full { gap: 20px !important; padding: 0 20px 80px !important; }
+
+            .industrial-faq-titan { margin: 40px 18px 100px !important; }
+            .accordion-titan-industrial-button { padding: 28px 22px !important; font-size: 1.2rem !important; }
+            .accordion-titan-industrial-body { padding: 28px 22px !important; font-size: 1rem !important; line-height: 2 !important; }
+
+            .modal-dialog { margin: 15px !important; }
+            .modal-body.p-5 { padding: 28px 22px !important; }
+        }
+
+        /* TRÈS PETITS MOBILES (< 360px) */
+        @media (max-width: 359px) {
+            .logo-titan-industrial { font-size: 1rem !important; }
+            .val-titan-heavy { font-size: 0.75rem !important; }
+            .nav-info-box-titan { gap: 5px !important; padding: 6px 8px !important; }
+            .stats-industrial-grid { grid-template-columns: 1fr !important; }
+            .industrial-copy-group input { font-size: 0.65rem !important; }
+        }
+
+</style>
 </head>
 <body>
 
@@ -480,7 +526,7 @@
                 <% if(user.certified) { %><span style="display:inline-flex;align-items:center;gap:4px;background:#1d4ed8;color:#fff;font-size:0.65rem;font-weight:900;padding:2px 10px;border-radius:20px;margin-left:6px;letter-spacing:0.5px;vertical-align:middle;"><i class="bi bi-patch-check-fill" style="font-size:0.75rem;"></i> CERTIFIÉ</span><% } %>
                 | RÉSEAU : +243 <%= user.phone %>
             </div>
-            <h1 class="hero-title-titan-heavy"><%= content.hero_title || 'MINAGE <span class="text-primary">INDUSTRIEL</span>' %></h1>
+            <h1 class="hero-title-titan-heavy"><%- content.hero_title || 'MINAGE <span class="text-primary">INDUSTRIEL</span>' %></h1>
             <p class="hero-para-titan-heavy"><%= content.hero_subtitle || 'Le protocole CASHLINK v28.0 déploie une puissance de calcul décentralisée pour chaque citoyen congolais. Sécurisez votre avenir financier avec le minage Cloud Master.' %></p>
             <button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-4 fw-900 shadow-lg fs-2">LANCER MON UNITÉ DE MINAGE</button>
         </div>
