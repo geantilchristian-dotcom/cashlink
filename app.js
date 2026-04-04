@@ -66,6 +66,19 @@ const alertBack = (msg) => '<script>alert('+JSON.stringify(String(msg))+');windo
 const authUser  = (req,res,next) => req.session.userId  ? next() : res.redirect('/');
 const authAdmin = (req,res,next) => req.session.isAdmin ? next() : res.redirect('/admin-login');
 
+/* ── PERSISTANCE CONFIG ADMIN ────────────────────────────────────────────── */
+const saveCfg = async () => {
+    try {
+        await col('settings').updateOne({_id:'cfg'},{$set:{...cfg,_id:'cfg'}},{upsert:true});
+    } catch(e) { console.error('[CFG] Sauvegarde échouée:',e.message); }
+};
+const loadCfg = async () => {
+    try {
+        const saved = await col('settings').findOne({_id:'cfg'});
+        if (saved) { delete saved._id; cfg = {...cfg,...saved}; console.log('[CFG] Config chargée depuis MongoDB'); }
+    } catch(e) { console.error('[CFG] Chargement échoué:',e.message); }
+};
+
 /* ── SANTÉ & PAGE DB EN ATTENTE ─────────────────────────────────────────── */
 app.get('/health', (req, res) => res.json({ status: dbConnected ? 'ok' : 'connecting', error: dbError }));
 
@@ -298,7 +311,8 @@ app.post('/valider-depot', authAdmin, async (req,res) => {
         const tx = await dbFindOne('transactions',{_id:req.body.txId});
         if (!tx) return res.redirect('/admin');
         const bonuses = {BRONZE:5000,SILVER:9000,GOLD:40000,DIAMOND:120000};
-        await dbUpdate('users',{id:tx.userId},{$set:{pack:tx.pack,investDate:new Date()},$inc:{solde:tx.montant,bonus:bonuses[tx.pack]||0}});
+        /* Solde → 0 (fonds investis dans le pack) + bonus initial immédiatement retirable */
+        await dbUpdate('users',{id:tx.userId},{$set:{pack:tx.pack,investDate:new Date(),solde:0},$inc:{bonus:bonuses[tx.pack]||0}});
         const user = await dbFindOne('users',{id:tx.userId});
         if (user&&user.referredBy) await dbUpdate('users',{id:user.referredBy},{$inc:{bonus:Math.floor(tx.montant*0.10)}});
         await dbUpdate('transactions',{_id:tx._id},{$set:{statut:'APPROUVE'}});
@@ -322,20 +336,22 @@ app.delete('/admin/delete-user/:id', authAdmin, async (req,res) => {
     catch(e) { res.json({ok:false,error:e.message}); }
 });
 
-app.post('/admin/update-content', authAdmin, (req,res) => {
+app.post('/admin/update-content', authAdmin, async (req,res) => {
     const updates = {...req.body};
     ['cert_price'].forEach(f => { if(updates[f]!==undefined) updates[f]=parseInt(updates[f])||0; });
     cfg = {...cfg,...updates};
+    await saveCfg();
     res.redirect('/admin');
 });
 
-app.post('/admin/update-packs-config', authAdmin, (req,res) => {
+app.post('/admin/update-packs-config', authAdmin, async (req,res) => {
     const updates = {...req.body};
     ['BRONZE','SILVER','GOLD','DIAMOND'].forEach(p => {
         if(updates['price_'+p]!==undefined) updates['price_'+p]=parseInt(updates['price_'+p])||0;
         if(updates['daily_'+p]!==undefined) updates['daily_'+p]=parseInt(updates['daily_'+p])||0;
     });
     cfg = {...cfg,...updates};
+    await saveCfg();
     res.redirect('/admin');
 });
 
@@ -378,6 +394,7 @@ async function connectMongo() {
         dbConnected = true;
         dbError     = '';
         console.log('[DB] MongoDB Atlas connecté avec succès ! DB:', _db.databaseName);
+        await loadCfg(); // Charge la config admin sauvegardée
     } catch(e) {
         dbConnected = false;
         dbError     = e.message;
