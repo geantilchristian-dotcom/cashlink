@@ -63,7 +63,7 @@
 
         /* --- MAIN CONTENT --- */
         .admin-main-content { flex: 1; min-width: 0; padding: 40px 36px; overflow-x: hidden; }
-        .admin-main-content { /* removed */; padding: 50px; }
+
 
         .glass-card {
             background: var(--card-glass); border: 1px solid var(--border-glass);
@@ -182,23 +182,23 @@
                 <a href="/logout" style="background:rgba(244,63,94,0.15);border:1px solid rgba(244,63,94,0.3);color:#f43f5e;width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;text-decoration:none;" title="Déconnexion">
                     <i class="bi bi-power"></i>
                 </a>
-                <button onclick="toggleMobileMenu()" id="mob-hamburger" style="background:rgba(0,217,255,0.1);border:1px solid rgba(0,217,255,0.3);color:var(--neon-blue);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                <button id="mob-hamburger" style="background:rgba(0,217,255,0.1);border:1px solid rgba(0,217,255,0.3);color:var(--neon-blue);width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
                     <i class="bi bi-list fs-5"></i>
                 </button>
             </div>
         </div>
         <!-- Menu déroulant -->
         <div id="mob-menu" style="display:none;padding:6px 12px 14px;border-top:1px solid rgba(255,255,255,0.06);max-height:70vh;overflow-y:auto;">
-            <div class="mob-nav-item active" onclick="openTab('stats',this);closeMobileMenu()"><i class="bi bi-cpu me-2"></i>Performances CA</div>
-            <div class="mob-nav-item" onclick="openTab('validations',this);closeMobileMenu()"><i class="bi bi-shield-check me-2"></i>Validations TID<% if(stats.enAttente > 0){ %> <span class="badge bg-danger ms-1"><%= stats.enAttente %></span><% } %></div>
-            <div class="mob-nav-item" onclick="openTab('clients',this);closeMobileMenu()"><i class="bi bi-people me-2"></i>Gestion Membres</div>
-            <div class="mob-nav-item" onclick="openTab('interface',this);closeMobileMenu()"><i class="bi bi-palette me-2"></i>Design & Pubs</div>
-            <div class="mob-nav-item" onclick="openTab('packs',this);closeMobileMenu()"><i class="bi bi-box-seam me-2"></i>Config Machines</div>
-            <div class="mob-nav-item" onclick="openTab('messages',this);closeMobileMenu()"><i class="bi bi-chat-dots me-2"></i>Messages Clients</div>
-            <div class="mob-nav-item" onclick="openTab('retraits',this);closeMobileMenu()"><i class="bi bi-cash-coin me-2"></i>Retraits<% if(retraits && retraits.length > 0){ %> <span class="badge bg-warning text-dark ms-1"><%= retraits.length %></span><% } %></div>
-            <div class="mob-nav-item" onclick="openTab('logs',this);closeMobileMenu()"><i class="bi bi-journal-text me-2"></i>Journal Activité</div>
-            <div class="mob-nav-item" onclick="openTab('annulations',this);closeMobileMenu()"><i class="bi bi-x-octagon me-2"></i>Annulations</div>
-            <div class="mob-nav-item" onclick="openTab('security',this);closeMobileMenu()"><i class="bi bi-lock me-2"></i>Accès & Sécurité</div>
+            <div class="mob-nav-item active" data-tab="stats" data-mobile="1"><i class="bi bi-cpu me-2"></i>Performances CA</div>
+            <div class="mob-nav-item" data-tab="validations" data-mobile="1"><i class="bi bi-shield-check me-2"></i>Validations TID<% if(stats.enAttente > 0){ %> <span class="badge bg-danger ms-1"><%= stats.enAttente %></span><% } %></div>
+            <div class="mob-nav-item" data-tab="clients" data-mobile="1"><i class="bi bi-people me-2"></i>Gestion Membres</div>
+            <div class="mob-nav-item" data-tab="interface" data-mobile="1"><i class="bi bi-palette me-2"></i>Design & Pubs</div>
+            <div class="mob-nav-item" data-tab="packs" data-mobile="1"><i class="bi bi-box-seam me-2"></i>Config Machines</div>
+            <div class="mob-nav-item" data-tab="messages" data-mobile="1"><i class="bi bi-chat-dots me-2"></i>Messages Clients</div>
+            <div class="mob-nav-item" data-tab="retraits" data-mobile="1"><i class="bi bi-cash-coin me-2"></i>Retraits<% if(retraits && retraits.length > 0){ %> <span class="badge bg-warning text-dark ms-1"><%= retraits.length %></span><% } %></div>
+            <div class="mob-nav-item" data-tab="logs" data-mobile="1"><i class="bi bi-journal-text me-2"></i>Journal Activité</div>
+            <div class="mob-nav-item" data-tab="annulations" data-mobile="1"><i class="bi bi-x-octagon me-2"></i>Annulations</div>
+            <div class="mob-nav-item" data-tab="security" data-mobile="1"><i class="bi bi-lock me-2"></i>Accès & Sécurité</div>
         </div>
     </div>
 
@@ -212,17 +212,17 @@
             <span class="badge bg-danger rounded-pill" style="font-size: 0.6rem;">MASTER 2026</span>
         </div>
 
-        <div class="nav-menu">
-            <div class="nav-item-custom active" onclick="openTab('stats', this)"><i class="bi bi-cpu"></i> Performances CA</div>
-            <div class="nav-item-custom" onclick="openTab('validations', this)"><i class="bi bi-shield-check"></i> Validations TID <% if(stats.enAttente > 0){ %><span class="badge bg-danger ms-auto"><%= stats.enAttente %></span><% } %></div>
-            <div class="nav-item-custom" onclick="openTab('clients', this)"><i class="bi bi-people"></i> Gestion Membres</div>
-            <div class="nav-item-custom" onclick="openTab('interface', this)"><i class="bi bi-palette"></i> Design & Pubs</div>
-            <div class="nav-item-custom" onclick="openTab('packs', this)"><i class="bi bi-box-seam"></i> Config Machines</div>
-            <div class="nav-item-custom" onclick="openTab('messages', this)"><i class="bi bi-chat-dots"></i> Messages Clients</div>
-            <div class="nav-item-custom" onclick="openTab('retraits', this)"><i class="bi bi-cash-coin"></i> Retraits <% if(retraits && retraits.length > 0){ %><span class="badge bg-warning text-dark ms-auto"><%= retraits.length %></span><% } %></div>
-            <div class="nav-item-custom" onclick="openTab('logs', this)"><i class="bi bi-journal-text"></i> Journal Activité</div>
-            <div class="nav-item-custom" onclick="openTab('annulations', this)"><i class="bi bi-x-octagon"></i> Annulations</div>
-            <div class="nav-item-custom" onclick="openTab('security', this)"><i class="bi bi-lock"></i> Accès & Sécurité</div>
+        <div class="nav-menu" id="navMenu">
+            <div class="nav-item-custom active" data-tab="stats"><i class="bi bi-cpu"></i> Performances CA</div>
+            <div class="nav-item-custom" data-tab="validations"><i class="bi bi-shield-check"></i> Validations TID <% if(stats.enAttente > 0){ %><span class="badge bg-danger ms-auto"><%= stats.enAttente %></span><% } %></div>
+            <div class="nav-item-custom" data-tab="clients"><i class="bi bi-people"></i> Gestion Membres</div>
+            <div class="nav-item-custom" data-tab="interface"><i class="bi bi-palette"></i> Design & Pubs</div>
+            <div class="nav-item-custom" data-tab="packs"><i class="bi bi-box-seam"></i> Config Machines</div>
+            <div class="nav-item-custom" data-tab="messages"><i class="bi bi-chat-dots"></i> Messages Clients</div>
+            <div class="nav-item-custom" data-tab="retraits"><i class="bi bi-cash-coin"></i> Retraits <% if(retraits && retraits.length > 0){ %><span class="badge bg-warning text-dark ms-auto"><%= retraits.length %></span><% } %></div>
+            <div class="nav-item-custom" data-tab="logs"><i class="bi bi-journal-text"></i> Journal Activité</div>
+            <div class="nav-item-custom" data-tab="annulations"><i class="bi bi-x-octagon"></i> Annulations</div>
+            <div class="nav-item-custom" data-tab="security"><i class="bi bi-lock"></i> Accès & Sécurité</div>
         </div>
 
         <div style="margin-top: auto;">
@@ -687,19 +687,33 @@
 
     <script>
         function openTab(tabId, btn) {
-            document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.section-panel').forEach(function(s){ s.classList.remove('active'); });
             var el = document.getElementById(tabId);
             if (el) el.classList.add('active');
-            document.querySelectorAll('.nav-item-custom').forEach(n => n.classList.remove('active'));
-            document.querySelectorAll('.mob-nav-item').forEach(n => n.classList.remove('mob-active'));
+            document.querySelectorAll('.nav-item-custom').forEach(function(n){ n.classList.remove('active'); });
+            document.querySelectorAll('.mob-nav-item').forEach(function(n){ n.classList.remove('mob-active'); });
             if (btn) {
                 if (btn.classList.contains('mob-nav-item')) btn.classList.add('mob-active');
                 else btn.classList.add('active');
             }
-            // Close mobile menu if open
             var menu = document.getElementById('mob-menu');
             if (menu && menu.style.display === 'block') closeMobileMenu();
         }
+
+        // Universal nav binding — works on all devices/browsers
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('[data-tab]').forEach(function(el) {
+                el.addEventListener('click', function() {
+                    var tab = this.getAttribute('data-tab');
+                    var isMob = this.getAttribute('data-mobile');
+                    openTab(tab, this);
+                    if (isMob) closeMobileMenu();
+                });
+            });
+            // hamburger
+            var hbg = document.getElementById('mob-hamburger');
+            if (hbg) hbg.addEventListener('click', toggleMobileMenu);
+        });
         function toggleMobileMenu() {
             const menu = document.getElementById('mob-menu');
             const icon = document.querySelector('#mob-hamburger i');
