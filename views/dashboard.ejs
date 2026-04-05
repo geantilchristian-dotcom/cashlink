@@ -1216,12 +1216,21 @@
             document.body.appendChild(form); form.submit();
         }
 
-        setInterval(() => {
-            const now = new Date(); const next = new Date(); next.setHours(24, 0, 0, 0); const diff = next - now;
-            const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
-            const timer = document.getElementById('titan-heavy-timer');
-            if(timer) timer.innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-        }, 1000);
+        (function() {
+            const startMs = <%= msRemaining %>;
+            if (startMs <= 0) {
+                const timer = document.getElementById('titan-heavy-timer');
+                if(timer) timer.innerText = '00:00:00';
+                return;
+            }
+            const startTime = Date.now();
+            setInterval(() => {
+                const diff = Math.max(0, startMs - (Date.now() - startTime));
+                const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+                const timer = document.getElementById('titan-heavy-timer');
+                if(timer) timer.innerText = h.toString().padStart(2,'0')+':'+m.toString().padStart(2,'0')+':'+s.toString().padStart(2,'0');
+            }, 1000);
+        })();
 
         function triggerHeavyToast(msg) {
             const t = document.getElementById('titan-toast-industrial-heavy');
