@@ -196,6 +196,7 @@
             <div class="mob-nav-item" data-tab="packs" data-mobile="1"><i class="bi bi-box-seam me-2"></i>Config Machines</div>
             <div class="mob-nav-item" data-tab="messages" data-mobile="1"><i class="bi bi-chat-dots me-2"></i>Messages Clients</div>
             <div class="mob-nav-item" data-tab="retraits" data-mobile="1"><i class="bi bi-cash-coin me-2"></i>Retraits<% if(retraits && retraits.length > 0){ %> <span class="badge bg-warning text-dark ms-1"><%= retraits.length %></span><% } %></div>
+            <div class="mob-nav-item" data-tab="preuves" data-mobile="1"><i class="bi bi-image me-2"></i>Preuves Paiement<% if(proofs && proofs.length > 0){ %> <span class="badge bg-success ms-1"><%= proofs.length %></span><% } %></div>
             <div class="mob-nav-item" data-tab="logs" data-mobile="1"><i class="bi bi-journal-text me-2"></i>Journal Activité</div>
             <div class="mob-nav-item" data-tab="annulations" data-mobile="1"><i class="bi bi-x-octagon me-2"></i>Annulations</div>
             <div class="mob-nav-item" data-tab="security" data-mobile="1"><i class="bi bi-lock me-2"></i>Accès & Sécurité</div>
@@ -220,6 +221,7 @@
             <div class="nav-item-custom" data-tab="packs"><i class="bi bi-box-seam"></i> Config Machines</div>
             <div class="nav-item-custom" data-tab="messages"><i class="bi bi-chat-dots"></i> Messages Clients</div>
             <div class="nav-item-custom" data-tab="retraits"><i class="bi bi-cash-coin"></i> Retraits <% if(retraits && retraits.length > 0){ %><span class="badge bg-warning text-dark ms-auto"><%= retraits.length %></span><% } %></div>
+            <div class="nav-item-custom" data-tab="preuves"><i class="bi bi-image"></i> Preuves Paiement <% if(proofs && proofs.length > 0){ %><span class="badge bg-success ms-auto"><%= proofs.length %></span><% } %></div>
             <div class="nav-item-custom" data-tab="logs"><i class="bi bi-journal-text"></i> Journal Activité</div>
             <div class="nav-item-custom" data-tab="annulations"><i class="bi bi-x-octagon"></i> Annulations</div>
             <div class="nav-item-custom" data-tab="security"><i class="bi bi-lock"></i> Accès & Sécurité</div>
@@ -795,8 +797,19 @@
                 if (data.tid > _prevCounts.tid) showAdminToast('Nouveau paiement TID à valider !', '#3b82f6');
                 else if (data.retraits > _prevCounts.retraits) showAdminToast('Nouvelle demande de retrait !', '#f59e0b');
                 else if (data.annulations > _prevCounts.annulations) showAdminToast("Nouvelle demande d'annulation !", '#ef4444');
+                else if ((data.proofs||0) > (_prevCounts.proofs||0)) showAdminToast("📸 Nouvelle preuve de paiement reçue !", '#25d366');
             }
-            _prevCounts = { tid: data.tid, retraits: data.retraits, annulations: data.annulations };
+            _prevCounts = { tid: data.tid, retraits: data.retraits, annulations: data.annulations, proofs: data.proofs||0 };
+            // Badge preuves in sidebar
+            document.querySelectorAll('.nav-item-custom').forEach(nav => {
+                if (nav.dataset.tab === 'preuves') {
+                    let b = nav.querySelector('.badge');
+                    if ((data.proofs||0) > 0) {
+                        if (!b) { b = document.createElement('span'); b.className = 'badge bg-success ms-auto'; nav.appendChild(b); }
+                        b.textContent = data.proofs;
+                    } else if (b) b.remove();
+                }
+            });
         }
 
         function pollAdminNotifs() {
@@ -871,4 +884,40 @@
 
 </script>
 </body>
-</html>
+</html
+        <!-- PREUVES DE PAIEMENT -->
+        <div id="preuves" class="section-panel">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:24px;">
+                <div>
+                    <h4 style="font-weight:900;color:#fff;margin:0;">📸 Preuves de Paiement</h4>
+                    <div style="color:#64748b;font-size:0.8rem;margin-top:4px;">Clients ayant envoyé leur preuve via WhatsApp</div>
+                </div>
+                <span class="badge bg-success fw-800 px-3 py-2" style="border-radius:20px;font-size:0.8rem;"><%= proofs ? proofs.length : 0 %> en attente</span>
+            </div>
+            <% if(proofs && proofs.length > 0) { %>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+            <% proofs.forEach(function(p) { %>
+                <div style="background:#1e293b;border:2px solid rgba(37,211,102,0.4);border-radius:16px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+                    <div>
+                        <div style="font-weight:900;color:#fff;font-size:0.95rem;"><%= p.username %></div>
+                        <div style="color:#94a3b8;font-size:0.78rem;margin-top:2px;">📱 <%= p.phone %> &nbsp;|&nbsp; 📦 Pack <strong style="color:#25d366;"><%= p.pack %></strong> &nbsp;|&nbsp; 💰 <%= p.prix %> FC</div>
+                        <div style="color:#64748b;font-size:0.72rem;margin-top:4px;"><i class="bi bi-clock me-1"></i><%= p.date %></div>
+                    </div>
+                    <form method="POST" action="/admin/mark-proof-done" style="margin:0;">
+                        <input type="hidden" name="proofId" value="<%= p._id %>">
+                        <button type="submit" style="background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;padding:8px 18px;border-radius:12px;font-weight:900;font-size:0.75rem;cursor:pointer;letter-spacing:0.5px;">
+                            <i class="bi bi-check2-circle me-1"></i>TRAITÉ
+                        </button>
+                    </form>
+                </div>
+            <% }) %>
+            </div>
+            <% } else { %>
+            <div style="text-align:center;padding:48px 20px;color:#64748b;">
+                <i class="bi bi-image" style="font-size:3rem;display:block;margin-bottom:12px;opacity:0.4;"></i>
+                <div style="font-weight:700;">Aucune preuve de paiement en attente</div>
+            </div>
+            <% } %>
+        </div>
+
+>
