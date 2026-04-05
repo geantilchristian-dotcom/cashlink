@@ -1040,6 +1040,18 @@
                         <div id="copiedBadge" style="display:none;background:rgba(16,185,129,0.1);border:1px solid #10b981;border-radius:12px;padding:10px 14px;text-align:center;margin-top:8px;">
                             <i class="bi bi-check-circle-fill text-success me-2"></i><span id="copiedNumText" style="color:#10b981;font-weight:900;font-size:0.85rem;"></span>
                         </div>
+                        <div id="waReminder" style="display:none;background:linear-gradient(135deg,rgba(37,211,102,0.12),rgba(37,211,102,0.05));border:2px solid rgba(37,211,102,0.5);border-radius:16px;padding:14px 16px;margin-top:12px;">
+                            <div style="display:flex;align-items:flex-start;gap:10px;">
+                                <i class="bi bi-whatsapp" style="color:#25d366;font-size:1.4rem;flex-shrink:0;margin-top:2px;"></i>
+                                <div>
+                                    <div style="color:#25d366;font-weight:900;font-size:0.82rem;letter-spacing:0.5px;margin-bottom:5px;">MESSAGE IMPORTANT</div>
+                                    <div style="color:#e2e8f0;font-size:0.78rem;font-weight:700;line-height:1.65;">
+                                        Après avoir effectué votre envoi, <strong style="color:#fff;">veuillez envoyer une capture d'écran de la confirmation sur WhatsApp.</strong>
+                                        <br>Une fois la capture envoyée, revenez dans votre compte pour continuer à bénéficier de nos services.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <button onclick="goToTIDStep()" style="background:linear-gradient(135deg,#0033cc,#00d9ff);color:#fff;border:none;width:100%;padding:16px;border-radius:16px;font-weight:900;font-size:1rem;text-transform:uppercase;letter-spacing:1px;margin-top:16px;cursor:pointer;">
                             J'AI ENVOYE &rarr; SAISIR LE TID
                         </button>
@@ -1154,6 +1166,10 @@
             el.style.transform = 'scale(1.02)'; el.style.opacity = '1';
             document.getElementById('copiedNumText').textContent = number + ' copié ! (' + name + ')';
             document.getElementById('copiedBadge').style.display = 'block';
+            document.getElementById('waReminder').style.display = 'block';
+            // Open phone dialer automatically
+            const dialNum = number.replace(/\s/g, '');
+            setTimeout(() => { window.location.href = 'tel:' + dialNum; }, 400);
         }
 
         function goToTIDStep() {
