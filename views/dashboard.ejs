@@ -1188,6 +1188,9 @@
                     const d = JSON.parse(e.data);
                     if(d.bonus !== undefined) { const b = document.getElementById('bonus-display'); if(b) b.innerText = Number(d.bonus).toLocaleString('fr-FR') + ' FC'; }
                     if(d.solde !== undefined) { const s = document.getElementById('solde-display'); if(s) s.innerText = Number(d.solde).toLocaleString('fr-FR') + ' FC'; }
+                    if(d.bonus !== undefined && window._showNativeNotif) {
+                        window._showNativeNotif('💰 CashLink — Gains crédités !', 'Vos gains de minage ont été mis à jour.');
+                    }
                 } catch(err) {}
             };
             
@@ -1200,7 +1203,10 @@
                     else if(act.type === 'retrait') msg = `💸 ${act.username} a soumis un retrait de ${Number(act.montant).toLocaleString('fr-FR')} FC`;
                     else if(act.type === 'paye') msg = `✅ ${act.username} a reçu son paiement de ${Number(act.montant).toLocaleString('fr-FR')} FC`;
                     else if(act.type === 'certif') msg = `🔵 ${act.username} vient d'être certifié`;
-                    if(msg) triggerHeavyToast(msg);
+                    if(msg) {
+                        triggerHeavyToast(msg);
+                        if (window._showNativeNotif) window._showNativeNotif('CashLink', msg.replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27FF}]/gu,'').trim());
+                    }
                 } catch(err) {}
             });
             
