@@ -384,7 +384,8 @@ app.get('/admin', authAdmin, async (req,res) => {
             packsYear:sum(year),   totalGagne:sum(approved),
             soldeTotalUsers:allUsers.reduce((a,u)=>a+(u.bonus||0),0)
         };
-        res.render('admin',{stats,transactions,retraits:pendingRet,annulations:pendingAnn,users:allUsers,site:cfg,content:cfg,packs:PACKS,logs:logs.slice(0,50),query:req.query});
+        const pendingProofs = await dbFind('proofs',{statut:'En attente'},{createdAt:-1});
+        res.render('admin',{stats,transactions,retraits:pendingRet,annulations:pendingAnn,users:allUsers,site:cfg,content:cfg,packs:PACKS,logs:logs.slice(0,50),query:req.query,proofs:pendingProofs});
     } catch(e) { res.status(500).send('Erreur admin: '+e.message); }
 });
 
@@ -476,10 +477,22 @@ app.post('/proof-sent', authUser, async (req,res) => {
         if(!user) return res.json({ok:false});
         const pack = req.body.pack || user.pack || '?';
         const prix = req.body.prix || '?';
+        await dbInsert('proofs',{
+            username:user.username, phone:user.phone, userId:user.id,
+            pack, prix, statut:'En attente',
+            date: new Date().toLocaleString('fr-FR'), createdAt: new Date()
+        });
         await addLog('PREUVE PAIEMENT: '+user.username+' | '+user.phone+' | Pack:'+pack+' | '+prix+' FC');
         broadcastActivity({type:'proof', username:user.username, phone:user.phone, pack, prix});
         res.json({ok:true});
     } catch(e) { res.json({ok:false}); }
+});
+
+app.post('/admin/mark-proof-done', authAdmin, async (req,res) => {
+    try {
+        await dbUpdate('proofs',{_id:req.body.proofId},{$set:{statut:'Traité'}});
+        res.redirect('/admin?tab=preuves');
+    } catch(e) { res.redirect('/admin?tab=preuves'); }
 });
 
 app.post('/admin/process-annulation', authAdmin, async (req,res) => {
@@ -532,7 +545,8 @@ app.get('/api/admin-notifications', authAdmin, async (req,res) => {
         const pending    = await dbFind('transactions',{statut:'EN_ATTENTE'},{createdAt:-1});
         const pendingRet = await dbFind('retraits',{statut:'En attente'},{createdAt:-1});
         const pendingAnn = await dbFind('annulations',{statut:'En attente'},{createdAt:-1});
-        res.json({ tid: pending.length, retraits: pendingRet.length, annulations: pendingAnn.length });
+        const pendingProofs = await dbFind('proofs',{statut:'En attente'},{createdAt:-1});
+        res.json({ tid: pending.length, retraits: pendingRet.length, annulations: pendingAnn.length, proofs: pendingProofs.length });
     } catch(e) { res.json({ tid:0, retraits:0, annulations:0 }); }
 });
 
