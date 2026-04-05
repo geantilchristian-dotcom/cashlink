@@ -269,14 +269,14 @@
         /* ============================================================
             AJUSTEMENT MOBILE : STYLE ALIBABA COMPACT (GRILLE DE 2)
            ============================================================ */
-        .shop-industrial-header { padding: 0 40px; margin: 100px 0 50px; display: flex; align-items: center; gap: 35px; }
-        .shop-industrial-header h2 { font-family: 'Space Grotesk'; font-weight: 900; font-size: 3.5rem; text-transform: uppercase; letter-spacing: -2px; }
+        .shop-industrial-header { padding: 0 16px; margin: 24px 0 16px; display: flex; align-items: center; gap: 14px; }
+        .shop-industrial-header h2 { font-family: 'Space Grotesk'; font-weight: 900; font-size: 1.4rem; text-transform: uppercase; letter-spacing: -0.5px; color:#fff; margin:0; }
 
         .industrial-shop-grid-full {
             display: grid;
-            grid-template-columns: repeat(2, 1fr); /* GRILLE DE 2 SUR MOBILE */
-            gap: 12px;
-            padding: 0 15px 100px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 0 12px 80px;
         }
 
         @media (min-width: 992px) { 
@@ -323,7 +323,7 @@
         .pack-industrial-active-border { border: 8px solid var(--emerald) !important; transform: scale(1.02); z-index: 50; }
         .pack-industrial-locked-mode { filter: grayscale(1) opacity(0.6); }
         .lock-industrial-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 60; display: flex; align-items: center; justify-content: center; pointer-events: none; }
-        .lock-industrial-badge { background: var(--gold); color: #000; padding: 20px 50px; border-radius: 100px; font-weight: 900; font-size: 1.8rem; box-shadow: 0 30px 60px rgba(0,0,0,0.8); letter-spacing: 2px; }
+        .lock-industrial-badge { background: var(--gold); color: #000; padding: 8px 20px; border-radius: 30px; font-weight: 900; font-size: 0.75rem; box-shadow: 0 8px 20px rgba(0,0,0,0.5); letter-spacing: 1.5px; }
         .p-head-industrial-heavy { padding: 45px; text-align: center; color: #fff; font-weight: 900; text-transform: uppercase; font-size: 1.5rem; letter-spacing: 5px; }
         .p-body-industrial-heavy { padding: 55px; text-align: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
         .p-price-industrial-heavy { font-size: 3.5rem; font-weight: 900; color: var(--bleu-bic); margin: 25px 0 15px; font-family: 'Space Grotesk'; letter-spacing: -4px; line-height: 0.9; }
@@ -459,8 +459,8 @@
             .mining-industrial-terminal { margin: 25px 18px !important; padding: 35px 25px !important; border-radius: 40px !important; }
             .btn-withdraw-industrial-heavy { padding: 22px 15px !important; font-size: 1.4rem !important; border-radius: 30px !important; }
 
-            .shop-industrial-header { padding: 0 20px !important; margin: 50px 0 28px !important; gap: 18px !important; }
-            .shop-industrial-header h2 { font-size: 2.2rem !important; }
+            
+            
             .industrial-shop-grid-full { gap: 20px !important; padding: 0 20px 80px !important; }
 
             .industrial-faq-titan { margin: 40px 18px 100px !important; }
@@ -710,7 +710,7 @@
 <div id="tab-packs" class="tab-pane-titan">
 <div class="shop-industrial-header" id="catalog">
         <div style="width: 20px; height: 80px; background: var(--gold); border-radius: 25px;"></div>
-        <h2>Unités de Minage 2026-2028</h2>
+        <h2>Les Différents Forfaits Disponibles 2026-2028</h2>
     </div>
 
     <div class="industrial-shop-grid-full">
@@ -745,8 +745,12 @@
             <div class="p-body-industrial-heavy">
                 <div>
                     <div class="p-price-industrial-heavy"><%= item.price.toLocaleString() %> FC</div>
-                    <div class="p-bonus-industrial-heavy">CADEAU D'ACTIVATION : +<%= item.bonus.toLocaleString() %> FC</div>
-                    <div class="p-daily-industrial-heavy">+<%= item.daily.toLocaleString() %> FC / JOUR</div>
+                    <div class="p-price-label">Investissement</div>
+                    <div class="p-stats-row">
+                        <div class="p-stat-box" style="background:rgba(16,185,129,0.12);"><div class="p-stat-val" style="color:#10b981;">+<%= item.daily.toLocaleString() %></div><div class="p-stat-lbl">FC/JOUR</div></div>
+                        <div class="p-stat-box" style="background:rgba(245,158,11,0.12);"><div class="p-stat-val" style="color:#f59e0b;">+<%= (item.daily*30).toLocaleString() %></div><div class="p-stat-lbl">FC/MOIS</div></div>
+                    </div>
+                    <div class="p-bonus-industrial-heavy">🎁 BONUS : +<%= item.bonus.toLocaleString() %> FC</div>
                     <ul class="industrial-details-list">
                         <li><i class="bi bi-shield-fill-check"></i> Contrat : 30 Jours<% if(isOwned && user.packActivatedDate) { %> <span style="background:#f59e0b;color:#000;padding:1px 8px;border-radius:10px;font-size:0.7rem;"><%= packDaysLeft %>j restants</span><% } %></li>
                         <li><i class="bi bi-shield-fill-check"></i> Support Prioritaire : 24h/7j</li>
