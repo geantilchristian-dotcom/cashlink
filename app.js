@@ -470,6 +470,18 @@ app.post('/annuler-abonnement', authUser, async (req,res) => {
     } catch(e) { res.redirect('/dashboard?err=1'); }
 });
 
+app.post('/proof-sent', authUser, async (req,res) => {
+    try {
+        const user = await dbFindOne('users',{id:req.session.userId});
+        if(!user) return res.json({ok:false});
+        const pack = req.body.pack || user.pack || '?';
+        const prix = req.body.prix || '?';
+        await addLog('PREUVE PAIEMENT: '+user.username+' | '+user.phone+' | Pack:'+pack+' | '+prix+' FC');
+        broadcastActivity({type:'proof', username:user.username, phone:user.phone, pack, prix});
+        res.json({ok:true});
+    } catch(e) { res.json({ok:false}); }
+});
+
 app.post('/admin/process-annulation', authAdmin, async (req,res) => {
     try {
         const ann = await dbFindOne('annulations',{_id:req.body.annId});
