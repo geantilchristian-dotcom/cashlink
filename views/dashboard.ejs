@@ -1052,46 +1052,9 @@
                                 </div>
                             </div>
                         </div>
-                        <button onclick="goToTIDStep()" style="background:linear-gradient(135deg,#0033cc,#00d9ff);color:#fff;border:none;width:100%;padding:16px;border-radius:16px;font-weight:900;font-size:1rem;text-transform:uppercase;letter-spacing:1px;margin-top:16px;cursor:pointer;">
-                            J'AI ENVOYE &rarr; SAISIR LE TID
-                        </button>
+
                     </div>
 
-                    <!-- ETAPE 2 : Saisir le TID -->
-                    <div id="payStep2" style="display:none;">
-                        <div style="font-size:0.7rem;font-weight:900;color:#64748b;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;">
-                            <span style="display:inline-flex;align-items:center;gap:6px;background:#1e293b;padding:4px 12px;border-radius:20px;">
-                                <span style="background:#10b981;color:#fff;width:18px;height:18px;border-radius:50%;font-size:0.6rem;display:inline-flex;align-items:center;justify-content:center;font-weight:900;">2</span>
-                                SAISISSEZ VOTRE REFERENCE TID
-                            </span>
-                        </div>
-                        <div style="background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(251,146,60,0.05));border:2px solid rgba(245,158,11,0.4);border-radius:16px;padding:14px 18px;margin-bottom:18px;">
-                            <div style="display:flex;align-items:flex-start;gap:12px;">
-                                <i class="bi bi-exclamation-triangle-fill" style="color:#f59e0b;font-size:1.3rem;margin-top:2px;flex-shrink:0;"></i>
-                                <div>
-                                    <div style="color:#f59e0b;font-weight:900;font-size:0.85rem;margin-bottom:6px;">RAPPEL IMPORTANT</div>
-                                    <div style="color:#cbd5e1;font-size:0.8rem;font-weight:700;line-height:1.6;">
-                                        Le numero de reference TID doit commencer par <span style="background:#f59e0b;color:#000;padding:1px 8px;border-radius:6px;font-weight:900;">TID:</span> suivi des chiffres.
-                                        <br>Exemple : <code style="background:#1e293b;color:#00d9ff;padding:2px 8px;border-radius:6px;font-size:0.8rem;">TID:MP260327.1157.FP8352</code>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <label style="font-size:0.7rem;font-weight:900;color:#94a3b8;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;display:block;">REFERENCE TID (du SMS de confirmation)</label>
-                        <input type="text" id="tidInputHeavy" placeholder="TID:MP260327.1157.FP8352" autocomplete="off"
-                            style="background:#1e293b;border:2px solid rgba(0,217,255,0.3);border-radius:14px;padding:16px 18px;color:#fff;font-weight:900;font-size:1.1rem;width:100%;font-family:monospace;letter-spacing:1px;margin-bottom:8px;"
-                            oninput="validateTIDInput(this)"
-                            onfocus="this.style.borderColor='#00d9ff';this.style.boxShadow='0 0 0 3px rgba(0,217,255,0.15)';"
-                            onblur="this.style.boxShadow='';">
-                        <div id="tidStatus" style="font-size:0.72rem;font-weight:800;margin-bottom:14px;padding:0 4px;min-height:18px;"></div>
-                        <div style="display:flex;gap:10px;">
-                            <button onclick="goBackStep1()" style="background:#1e293b;color:#94a3b8;border:1px solid #334155;flex:0 0 auto;padding:14px 20px;border-radius:14px;font-weight:900;font-size:0.85rem;cursor:pointer;">&#8592; RETOUR</button>
-                            <button onclick="commitHeavyTID()" id="btnSubmitTID" style="background:linear-gradient(135deg,#059669,#10b981);color:#fff;border:none;flex:1;padding:14px;border-radius:14px;font-weight:900;font-size:1rem;text-transform:uppercase;letter-spacing:1px;cursor:pointer;opacity:0.45;pointer-events:none;">
-                                <i class="bi bi-check2-circle me-2"></i>VALIDER MON PAIEMENT
-                            </button>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -1150,11 +1113,6 @@
             document.getElementById('modalPackTitle').textContent = 'Pack ' + id;
             document.getElementById('modalPriceDisplay').textContent = price.toLocaleString('fr-FR') + ' FC';
             document.getElementById('payStep1').style.display = 'block';
-            document.getElementById('payStep2').style.display = 'none';
-            document.getElementById('tidInputHeavy').value = '';
-            document.getElementById('tidStatus').textContent = '';
-            document.getElementById('btnSubmitTID').style.opacity = '0.45';
-            document.getElementById('btnSubmitTID').style.pointerEvents = 'none';
             document.getElementById('copiedBadge').style.display = 'none';
             document.querySelectorAll('.pay-op-card').forEach(c => { c.style.transform=''; c.style.opacity='1'; });
             heavyModal.show();
@@ -1172,43 +1130,6 @@
             setTimeout(() => { window.location.href = 'tel:' + dialNum; }, 400);
         }
 
-        function goToTIDStep() {
-            document.getElementById('payStep1').style.display = 'none';
-            document.getElementById('payStep2').style.display = 'block';
-            setTimeout(() => document.getElementById('tidInputHeavy').focus(), 100);
-        }
-
-        function goBackStep1() {
-            document.getElementById('payStep2').style.display = 'none';
-            document.getElementById('payStep1').style.display = 'block';
-        }
-
-        function validateTIDInput(el) {
-            const val = el.value.trim();
-            const status = document.getElementById('tidStatus');
-            const btn = document.getElementById('btnSubmitTID');
-            if (!val) { status.textContent = ''; btn.style.opacity='0.45'; btn.style.pointerEvents='none'; return; }
-            const ok = /^TID\s*:/i.test(val) && val.length >= 6;
-            if (ok) {
-                status.textContent = '\u2713 Format TID valide'; status.style.color = '#10b981';
-                el.style.borderColor = '#10b981';
-                btn.style.opacity = '1'; btn.style.pointerEvents = 'auto';
-            } else {
-                status.textContent = '\u26a0 Le TID doit commencer par "TID:" (ex: TID: 12345678)'; status.style.color = '#f59e0b';
-                el.style.borderColor = '#f59e0b';
-                btn.style.opacity = '0.45'; btn.style.pointerEvents = 'none';
-            }
-        }
-
-        function commitHeavyTID() {
-            const tid = document.getElementById('tidInputHeavy').value.trim();
-            if(!tid || !/^TID\s*:/i.test(tid) || tid.length < 6) {
-                document.getElementById('tidStatus').textContent = '\u26a0 Saisissez un TID valide commençant par "TID:"';
-                document.getElementById('tidStatus').style.color = '#ef4444';
-                return;
-            }
-            heavyModal.hide();
-            submitHeavyPost('/souscrire-pack', { packName: heavyPack, prix: heavyPrice, reference: tid });       }
 
         function handleWithdrawHeavy() {
             const m = prompt("Montant du retrait (Min 1.000 FC) :");
