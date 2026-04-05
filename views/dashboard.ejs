@@ -532,13 +532,13 @@
         }
         @media (min-width: 992px) { .tabs-nav-titan { padding: 10px 100px; gap: 10px; } }
         .tab-btn-titan {
-            background: transparent; border: none; color: rgba(255,255,255,0.55);
+            background: rgba(255,255,255,0.07); border: 1.5px solid rgba(255,255,255,0.12); color: #e2e8f0;
             font-weight: 900; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1.5px;
             padding: 10px 20px; border-radius: 50px; white-space: nowrap;
             cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 7px;
         }
-        .tab-btn-titan:hover { color: #fff; background: rgba(255,255,255,0.08); }
-        .tab-btn-titan.active { background: var(--gold); color: #000; box-shadow: 0 6px 20px rgba(251,191,36,0.5); }
+        .tab-btn-titan:hover { color: #fff; background: rgba(255,255,255,0.14); border-color: rgba(255,255,255,0.3); }
+        .tab-btn-titan.active { background: var(--gold); color: #000; border-color: var(--gold); box-shadow: 0 6px 20px rgba(251,191,36,0.5); }
         .tab-btn-titan i { font-size: 0.95rem; }
         @media (max-width: 767px) {
             .tabs-nav-titan { top: 56px !important; padding: 5px 4px !important; gap: 2px !important; flex-wrap: nowrap !important; justify-content: space-between !important; }
@@ -593,7 +593,7 @@
     <div class="tabs-nav-titan">
         <button class="tab-btn-titan active" id="tab-btn-accueil" onclick="showTab('accueil')"><i class="bi bi-house-fill"></i> ACCUEIL</button>
         <button class="tab-btn-titan" id="tab-btn-parrainage" onclick="showTab('parrainage')"><i class="bi bi-people-fill"></i> PARRAINAGE</button>
-        <button class="tab-btn-titan" id="tab-btn-packs" onclick="showTab('packs')"><i class="bi bi-box-seam-fill"></i> PACKS</button>
+        <button class="tab-btn-titan" id="tab-btn-packs" onclick="showTab('packs')"><i class="bi bi-box-seam-fill"></i> FORFAITS</button>
         <button class="tab-btn-titan" id="tab-btn-regles" onclick="showTab('regles')"><i class="bi bi-book-fill"></i> RÈGLES</button>
         <button class="tab-btn-titan" id="tab-btn-profil" onclick="showTab('profil')"><i class="bi bi-person-circle"></i> PROFIL</button>
     </div>
