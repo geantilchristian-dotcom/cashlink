@@ -579,16 +579,8 @@
         <a href="/logout" class="btn-logout-industrial"><i class="bi bi-power fs-1"></i></a>
     </nav>
 
-        <% if(content.alert_msg && content.alert_msg.trim()) { %>
-    <div style="background:#dc2626;color:#fff;padding:12px 24px;text-align:center;font-weight:900;font-size:0.92rem;letter-spacing:0.5px;position:relative;z-index:999;">
-        <i class="bi bi-exclamation-triangle-fill me-2"></i><%= content.alert_msg %>
-    </div>
-    <% } %>
-    <% if(content.welcome_msg && content.welcome_msg.trim()) { %>
-    <div style="background:linear-gradient(90deg,rgba(16,185,129,0.15),rgba(6,182,212,0.15));border-bottom:2px solid rgba(16,185,129,0.3);padding:14px 30px;text-align:center;font-weight:700;font-size:0.9rem;color:#d1fae5;">
-        <i class="bi bi-megaphone-fill text-success me-2"></i><%= content.welcome_msg %>
-    </div>
-    <% } %>
+    
+
     
     <div class="tabs-nav-titan">
         <button class="tab-btn-titan active" id="tab-btn-accueil" onclick="showTab('accueil')"><i class="bi bi-house-fill"></i> ACCUEIL</button>
