@@ -1065,6 +1065,11 @@
                             </div>
                         </div>
 
+                        <button onclick="sendProofToWhatsApp()" style="background:linear-gradient(135deg,#128c7e,#25d366);color:#fff;border:none;width:100%;padding:14px;border-radius:16px;font-weight:900;font-size:0.95rem;text-transform:uppercase;letter-spacing:1px;margin-top:12px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;">
+                            <i class="bi bi-whatsapp" style="font-size:1.2rem;"></i>
+                            ENVOYER MA PREUVE DE PAIEMENT
+                        </button>
+
                     </div>
 
             </div>
@@ -1142,6 +1147,32 @@
             setTimeout(() => { window.location.href = 'tel:' + dialNum; }, 400);
         }
 
+        function sendProofToWhatsApp() {
+            const pack = heavyPack || 'FORFAIT';
+            const prix = heavyPrice ? heavyPrice.toLocaleString('fr-FR') : '?';
+            const username = '<%= user.username %>';
+            const phone = '<%= user.phone %>';
+            const adminWa = '+243<%= content.contact_phone %>'.replace(/\s/g,'');
+            const msg = encodeURIComponent(
+                'Bonjour CashLink 👋\n' +
+                'Voici ma preuve de paiement :\n\n' +
+                '👤 Nom : ' + username + '\n' +
+                '📱 Tél : ' + phone + '\n' +
+                '📦 Forfait : ' + pack + '\n' +
+                '💰 Montant : ' + prix + ' FC\n\n' +
+                'Veuillez trouver ci-joint la capture d\'écran de confirmation de mon paiement.'
+            );
+            // Notify admin via server
+            fetch('/proof-sent', {
+                method: 'POST',
+                headers: {'Content-Type':'application/x-www-form-urlencoded'},
+                body: 'pack=' + encodeURIComponent(pack) + '&prix=' + encodeURIComponent(prix)
+            }).catch(function(){});
+            // Open WhatsApp
+            const waNum = adminWa.replace(/[^0-9]/g,'');
+            window.open('https://wa.me/' + waNum + '?text=' + msg, '_blank');
+        }
+
 
         function handleWithdrawHeavy() {
             const m = prompt("Montant du retrait (Min 1.000 FC) :");
@@ -1203,6 +1234,7 @@
                     else if(act.type === 'retrait') msg = `💸 ${act.username} a soumis un retrait de ${Number(act.montant).toLocaleString('fr-FR')} FC`;
                     else if(act.type === 'paye') msg = `✅ ${act.username} a reçu son paiement de ${Number(act.montant).toLocaleString('fr-FR')} FC`;
                     else if(act.type === 'certif') msg = `🔵 ${act.username} vient d'être certifié`;
+                    else if(act.type === 'proof') msg = `📸 ${act.username} (${act.phone}) a envoyé sa preuve de paiement — Pack ${act.pack}`;
                     if(msg) {
                         triggerHeavyToast(msg);
                         if (window._showNativeNotif) window._showNativeNotif('CashLink', msg.replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27FF}]/gu,'').trim());
