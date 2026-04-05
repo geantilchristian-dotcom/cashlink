@@ -480,6 +480,75 @@
             .industrial-copy-group input { font-size: 0.65rem !important; }
         }
 
+        /* ── BOUTONS RONDS NAVBAR (PROFIL + CERTIFICATION) ── */
+        .btn-round-nav {
+            width: 50px; height: 50px; border-radius: 50%;
+            border: none; display: flex; align-items: center; justify-content: center;
+            font-size: 1.3rem; cursor: pointer; flex-shrink: 0;
+            transition: var(--transition-titan); position: relative;
+        }
+        .btn-profile-titan {
+            background: var(--bleu-bic); color: #fff;
+            box-shadow: 0 8px 25px rgba(0,51,153,0.5);
+        }
+        .btn-profile-titan:hover { transform: scale(1.1); background: #0044dd; }
+        .btn-certif-titan-round {
+            background: var(--gold); color: #000;
+            box-shadow: 0 8px 25px rgba(251,191,36,0.6);
+        }
+        .btn-certif-titan-round:hover { transform: scale(1.1); filter: brightness(1.1); }
+        .btn-certified-badge {
+            background: #1d4ed8; color: #fff;
+            box-shadow: 0 8px 25px rgba(29,78,216,0.5);
+            cursor: default;
+        }
+        @media (max-width: 767px) {
+            .btn-round-nav { width: 34px !important; height: 34px !important; font-size: 0.9rem !important; }
+        }
+
+        /* ── DROPDOWN PROFIL ── */
+        .profile-dropdown-titan {
+            display: none; position: absolute; top: calc(100% + 14px); right: 0;
+            background: #fff; color: #0f172a; border-radius: 24px;
+            padding: 22px 24px; min-width: 280px; z-index: 99999;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+            border: 3px solid rgba(251,191,36,0.4);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .profile-dropdown-titan.open { display: block; animation: fadeInDown 0.25s ease; }
+        @keyframes fadeInDown { from { opacity:0; transform: translateY(-10px); } to { opacity:1; transform: translateY(0); } }
+        .profile-dropdown-titan .pd-label { font-size: 0.6rem; font-weight: 900; text-transform: uppercase; color: #94a3b8; letter-spacing: 1.5px; margin-bottom: 2px; }
+        .profile-dropdown-titan .pd-value { font-size: 1rem; font-weight: 900; color: var(--bleu-bic); }
+        .profile-dropdown-titan .pd-row { padding: 10px 0; border-bottom: 1.5px solid #f1f5f9; }
+        .profile-dropdown-titan .pd-row:last-child { border-bottom: none; }
+        .profile-wrap { position: relative; }
+
+        /* ── BARRE D'ONGLETS ── */
+        .tabs-nav-titan {
+            display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap;
+            background: rgba(0,0,0,0.35); backdrop-filter: blur(20px);
+            padding: 10px 20px; border-bottom: 2px solid rgba(255,255,255,0.08);
+            position: sticky; top: 72px; z-index: 999; overflow-x: auto;
+        }
+        @media (min-width: 992px) { .tabs-nav-titan { padding: 10px 100px; gap: 10px; } }
+        .tab-btn-titan {
+            background: transparent; border: none; color: rgba(255,255,255,0.55);
+            font-weight: 900; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1.5px;
+            padding: 10px 20px; border-radius: 50px; white-space: nowrap;
+            cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 7px;
+        }
+        .tab-btn-titan:hover { color: #fff; background: rgba(255,255,255,0.08); }
+        .tab-btn-titan.active { background: var(--gold); color: #000; box-shadow: 0 6px 20px rgba(251,191,36,0.5); }
+        .tab-btn-titan i { font-size: 0.95rem; }
+        @media (max-width: 767px) {
+            .tabs-nav-titan { top: 56px !important; padding: 6px 8px !important; gap: 4px !important; }
+            .tab-btn-titan { font-size: 0.62rem !important; padding: 7px 12px !important; letter-spacing: 0.5px !important; }
+        }
+
+        /* ── PANNEAU D'ONGLET ── */
+        .tab-pane-titan { display: none; }
+        .tab-pane-titan.active { display: block; }
+
 </style>
 </head>
 <body>
@@ -499,11 +568,11 @@
         <div class="nav-info-box-titan animate__animated animate__zoomIn">
             <div class="solde-badge-industrial">
                 <span class="label-titan-bold">SOLDE DU TERMINAL</span>
-                <div class="val-titan-heavy"><%= (user.solde || 0).toLocaleString() %> FC</div>
+                <div class="val-titan-heavy" id="solde-display"><%= (user.solde || 0).toLocaleString() %> FC</div>
             </div>
             <div>
                 <span class="label-titan-bold text-success">PROFITS MINAGE</span>
-                <div class="val-titan-heavy text-success">+<%= (user.bonus || 0).toLocaleString() %> FC</div>
+                <div class="val-titan-heavy text-success" id="bonus-display">+<%= (user.bonus || 0).toLocaleString() %> FC</div>
             </div>
         </div>
         <a href="/logout" class="btn-logout-industrial"><i class="bi bi-power fs-1"></i></a>
@@ -519,28 +588,72 @@
         <i class="bi bi-megaphone-fill text-success me-2"></i><%= content.welcome_msg %>
     </div>
     <% } %>
+    
+    <div class="tabs-nav-titan">
+        <button class="tab-btn-titan active" id="tab-btn-accueil" onclick="showTab('accueil')"><i class="bi bi-house-fill"></i> ACCUEIL</button>
+        <button class="tab-btn-titan" id="tab-btn-parrainage" onclick="showTab('parrainage')"><i class="bi bi-people-fill"></i> PARRAINAGE</button>
+        <button class="tab-btn-titan" id="tab-btn-packs" onclick="showTab('packs')"><i class="bi bi-box-seam-fill"></i> PACKS</button>
+        <button class="tab-btn-titan" id="tab-btn-regles" onclick="showTab('regles')"><i class="bi bi-book-fill"></i> RÈGLES</button>
+        <button class="tab-btn-titan" id="tab-btn-profil" onclick="showTab('profil')"><i class="bi bi-person-circle"></i> PROFIL</button>
+    </div>
+<div id="tab-accueil" class="tab-pane-titan active">
+
     <header class="hero-industrial-banner">
         <div class="animate__animated animate__fadeIn">
-            <div class="user-id-badge-industrial">
-                SESSION ACTIVE : <%= user.username %>
-                <% if(user.certified) { %><span style="display:inline-flex;align-items:center;gap:4px;background:#1d4ed8;color:#fff;font-size:0.65rem;font-weight:900;padding:2px 10px;border-radius:20px;margin-left:6px;letter-spacing:0.5px;vertical-align:middle;"><i class="bi bi-patch-check-fill" style="font-size:0.75rem;"></i> CERTIFIÉ</span><% } %>
-                | RÉSEAU : +243 <%= user.phone %>
-            </div>
             <h1 class="hero-title-titan-heavy"><%- content.hero_title || 'MINAGE <span class="text-primary">INDUSTRIEL</span>' %></h1>
-            <p class="hero-para-titan-heavy"><%= content.hero_subtitle || 'Le protocole CASHLINK v28.0 déploie une puissance de calcul décentralisée Sécurisez votre avenir financier avec le minage Cloud Master.' %></p>
-            <button onclick="document.getElementById('catalog').scrollIntoView({behavior:'smooth'})" class="btn btn-primary rounded-pill px-5 py-4 fw-900 shadow-lg fs-2">LANCER MON UNITÉ DE MINAGE</button>
+            <p class="hero-para-titan-heavy"><%= content.hero_subtitle || 'Le protocole CASHLINK v28.0 déploie une puissance de calcul décentralisée pour chaque utilisateur.' %></p>
+            <button onclick="showTab('packs')" class="btn btn-primary rounded-pill px-5 py-4 fw-900 shadow-lg fs-2">LANCER MON UNITÉ DE MINAGE</button>
         </div>
     </header>
 
-    <div class="stats-industrial-grid">
-        <div class="stat-industrial-card">
-            <i class="bi bi-patch-check-fill stat-industrial-icon text-warning"></i><span class="label-titan-bold">Niveau Compte</span><div class="val-titan-heavy text-white fs-2"><%= user.certified ? 'CERTIFIÉ ÉLITE' : 'BASIQUE' %></div>
-            <% if(!user.certified) { %><button onclick="openPaymentModal('CERTIFICATION', <%= content.cert_price || 30000 %>)" class="btn-certif-industrial">CERTIFIER (<%= (parseInt(content.cert_price)||30000).toLocaleString() %> FC)</button><% } %>
-        </div>
-        <div class="stat-industrial-card"><i class="bi bi-currency-exchange stat-industrial-icon text-success"></i><span class="label-titan-bold">Flux Retrait</span><div class="val-titan-heavy text-white fs-2">SÉCURISÉ</div></div>
-    </div>
 
-    <div class="referral-industrial-container animate__animated animate__fadeInUp">
+    <section class="mining-industrial-terminal animate__animated animate__fadeInUp">
+        <div class="d-flex justify-content-between align-items-end mb-2">
+            <div><h3 class="fw-900 mb-0 small text-uppercase">MASTER CLUSTER STATUS</h3><p class="label-titan-bold text-muted mb-0">Unité : <%= user.pack %> industrial_master_v28</p></div>
+            <div class="fw-900 fs-1" style="font-family: 'Space Grotesk'; color: <%= user.packActivated ? '#10b981' : '#f59e0b' %>;"><%= user.packActivated ? (p || 0)+'%' : '⏳' %></div>
+        </div>
+        <div class="progress-industrial-track"><div class="bar-industrial-emerald-fill animate__animated animate__pulse animate__infinite" style="width:<%= user.packActivated ? (p||0) : 0 %>%"></div></div>
+        <% if(!user.packActivated && user.pack && user.pack !== 'Aucun') { %>
+        <div style="background:rgba(245,158,11,0.1);border:2px solid rgba(245,158,11,0.4);border-radius:16px;padding:14px 20px;margin-top:14px;text-align:center;">
+            <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
+            <span class="fw-900 text-warning" style="font-size:0.88rem;">Pack assigné — cliquez <strong>ACTIVER MAINTENANT</strong> ci-dessous pour démarrer l'accumulation des gains (premier gain dans 24h)</span>
+        </div>
+        <% } %>
+        <% if(user.pack && user.pack !== 'Aucun' && user.packActivated) { 
+           const dailyGain = parseInt(content['daily_' + user.pack]) || 0;
+           const accumulatedNow = Math.floor((p/100) * dailyGain);
+           const ratePerHour = Math.floor(dailyGain / 24);
+           const ratePerMin = Math.floor(dailyGain / 1440);
+        %>
+        <div class="d-flex flex-wrap gap-4 mt-3 mb-2" style="font-size:0.85rem;">
+            <div class="text-success fw-bold"><i class="bi bi-lightning-fill me-1"></i>Accumulé : <span class="text-white"><%= accumulatedNow.toLocaleString() %> FC</span></div>
+            <div class="text-info fw-bold"><i class="bi bi-hourglass-split me-1"></i>+<%= ratePerHour.toLocaleString() %> FC/heure</div>
+            <div class="text-warning fw-bold"><i class="bi bi-clock me-1"></i>+<%= ratePerMin.toLocaleString() %> FC/min</div>
+        </div>
+        <% } %>
+        <div class="d-flex flex-wrap justify-content-between mt-5 align-items-center gap-5">
+            <div class="fw-900 text-warning fs-3"><i class="bi bi-clock-history me-3"></i>RECHARGE DISPONIBLE DANS : <span id="titan-heavy-timer">--:--:--</span></div>
+            <% if(typeof pendingRetrait !== 'undefined' && pendingRetrait) { %>
+                <div style="background:rgba(245,158,11,0.15);border:2px solid #f59e0b;border-radius:16px;padding:16px 24px;text-align:center;">
+                    <div class="fw-900 text-warning fs-4"><i class="bi bi-hourglass-split me-2"></i>RETRAIT EN TRAITEMENT</div>
+                    <div class="text-warning opacity-75 mt-2" style="font-size:0.85rem;">Veuillez patienter pendant que l'admin confirme votre demande de <strong><%= (pendingRetrait.montant||0).toLocaleString() %> FC</strong></div>
+                </div>
+            <% } else { %>
+                <button onclick="handleWithdrawHeavy()" class="btn-withdraw-industrial-heavy animate__animated animate__pulse animate__infinite">RÉCUPÉRER MES PROFITS (MONEY)</button>
+            <% } %>
+            <% if(typeof pendingAnnulation !== 'undefined' && pendingAnnulation) { %>
+                <div style="background:rgba(239,68,68,0.12);border:2px solid #ef4444;border-radius:16px;padding:14px 20px;text-align:center;margin-top:12px;">
+                    <div class="fw-900 text-danger fs-5"><i class="bi bi-x-octagon-fill me-2"></i>ANNULATION EN COURS DE TRAITEMENT</div>
+                    <div class="text-danger opacity-75 mt-1" style="font-size:0.82rem;">Remboursement de <strong><%= (pendingAnnulation.remboursement||0).toLocaleString() %> FC (50%)</strong> en cours — traitement sous 72h</div>
+                </div>
+            <% } %>
+        </div>
+    </section>
+
+    
+</div>
+<div id="tab-parrainage" class="tab-pane-titan">
+<div class="referral-industrial-container animate__animated animate__fadeInUp">
         <h3 class="ref-title-industrial">Programme de Parrainage Elite</h3>
         <%
         const nextMilestone = Math.ceil((refCount + 1) / 100) * 100;
@@ -592,50 +705,10 @@
     </div>
     </div>
 
-    <section class="mining-industrial-terminal animate__animated animate__fadeInUp">
-        <div class="d-flex justify-content-between align-items-end mb-2">
-            <div><h3 class="fw-900 mb-0 small text-uppercase">MASTER CLUSTER STATUS</h3><p class="label-titan-bold text-muted mb-0">Unité : <%= user.pack %> industrial_master_v28</p></div>
-            <div class="fw-900 fs-1" style="font-family: 'Space Grotesk'; color: <%= user.packActivated ? '#10b981' : '#f59e0b' %>;"><%= user.packActivated ? (p || 0)+'%' : '⏳' %></div>
-        </div>
-        <div class="progress-industrial-track"><div class="bar-industrial-emerald-fill animate__animated animate__pulse animate__infinite" style="width:<%= user.packActivated ? (p||0) : 0 %>%"></div></div>
-        <% if(!user.packActivated && user.pack && user.pack !== 'Aucun') { %>
-        <div style="background:rgba(245,158,11,0.1);border:2px solid rgba(245,158,11,0.4);border-radius:16px;padding:14px 20px;margin-top:14px;text-align:center;">
-            <i class="bi bi-exclamation-triangle-fill text-warning me-2"></i>
-            <span class="fw-900 text-warning" style="font-size:0.88rem;">Pack assigné — cliquez <strong>ACTIVER MAINTENANT</strong> ci-dessous pour démarrer l'accumulation des gains (premier gain dans 24h)</span>
-        </div>
-        <% } %>
-        <% if(user.pack && user.pack !== 'Aucun' && user.packActivated) { 
-           const dailyGain = parseInt(content['daily_' + user.pack]) || 0;
-           const accumulatedNow = Math.floor((p/100) * dailyGain);
-           const ratePerHour = Math.floor(dailyGain / 24);
-           const ratePerMin = Math.floor(dailyGain / 1440);
-        %>
-        <div class="d-flex flex-wrap gap-4 mt-3 mb-2" style="font-size:0.85rem;">
-            <div class="text-success fw-bold"><i class="bi bi-lightning-fill me-1"></i>Accumulé : <span class="text-white"><%= accumulatedNow.toLocaleString() %> FC</span></div>
-            <div class="text-info fw-bold"><i class="bi bi-hourglass-split me-1"></i>+<%= ratePerHour.toLocaleString() %> FC/heure</div>
-            <div class="text-warning fw-bold"><i class="bi bi-clock me-1"></i>+<%= ratePerMin.toLocaleString() %> FC/min</div>
-        </div>
-        <% } %>
-        <div class="d-flex flex-wrap justify-content-between mt-5 align-items-center gap-5">
-            <div class="fw-900 text-warning fs-3"><i class="bi bi-clock-history me-3"></i>RECHARGE DISPONIBLE DANS : <span id="titan-heavy-timer">--:--:--</span></div>
-            <% if(typeof pendingRetrait !== 'undefined' && pendingRetrait) { %>
-                <div style="background:rgba(245,158,11,0.15);border:2px solid #f59e0b;border-radius:16px;padding:16px 24px;text-align:center;">
-                    <div class="fw-900 text-warning fs-4"><i class="bi bi-hourglass-split me-2"></i>RETRAIT EN TRAITEMENT</div>
-                    <div class="text-warning opacity-75 mt-2" style="font-size:0.85rem;">Veuillez patienter pendant que l'admin confirme votre demande de <strong><%= (pendingRetrait.montant||0).toLocaleString() %> FC</strong></div>
-                </div>
-            <% } else { %>
-                <button onclick="handleWithdrawHeavy()" class="btn-withdraw-industrial-heavy animate__animated animate__pulse animate__infinite">RÉCUPÉRER MES PROFITS (MONEY)</button>
-            <% } %>
-            <% if(typeof pendingAnnulation !== 'undefined' && pendingAnnulation) { %>
-                <div style="background:rgba(239,68,68,0.12);border:2px solid #ef4444;border-radius:16px;padding:14px 20px;text-align:center;margin-top:12px;">
-                    <div class="fw-900 text-danger fs-5"><i class="bi bi-x-octagon-fill me-2"></i>ANNULATION EN COURS DE TRAITEMENT</div>
-                    <div class="text-danger opacity-75 mt-1" style="font-size:0.82rem;">Remboursement de <strong><%= (pendingAnnulation.remboursement||0).toLocaleString() %> FC (50%)</strong> en cours — traitement sous 72h</div>
-                </div>
-            <% } %>
-        </div>
-    </section>
-
-    <div class="shop-industrial-header" id="catalog">
+    
+</div>
+<div id="tab-packs" class="tab-pane-titan">
+<div class="shop-industrial-header" id="catalog">
         <div style="width: 20px; height: 80px; background: var(--gold); border-radius: 25px;"></div>
         <h2>Unités de Minage 2026-2028</h2>
     </div>
@@ -707,148 +780,230 @@
     </div>
 
 
-    <div style="margin:60px 30px;padding:0;" class="animate__animated animate__fadeInUp">
-        <div style="background:linear-gradient(135deg,rgba(6,182,212,0.12),rgba(99,102,241,0.12));border:2px solid rgba(6,182,212,0.4);border-radius:40px;padding:50px 40px;">
-            <h2 style="font-weight:900;letter-spacing:-1px;font-size:2.2rem;color:#fff;margin-bottom:30px;"><i class="bi bi-book-fill text-info me-3"></i>RÈGLES D'INVESTISSEMENT</h2>
-            
-            <!-- PACKS & GAINS -->
-            <div style="margin-bottom:35px;">
-                <h5 style="font-weight:900;color:#f59e0b;letter-spacing:2px;font-size:0.85rem;margin-bottom:16px;"><i class="bi bi-box-seam-fill me-2"></i>PACKS D'INVESTISSEMENT</h5>
-                <div style="overflow-x:auto;">
-                    <table style="width:100%;border-collapse:collapse;font-size:0.88rem;">
-                        <thead>
-                            <tr style="background:rgba(255,255,255,0.08);">
-                                <th style="padding:12px 16px;text-align:left;font-weight:900;color:#94a3b8;font-size:0.72rem;letter-spacing:1px;">PACK</th>
-                                <th style="padding:12px 16px;text-align:right;font-weight:900;color:#94a3b8;font-size:0.72rem;letter-spacing:1px;">INVESTISSEMENT</th>
-                                <th style="padding:12px 16px;text-align:right;font-weight:900;color:#94a3b8;font-size:0.72rem;letter-spacing:1px;">GAIN/JOUR</th>
-                                <th style="padding:12px 16px;text-align:right;font-weight:900;color:#94a3b8;font-size:0.72rem;letter-spacing:1px;">GAIN/30 JOURS</th>
-                                <th style="padding:12px 16px;text-align:right;font-weight:900;color:#94a3b8;font-size:0.72rem;letter-spacing:1px;">BONUS ACTIVATION</th>
-                                <th style="padding:12px 16px;text-align:right;font-weight:900;color:#94a3b8;font-size:0.72rem;letter-spacing:1px;">CONTRAT</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <% const packDefs = [
-                                {name:"BRONZE",color:"#10b981",price:content.price_BRONZE||50000,daily:content.daily_BRONZE||5000,bonus:5000},
-                                {name:"SILVER",color:"#4f46e5",price:content.price_SILVER||150000,daily:content.daily_SILVER||15000,bonus:9000},
-                                {name:"GOLD",color:"#f59e0b",price:content.price_GOLD||500000,daily:content.daily_GOLD||40000,bonus:40000},
-                                {name:"DIAMOND",color:"#ef4444",price:content.price_DIAMOND||1000000,daily:content.daily_DIAMOND||100000,bonus:120000},
-                            ]; %>
-                            <% packDefs.forEach(pk => { %>
-                            <tr style="border-top:1px solid rgba(255,255,255,0.07);<%= user.pack===pk.name ? 'background:rgba(245,158,11,0.08);' : '' %>">
-                                <td style="padding:12px 16px;"><span style="background:<%= pk.color %>;color:#fff;font-weight:900;padding:3px 12px;border-radius:20px;font-size:0.75rem;"><%= pk.name %></span><%= user.pack===pk.name ? ' <span style="font-size:0.65rem;color:#f59e0b;font-weight:900;">✅ VOTRE PACK</span>' : '' %></td>
-                                <td style="padding:12px 16px;text-align:right;font-weight:900;color:#fff;"><%= parseInt(pk.price).toLocaleString() %> FC</td>
-                                <td style="padding:12px 16px;text-align:right;font-weight:900;color:#10b981;">+<%= parseInt(pk.daily).toLocaleString() %> FC</td>
-                                <td style="padding:12px 16px;text-align:right;font-weight:900;color:#06b6d4;">+<%= (parseInt(pk.daily)*30).toLocaleString() %> FC</td>
-                                <td style="padding:12px 16px;text-align:right;font-weight:900;color:#f59e0b;">+<%= parseInt(pk.bonus).toLocaleString() %> FC</td>
-                                <td style="padding:12px 16px;text-align:right;color:#94a3b8;font-weight:700;">30 jours</td>
-                            </tr>
-                            <% }) %>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            
-            <!-- PARRAINAGE -->
-            <div style="margin-bottom:35px;">
-                <h5 style="font-weight:900;color:#f59e0b;letter-spacing:2px;font-size:0.85rem;margin-bottom:16px;"><i class="bi bi-people-fill me-2"></i>PROGRAMME DE PARRAINAGE</h5>
-                <div class="row g-3">
-                    <div class="col-md-6">
-                        <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;">
-                            <div style="font-size:0.8rem;font-weight:900;color:#94a3b8;margin-bottom:12px;">TAUX SELON VOTRE PACK</div>
-                            <div style="display:flex;flex-direction:column;gap:8px;font-size:0.85rem;">
-                                <div style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.06);">
-                                    <div class="fw-900 text-warning mb-1" style="font-size:0.82rem;"><i class="bi bi-gift-fill me-2"></i>COMMISSION FIXE : 10% pour tous les packs</div>
-                                    <div style="font-size:0.78rem;color:#cbd5e1;">Exemple : filleul achète BRONZE (50.000 FC) → vous gagnez <strong class="text-success">5.000 FC</strong></div>
-                                    <div style="font-size:0.78rem;color:#cbd5e1;">Exemple : filleul achète DIAMOND (1.000.000 FC) → vous gagnez <strong class="text-success">100.000 FC</strong></div>
-                                </div>
-                                <div style="padding:10px 0;">
-                                    <div class="fw-900 text-warning mb-1" style="font-size:0.82rem;"><i class="bi bi-trophy-fill me-2"></i>PALIER : 100 filleuls actifs = +100.000 FC</div>
-                                    <div style="font-size:0.78rem;color:#cbd5e1;">Cumulable à l'infini : 200 filleuls = +200.000 FC, 300 = +300.000 FC...</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;">
-                            <div style="font-size:0.8rem;font-weight:900;color:#94a3b8;margin-bottom:12px;">BONUS DE PALIER (filleuls actifs)</div>
-                            <div style="display:flex;flex-direction:column;gap:8px;font-size:0.85rem;">
-                                <div style="display:flex;justify-content:space-between;"><span style="color:#94a3b8;font-weight:700;">100 filleuls</span><span style="font-weight:900;color:#f59e0b;">+100.000 FC</span></div>
-                                <div style="display:flex;justify-content:space-between;"><span style="color:#94a3b8;font-weight:700;">200 filleuls</span><span style="font-weight:900;color:#f59e0b;">+200.000 FC</span></div>
-                                <div style="display:flex;justify-content:space-between;"><span style="color:#94a3b8;font-weight:700;">300 filleuls</span><span style="font-weight:900;color:#f59e0b;">+300.000 FC</span></div>
-                                <div style="display:flex;justify-content:space-between;"><span style="color:#94a3b8;font-weight:700;">N × 100 filleuls</span><span style="font-weight:900;color:#f59e0b;">+N × 100.000 FC</span></div>
-                            </div>
-                            <div style="font-size:0.72rem;color:#10b981;font-weight:800;margin-top:10px;"><i class="bi bi-check-circle-fill me-1"></i>Commission retirable directement</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- RETRAITS -->
-            <div style="margin-bottom:35px;">
-                <h5 style="font-weight:900;color:#f59e0b;letter-spacing:2px;font-size:0.85rem;margin-bottom:16px;"><i class="bi bi-cash-coin me-2"></i>RÈGLES DE RETRAIT</h5>
-                <div class="row g-3">
-                    <div class="col-md-4">
-                        <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;text-align:center;">
-                            <div style="font-size:2rem;font-weight:900;color:#06b6d4;">1.000 FC</div>
-                            <div style="font-size:0.75rem;color:#94a3b8;font-weight:800;">MONTANT MINIMUM</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;text-align:center;">
-                            <div style="font-size:2rem;font-weight:900;color:#ef4444;">72H</div>
-                            <div style="font-size:0.75rem;color:#94a3b8;font-weight:800;">DÉLAI (COMPTE STANDARD)</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;text-align:center;">
-                            <div style="font-size:2rem;font-weight:900;color:#10b981;">24H</div>
-                            <div style="font-size:0.75rem;color:#94a3b8;font-weight:800;">DÉLAI (COMPTE CERTIFIÉ 🔵)</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- UPGRADE PACKS -->
-            <div>
-                <h5 style="font-weight:900;color:#f59e0b;letter-spacing:2px;font-size:0.85rem;margin-bottom:16px;"><i class="bi bi-arrow-up-circle-fill me-2"></i>RÈGLES D'UPGRADE DE PACK</h5>
-                <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:20px;font-size:0.88rem;line-height:2;">
-                    <div><i class="bi bi-check-circle-fill text-success me-2"></i>Vous pouvez toujours <strong class="text-white">monter vers un pack supérieur</strong> (BRONZE → SILVER → GOLD → DIAMOND)</div>
-                    <div><i class="bi bi-x-circle-fill text-danger me-2"></i>Il est <strong class="text-white">impossible de descendre</strong> vers un pack inférieur</div>
-                    <div><i class="bi bi-x-circle-fill text-danger me-2"></i>Il est <strong class="text-white">impossible d'acheter 2 fois</strong> le même pack</div>
-                    <div><i class="bi bi-info-circle-fill text-info me-2"></i>Chaque contrat dure <strong class="text-white">30 jours</strong> — le minage s'arrête automatiquement après</div>
-                    <div><i class="bi bi-info-circle-fill text-info me-2"></i>Activez votre pack en cliquant <strong class="text-white">ACTIVER MON PACK</strong> pour démarrer le minage</div>
-                </div>
-            </div>
-            
+    
+</div>
+<div id="tab-regles" class="tab-pane-titan">
+    <div style="max-width:900px;margin:30px auto;padding:0 16px 80px;">
+
+        <!-- ── TITRE ── -->
+        <div style="text-align:center;margin-bottom:30px;">
+            <h2 style="font-family:'Space Grotesk';font-weight:900;color:#fff;font-size:2rem;letter-spacing:-1px;margin-bottom:6px;">
+                <i class="bi bi-book-fill text-info me-2"></i>RÈGLES D'INVESTISSEMENT
+            </h2>
+            <p style="color:#94a3b8;font-size:0.85rem;font-weight:700;">Lisez attentivement avant d'investir</p>
         </div>
+
+        <!-- ── TABLE PACKS ── -->
+        <div style="background:var(--glass-dark);border-radius:24px;border:2px solid rgba(6,182,212,0.3);padding:24px;margin-bottom:20px;">
+            <h5 style="font-weight:900;color:#f59e0b;letter-spacing:2px;font-size:0.78rem;text-transform:uppercase;margin-bottom:16px;">
+                <i class="bi bi-box-seam-fill me-2"></i>PACKS D'INVESTISSEMENT
+            </h5>
+            <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+                <table style="width:100%;border-collapse:collapse;font-size:0.8rem;min-width:500px;">
+                    <thead>
+                        <tr style="background:rgba(255,255,255,0.06);border-radius:12px;">
+                            <th style="padding:10px 12px;text-align:left;font-weight:900;color:#64748b;font-size:0.68rem;letter-spacing:1px;">PACK</th>
+                            <th style="padding:10px 12px;text-align:right;font-weight:900;color:#64748b;font-size:0.68rem;letter-spacing:1px;">INVEST.</th>
+                            <th style="padding:10px 12px;text-align:right;font-weight:900;color:#64748b;font-size:0.68rem;letter-spacing:1px;">GAIN/JOUR</th>
+                            <th style="padding:10px 12px;text-align:right;font-weight:900;color:#64748b;font-size:0.68rem;letter-spacing:1px;">30 JOURS</th>
+                            <th style="padding:10px 12px;text-align:right;font-weight:900;color:#64748b;font-size:0.68rem;letter-spacing:1px;">BONUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% const packDefs = [
+                            {name:"BRONZE",color:"#10b981",price:content.price_BRONZE||50000,daily:content.daily_BRONZE||5000,bonus:5000},
+                            {name:"SILVER",color:"#4f46e5",price:content.price_SILVER||150000,daily:content.daily_SILVER||15000,bonus:9000},
+                            {name:"GOLD",color:"#f59e0b",price:content.price_GOLD||500000,daily:content.daily_GOLD||40000,bonus:40000},
+                            {name:"DIAMOND",color:"#ef4444",price:content.price_DIAMOND||1000000,daily:content.daily_DIAMOND||100000,bonus:120000},
+                        ]; %>
+                        <% packDefs.forEach(pk => { %>
+                        <tr style="border-top:1px solid rgba(255,255,255,0.06);<%= user.pack===pk.name ? 'background:rgba(245,158,11,0.07);' : '' %>">
+                            <td style="padding:10px 12px;">
+                                <span style="background:<%= pk.color %>;color:#fff;font-weight:900;padding:2px 10px;border-radius:20px;font-size:0.7rem;"><%= pk.name %></span>
+                                <%- user.pack===pk.name ? '<span style="font-size:0.6rem;color:#f59e0b;font-weight:900;margin-left:4px;">✅</span>' : '' %>
+                            </td>
+                            <td style="padding:10px 12px;text-align:right;font-weight:900;color:#fff;font-size:0.8rem;"><%= parseInt(pk.price).toLocaleString() %> FC</td>
+                            <td style="padding:10px 12px;text-align:right;font-weight:900;color:#10b981;font-size:0.8rem;">+<%= parseInt(pk.daily).toLocaleString() %> FC</td>
+                            <td style="padding:10px 12px;text-align:right;font-weight:900;color:#06b6d4;font-size:0.8rem;">+<%= (parseInt(pk.daily)*30).toLocaleString() %> FC</td>
+                            <td style="padding:10px 12px;text-align:right;font-weight:900;color:#f59e0b;font-size:0.8rem;">+<%= parseInt(pk.bonus).toLocaleString() %> FC</td>
+                        </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ── PARRAINAGE + RETRAITS (2 colonnes) ── -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+            <!-- Parrainage -->
+            <div style="background:var(--glass-dark);border-radius:24px;border:2px solid rgba(99,102,241,0.3);padding:22px;">
+                <h5 style="font-weight:900;color:#f59e0b;font-size:0.78rem;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;">
+                    <i class="bi bi-people-fill me-2"></i>PARRAINAGE
+                </h5>
+                <div style="display:flex;flex-direction:column;gap:10px;font-size:0.82rem;">
+                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;">
+                        <div style="color:#10b981;font-weight:900;margin-bottom:4px;">Commission : 10% fixe</div>
+                        <div style="color:#94a3b8;font-size:0.75rem;">Ex: filleul BRONZE → vous gagnez <strong style="color:#fff;">5.000 FC</strong></div>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;">
+                        <div style="color:#f59e0b;font-weight:900;margin-bottom:4px;"><i class="bi bi-trophy-fill me-1"></i>Palier : 100 filleuls</div>
+                        <div style="color:#94a3b8;font-size:0.75rem;">= <strong style="color:#fff;">+100.000 FC</strong> bonus (cumulable)</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Retraits -->
+            <div style="background:var(--glass-dark);border-radius:24px;border:2px solid rgba(244,63,94,0.3);padding:22px;">
+                <h5 style="font-weight:900;color:#f59e0b;font-size:0.78rem;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;">
+                    <i class="bi bi-cash-coin me-2"></i>RETRAITS
+                </h5>
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;display:flex;justify-content:space-between;align-items:center;">
+                        <span style="color:#94a3b8;font-size:0.75rem;font-weight:700;">Minimum</span>
+                        <span style="color:#06b6d4;font-weight:900;font-size:0.9rem;">1.000 FC</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;display:flex;justify-content:space-between;align-items:center;">
+                        <span style="color:#94a3b8;font-size:0.75rem;font-weight:700;">Standard</span>
+                        <span style="color:#ef4444;font-weight:900;font-size:0.9rem;">72H</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:12px;display:flex;justify-content:space-between;align-items:center;">
+                        <span style="color:#94a3b8;font-size:0.75rem;font-weight:700;">Certifié 🔵</span>
+                        <span style="color:#10b981;font-weight:900;font-size:0.9rem;">24H</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <style>@media(max-width:600px){#regles-grid-2col{grid-template-columns:1fr!important;}}</style>
+
+        <!-- ── UPGRADE PACKS ── -->
+        <div style="background:var(--glass-dark);border-radius:24px;border:2px solid rgba(16,185,129,0.3);padding:22px;margin-bottom:20px;">
+            <h5 style="font-weight:900;color:#f59e0b;font-size:0.78rem;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;">
+                <i class="bi bi-arrow-up-circle-fill me-2"></i>RÈGLES D'UPGRADE
+            </h5>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:0.83rem;line-height:1.6;">
+                <div style="display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-check-circle-fill text-success" style="margin-top:2px;flex-shrink:0;"></i><span style="color:#cbd5e1;">Montée possible : <strong style="color:#fff;">BRONZE → SILVER → GOLD → DIAMOND</strong></span></div>
+                <div style="display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-x-circle-fill text-danger" style="margin-top:2px;flex-shrink:0;"></i><span style="color:#cbd5e1;">Impossible de <strong style="color:#fff;">descendre vers un pack inférieur</strong></span></div>
+                <div style="display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-x-circle-fill text-danger" style="margin-top:2px;flex-shrink:0;"></i><span style="color:#cbd5e1;">Impossible d'<strong style="color:#fff;">acheter 2 fois le même pack</strong></span></div>
+                <div style="display:flex;gap:10px;align-items:flex-start;"><i class="bi bi-info-circle-fill text-info" style="margin-top:2px;flex-shrink:0;"></i><span style="color:#cbd5e1;">Chaque contrat dure <strong style="color:#fff;">30 jours</strong> — le minage s'arrête ensuite</span></div>
+            </div>
+        </div>
+
+        <!-- ── FAQ ACCORDÉON ── -->
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+
+            <!-- FAQ 1 -->
+            <div style="background:var(--glass-dark);border-radius:20px;border:2px solid rgba(255,255,255,0.1);overflow:hidden;">
+                <button onclick="this.nextElementSibling.classList.toggle('open-faq')"
+                    style="width:100%;background:transparent;border:none;color:#fff;font-weight:900;font-size:0.9rem;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-align:left;gap:10px;">
+                    <span><i class="bi bi-info-circle-fill text-info me-2"></i>VISION CASHLINK 2026</span>
+                    <i class="bi bi-chevron-down" style="transition:0.3s;flex-shrink:0;"></i>
+                </button>
+                <div class="faq-body-titan">
+                    <div style="padding:0 22px 18px;color:#cbd5e1;font-size:0.85rem;line-height:1.8;"><%= content.about_text %></div>
+                </div>
+            </div>
+
+            <!-- FAQ 2 -->
+            <div style="background:var(--glass-dark);border-radius:20px;border:2px solid rgba(255,255,255,0.1);overflow:hidden;">
+                <button onclick="this.nextElementSibling.classList.toggle('open-faq')"
+                    style="width:100%;background:transparent;border:none;color:#fff;font-weight:900;font-size:0.9rem;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-align:left;gap:10px;">
+                    <span><i class="bi bi-shield-lock-fill text-success me-2"></i>PROTOCOLE DE SÉCURITÉ ET RETRAITS</span>
+                    <i class="bi bi-chevron-down" style="transition:0.3s;flex-shrink:0;"></i>
+                </button>
+                <div class="faq-body-titan">
+                    <div style="padding:0 22px 18px;color:#cbd5e1;font-size:0.85rem;line-height:1.8;white-space:pre-line;"><%= content.rules_text %></div>
+                </div>
+            </div>
+
+            <!-- FAQ 3 -->
+            <div style="background:var(--glass-dark);border-radius:20px;border:2px solid rgba(255,255,255,0.1);overflow:hidden;">
+                <button onclick="this.nextElementSibling.classList.toggle('open-faq')"
+                    style="width:100%;background:transparent;border:none;color:#fff;font-weight:900;font-size:0.9rem;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;text-align:left;gap:10px;">
+                    <span><i class="bi bi-geo-alt-fill text-danger me-2"></i>SIÈGE SOCIAL ET CONTACT</span>
+                    <i class="bi bi-chevron-down" style="transition:0.3s;flex-shrink:0;"></i>
+                </button>
+                <div class="faq-body-titan">
+                    <div style="padding:0 22px 18px;color:#cbd5e1;font-size:0.85rem;line-height:2;">
+                        <strong style="color:#fff;">ADRESSE :</strong> <%= content.contact_address %><br>
+                        <strong style="color:#fff;">SUPPORT WHATSAPP :</strong> +243 <%= content.contact_phone %>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ── FOOTER ── -->
+        <div style="text-align:center;padding:30px 0;opacity:0.25;">
+            <div style="font-family:'Space Grotesk';font-weight:900;font-size:3.5rem;letter-spacing:-6px;color:#fff;">CASHLINK</div>
+            <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;color:#fff;letter-spacing:2px;">Protocole Cloud Mining v28.0 | 2026</div>
+        </div>
+
     </div>
+</div>
+<div id="tab-profil" class="tab-pane-titan">
+    <div style="max-width:600px;margin:40px auto;padding:0 20px 80px;">
 
-    <div class="industrial-faq-titan" id="accTitanHeavy">
-        <div class="accordion-titan-industrial-item shadow-lg">
-            <h2 class="accordion-header"><button class="accordion-button-titan-industrial collapsed" data-bs-toggle="collapse" data-bs-target="#qa1"><i class="bi bi-info-circle-fill me-5 text-info"></i> VISION CASHLINK 2026</button></h2>
-            <div id="qa1" class="accordion-collapse collapse" data-bs-parent="#accTitanHeavy"><div class="accordion-titan-industrial-body"><%= content.about_text %></div></div>
-        </div>
-        <div class="accordion-titan-industrial-item shadow-lg">
-            <h2 class="accordion-header"><button class="accordion-button-titan-industrial collapsed" data-bs-toggle="collapse" data-bs-target="#qa2"><i class="bi bi-shield-lock-fill me-5 text-success"></i> PROTOCOLE DE SÉCURITÉ ET RETRAITS</button></h2>
-            <div id="qa2" class="accordion-collapse collapse" data-bs-parent="#accTitanHeavy"><div class="accordion-titan-industrial-body" style="white-space: pre-line;"><%= content.rules_text %></div></div>
-        </div>
-        <div class="accordion-titan-industrial-item shadow-lg">
-            <h2 class="accordion-header"><button class="accordion-button-titan-industrial collapsed" data-bs-toggle="collapse" data-bs-target="#qa3"><i class="bi bi-geo-alt-fill me-5 text-danger"></i> SIÈGE SOCIAL ET CONTACT</button></h2>
-            <div id="qa3" class="accordion-collapse collapse" data-bs-parent="#accTitanHeavy">
-                <div class="accordion-titan-industrial-body fs-3">
-                    <strong>ADRESSE :</strong> <%= content.contact_address %><br>
-                    <strong>SUPPORT WHATSAPP :</strong> +243 <%= content.contact_phone %>
+        <!-- SESSION CARD -->
+        <div style="background:var(--glass-dark);backdrop-filter:blur(25px);border-radius:40px;border:3px solid rgba(255,255,255,0.2);padding:40px;margin-bottom:25px;text-align:center;">
+            <div style="width:90px;height:90px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 20px 50px rgba(251,191,36,0.5);">
+                <i class="bi bi-person-fill" style="font-size:2.8rem;color:var(--bleu-bic);"></i>
+            </div>
+            <div style="font-family:'Space Grotesk';font-weight:900;font-size:2rem;color:#fff;letter-spacing:-1px;margin-bottom:6px;"><%= user.username %></div>
+            <% if(user.certified) { %>
+            <div style="display:inline-flex;align-items:center;gap:6px;background:#1d4ed8;color:#fff;font-size:0.8rem;font-weight:900;padding:5px 18px;border-radius:20px;margin-bottom:14px;">
+                <i class="bi bi-patch-check-fill"></i> CERTIFIÉ
+            </div>
+            <% } else { %>
+            <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.1);color:#94a3b8;font-size:0.8rem;font-weight:900;padding:5px 18px;border-radius:20px;margin-bottom:14px;">
+                <i class="bi bi-person-fill"></i> COMPTE BASIQUE
+            </div>
+            <% } %>
+            <div style="display:flex;flex-direction:column;gap:14px;margin-top:20px;">
+                <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:0.65rem;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">SESSION ACTIVE</span>
+                    <span style="font-weight:900;color:#fff;font-size:0.95rem;"><%= user.username %></span>
+                </div>
+                <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:0.65rem;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">RÉSEAU</span>
+                    <span style="font-weight:900;color:#fff;font-size:0.95rem;">+243 <%= user.phone %></span>
+                </div>
+                <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:0.65rem;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">PACK ACTIF</span>
+                    <span style="font-weight:900;color:var(--gold);font-size:0.95rem;"><%= user.pack %></span>
+                </div>
+                <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:0.65rem;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">NIVEAU COMPTE</span>
+                    <span style="font-weight:900;color:<%= user.certified ? '#fbbf24' : '#94a3b8' %>;font-size:0.95rem;"><%= user.certified ? 'CERTIFIÉ ÉLITE' : 'BASIQUE' %></span>
+                </div>
+                <div style="background:rgba(255,255,255,0.06);border-radius:16px;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;">
+                    <span style="font-size:0.65rem;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;">FLUX RETRAIT</span>
+                    <span style="font-weight:900;color:#10b981;font-size:0.95rem;">SÉCURISÉ ✓</span>
                 </div>
             </div>
+            <% if(!user.certified) { %>
+            <button onclick="openPaymentModal('CERTIFICATION', <%= content.cert_price || 30000 %>)" style="margin-top:25px;background:var(--gold);color:#000;border:none;width:100%;padding:16px;border-radius:20px;font-weight:900;font-size:0.9rem;text-transform:uppercase;letter-spacing:1.5px;box-shadow:0 15px 40px rgba(251,191,36,0.5);cursor:pointer;">
+                <i class="bi bi-patch-check-fill me-2"></i>CERTIFIER MON COMPTE (<%= (parseInt(content.cert_price)||30000).toLocaleString() %> FC)
+            </button>
+            <% } %>
         </div>
+
+        <!-- BIENVENUE / CASHLINK INFO -->
+        <div style="background:var(--glass-dark);backdrop-filter:blur(25px);border-radius:40px;border:3px solid rgba(255,255,255,0.2);padding:40px;text-align:center;">
+            <h2 style="font-family:'Space Grotesk';font-weight:900;color:var(--gold);font-size:2.5rem;letter-spacing:-2px;margin-bottom:15px;">BIENVENUE</h2>
+            <h3 style="font-family:'Space Grotesk';font-weight:900;color:#fff;font-size:1.2rem;margin-bottom:18px;"><%- content.hero_title || 'MINAGE INDUSTRIEL' %></h3>
+            <p style="color:#cbd5e1;font-size:0.95rem;line-height:1.8;font-weight:600;"><%= content.hero_subtitle || 'Le protocole CASHLINK v28.0 déploie une puissance de calcul décentralisée pour chaque utilisateur.' %></p>
+            <div style="margin-top:25px;background:rgba(255,255,255,0.06);border-radius:16px;padding:16px;">
+                <div style="font-size:0.65rem;font-weight:900;color:#94a3b8;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px;">PUISSANCE DÉPLOYÉE</div>
+                <div style="font-family:'JetBrains Mono';font-weight:700;color:var(--neon-blue);font-size:1.1rem;"><%= content.puissance_hash || '104.2 TH/s' %></div>
+            </div>
+            <button onclick="showTab('packs')" style="margin-top:22px;background:var(--bleu-bic);color:#fff;border:none;width:100%;padding:16px;border-radius:20px;font-weight:900;font-size:0.9rem;text-transform:uppercase;letter-spacing:1.5px;box-shadow:0 15px 40px rgba(0,51,153,0.5);cursor:pointer;">
+                <i class="bi bi-box-seam-fill me-2"></i>VOIR LES PACKS
+            </button>
+        </div>
+
     </div>
+</div>
 
-    <footer class="text-center py-5 opacity-30">
-        <h1 class="fw-900" style="font-family: 'Space Grotesk'; letter-spacing: -10px; font-size: 8rem;">CASHLINK</h1>
-        <p class="small fw-bold text-uppercase fs-4">Protocole Cloud Mining v28.0 | 2026</p>
-    </footer>
-
-        <!-- ═══════════════ MODAL PAIEMENT REDESIGNÉ ═══════════════ -->
+<!-- ═══════════════ MODAL PAIEMENT REDESIGNÉ ═══════════════ -->
     <div class="modal fade" id="payHeavyModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered" style="max-width:540px;margin:12px auto;">
             <div class="modal-content border-0" style="background:#0f1629;border-radius:32px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,0.9);">
@@ -1128,6 +1283,42 @@
             submitHeavyPost('/annuler-abonnement', { pack: annulPack, password: pwd });
         }
 
-    </script>
+    
+
+        // Chevron rotation for FAQ
+        document.querySelectorAll('.faq-body-titan').forEach(body => {
+            const btn = body.previousElementSibling;
+            const chevron = btn ? btn.querySelector('.bi-chevron-down') : null;
+            if (btn) {
+                const orig = btn.onclick;
+                btn.onclick = function() {
+                    body.classList.toggle('open-faq');
+                    if (chevron) chevron.style.transform = body.classList.contains('open-faq') ? 'rotate(180deg)' : '';
+                };
+            }
+        });
+        // === ONGLETS ===
+        function showTab(name) {
+            document.querySelectorAll('.tab-pane-titan').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn-titan').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + name).classList.add('active');
+            document.getElementById('tab-btn-' + name).classList.add('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // === DROPDOWN PROFIL ===
+        function toggleProfileDropdown() {
+            const dd = document.getElementById('profileDropdown');
+            dd.classList.toggle('open');
+        }
+        document.addEventListener('click', function(e) {
+            const wrap = document.querySelector('.profile-wrap');
+            if (wrap && !wrap.contains(e.target)) {
+                const dd = document.getElementById('profileDropdown');
+                if(dd) dd.classList.remove('open');
+            }
+        });
+
+</script>
 </body>
 </html>
