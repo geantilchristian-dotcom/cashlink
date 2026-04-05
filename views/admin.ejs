@@ -482,26 +482,14 @@
                                     <label class="fw-800 text-warning mb-2" style="font-size:0.72rem;">TITRE HÉRO (ex: MINAGE INDUSTRIEL)</label>
                                     <input type="text" name="hero_title" class="form-control bg-dark text-white border-secondary" style="border-radius:10px;" value="<%= content.hero_title || 'MINAGE INDUSTRIEL' %>">
                                 </div>
-                                <div class="col-md-4">
-                                    <label class="fw-800 text-warning mb-2" style="font-size:0.72rem;">SLOGAN / TAGLINE</label>
-                                    <input type="text" name="tagline" class="form-control bg-dark text-white border-secondary" style="border-radius:10px;" value="<%= content.tagline || '' %>">
-                                </div>
-                                <div class="col-12">
-                                    <label class="fw-800 text-warning mb-2" style="font-size:0.72rem;">SOUS-TITRE HÉRO (description sous le titre)</label>
-                                    <textarea name="hero_subtitle" class="form-control bg-dark text-white border-secondary" rows="3" style="border-radius:10px;"><%= content.hero_subtitle || 'Le protocole CASHLINK v28.0 déploie une puissance de calcul décentralisée pour chaque utilisateur.' %></textarea>
-                                </div>
+
+
                             </div>
                         </div>
                     </div>
 
-                    <div class="col-md-6">
-                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">MESSAGE D'ACCUEIL (affiché sur le site)</label>
-                        <textarea name="welcome_msg" class="form-control bg-dark text-white border-secondary" rows="4" style="border-radius:12px;" placeholder="Ex: Bienvenue sur CashLink..."><%= content.welcome_msg || '' %></textarea>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">MESSAGE D'ALERTE (barre d'info en rouge)</label>
-                        <textarea name="alert_msg" class="form-control bg-dark text-white border-secondary" rows="4" style="border-radius:12px;" placeholder="Ex: Maintenance prévue le..."><%= content.alert_msg || '' %></textarea>
-                    </div>
+
+
                     <div class="col-md-6">
                         <label class="fw-800 text-info mb-2" style="font-size:0.75rem;">NUMÉRO WHATSAPP SUPPORT</label>
                         <input type="text" name="contact_phone" class="form-control bg-dark text-white border-secondary" style="border-radius:12px;" value="<%= content.contact_phone || '' %>">
